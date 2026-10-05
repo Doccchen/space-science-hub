@@ -51,14 +51,16 @@ def health():
 @app.get("/api/news/sources")
 def sources():
     # No raw upstream errors exposed on the public endpoint.
-    return {"items": [{**row, "last_error": bool(row["last_error"])} for row in news.sources_status()]}
+    return {"items": [{**row, "last_error": bool(row["last_error"])} for row in news.sources_status()],
+            'geographic_regions': [{'id': key, 'name': name} for key, name in news.GEOGRAPHIC_REGIONS.items()]}
 
 
 @app.get("/api/news")
 def articles(source: str | None = None, cursor: str | None = Query(None, max_length=500),
-             limit: int = Query(20, ge=1, le=50), category: str | None = None):
+             limit: int = Query(20, ge=1, le=50), category: str | None = None,
+             region: str | None = None, geographic_region: str | None = None):
     try:
-        return news.list_articles(source, cursor, limit, category)
+        return news.list_articles(source, cursor, limit, category, region, geographic_region)
     except ValueError as error:
         raise HTTPException(400, str(error)) from error
 
@@ -66,7 +68,8 @@ def articles(source: str | None = None, cursor: str | None = Query(None, max_len
 @app.get("/api/news/{article_id}")
 def article(article_id: int):
     with news.connect() as conn:
-        row = conn.execute("""SELECT a.*,s.name AS source_name,s.region,s.publisher_kind,s.enabled AS source_enabled FROM articles a
+        row = conn.execute("""SELECT a.*,s.name AS source_name,s.region,s.publisher_kind,s.enabled AS source_enabled,
+            s.geographic_region,s.country_code FROM articles a
             JOIN sources s ON s.id=a.source_id WHERE a.id=?""", (article_id,)).fetchone()
     if row is None:
         raise HTTPException(404, "Article not found")

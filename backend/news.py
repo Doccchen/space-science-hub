@@ -12,7 +12,7 @@ from datetime import datetime, timezone
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
-from .sources import SOURCES, CATEGORIES
+from .sources import SOURCES, CATEGORIES, GEOGRAPHIC_REGIONS
 from .locking import operation_lock
 
 import feedparser
@@ -118,13 +118,21 @@ def _initialize():
                 with closing(sqlite3.connect(DB_PATH)) as origin, closing(sqlite3.connect(backup)) as target:
                     origin.backup(target)
         legacy = conn.execute('PRAGMA user_version').fetchone()[0] < 2
+        migrating_v3 = 'geographic_region' not in columns
+        if migrating_v3 and conn.execute('SELECT COUNT(*) FROM articles').fetchone()[0]:
+            backup = DB_PATH.with_name(DB_PATH.name + '.before-v3.sqlite3')
+            if not backup.exists():
+                with closing(sqlite3.connect(DB_PATH)) as origin, closing(sqlite3.connect(backup)) as target:
+                    origin.backup(target)
         additions = {
             'sources': {'collector_kind': "TEXT NOT NULL DEFAULT 'rss'", 'region': "TEXT NOT NULL DEFAULT 'international'",
                         'publisher_kind': "TEXT NOT NULL DEFAULT 'agency'", 'enabled': 'INTEGER NOT NULL DEFAULT 1',
-                        'last_result': "TEXT NOT NULL DEFAULT 'never'", 'retry_after_at': 'TEXT'},
+                        'last_result': "TEXT NOT NULL DEFAULT 'never'", 'retry_after_at': 'TEXT',
+                        'geographic_region': 'TEXT', 'country_code': 'TEXT', 'availability_note': 'TEXT'},
             'articles': {'summary_kind': "TEXT NOT NULL DEFAULT 'source_summary'", 'content_source': 'TEXT',
                          'published_precision': "TEXT NOT NULL DEFAULT 'second'", 'published_raw': 'TEXT',
-                         'published_origin': "TEXT NOT NULL DEFAULT 'feed'"},
+                         'published_origin': "TEXT NOT NULL DEFAULT 'feed'", 'published_calendar_date': 'TEXT',
+                         'published_timezone': 'TEXT', 'published_time_status': "TEXT NOT NULL DEFAULT 'legacy_unspecified'"},
         }
         for table, fields in additions.items():
             existing = {row[1] for row in conn.execute(f'PRAGMA table_info({table})')}
@@ -152,13 +160,22 @@ def _initialize():
         if 'last_attempt_at' not in item_columns:
             conn.execute('ALTER TABLE backfill_items ADD COLUMN last_attempt_at TEXT')
         for source_id, source in SOURCES.items():
-            conn.execute('''INSERT INTO sources(id,name,feed_url,collector_kind,region,publisher_kind,enabled)
-              VALUES(?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET name=excluded.name,
+            conn.execute('''INSERT INTO sources(id,name,feed_url,collector_kind,region,publisher_kind,enabled,
+              geographic_region,country_code,availability_note)
+              VALUES(?,?,?,?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET name=excluded.name,
               feed_url=excluded.feed_url,collector_kind=excluded.collector_kind,
-              region=excluded.region,publisher_kind=excluded.publisher_kind''',
+              region=excluded.region,publisher_kind=excluded.publisher_kind,
+              geographic_region=excluded.geographic_region,country_code=excluded.country_code,
+              availability_note=excluded.availability_note''',
                          (source_id, source['name'], source['url'], source['collector_kind'],
-                          source['region'], source['publisher_kind'], int(source['enabled'])))
-        conn.execute('PRAGMA user_version=2')
+                          source['region'], source['publisher_kind'], int(source['enabled']),
+                          source.get('geographic_region'), source.get('country_code'), source.get('availability_note')))
+        if migrating_v3:
+            conn.execute("""UPDATE articles SET published_calendar_date=date(published_at,'+8 hours'),
+              published_timezone='Asia/Shanghai',published_time_status='date_only'
+              WHERE source_id IN ('cnsa','cmse','cas_space','landspace') AND published_precision='day' AND published_at IS NOT NULL""")
+            conn.execute("UPDATE articles SET published_time_status='missing' WHERE published_at IS NULL")
+        conn.execute('PRAGMA user_version=3')
 
 
 def parse_feed(source_id, raw):
@@ -200,10 +217,12 @@ def store_records(records):
         for record in records:
             conn.execute("""INSERT INTO articles(source_id,source_item_id,canonical_url,original_url,
               title,summary,published_at,date_status,first_seen_at,last_seen_at,content_hash,
-              lang,summary_kind,content_source,published_precision,published_raw,published_origin)
+              lang,summary_kind,content_source,published_precision,published_raw,published_origin,
+              published_calendar_date,published_timezone,published_time_status)
               VALUES(:source_id,:source_item_id,:canonical_url,:original_url,:title,:summary,
               :published_at,:date_status,:first_seen_at,:last_seen_at,:content_hash,
-              :lang,:summary_kind,:content_source,:published_precision,:published_raw,:published_origin)
+              :lang,:summary_kind,:content_source,:published_precision,:published_raw,:published_origin,
+              :published_calendar_date,:published_timezone,:published_time_status)
               ON CONFLICT(source_id,canonical_url) DO UPDATE SET
                 title=excluded.title,summary=excluded.summary,original_url=excluded.original_url,
                 source_item_id=excluded.source_item_id,
@@ -214,9 +233,13 @@ def store_records(records):
                 lang=excluded.lang,summary_kind=excluded.summary_kind,content_source=excluded.content_source,
                 published_precision=CASE WHEN excluded.published_at IS NOT NULL THEN excluded.published_precision ELSE articles.published_precision END,
                 published_raw=CASE WHEN excluded.published_at IS NOT NULL THEN excluded.published_raw ELSE articles.published_raw END,
-                published_origin=CASE WHEN excluded.published_at IS NOT NULL THEN excluded.published_origin ELSE articles.published_origin END""",
+                published_origin=CASE WHEN excluded.published_at IS NOT NULL THEN excluded.published_origin ELSE articles.published_origin END,
+                published_calendar_date=CASE WHEN excluded.published_at IS NOT NULL THEN excluded.published_calendar_date ELSE articles.published_calendar_date END,
+                published_timezone=CASE WHEN excluded.published_at IS NOT NULL THEN excluded.published_timezone ELSE articles.published_timezone END,
+                published_time_status=CASE WHEN excluded.published_at IS NOT NULL THEN excluded.published_time_status ELSE articles.published_time_status END""",
                          {'lang': 'und', 'summary_kind': 'source_summary', 'content_source': None,
                           'published_precision': 'second', 'published_raw': None, 'published_origin': 'feed',
+                          'published_calendar_date': None, 'published_timezone': None, 'published_time_status': 'legacy_unspecified',
                           **record, "first_seen_at": stamp, "last_seen_at": stamp})
 
 
@@ -316,24 +339,40 @@ async def collect_all():
         return [{'skipped': 'operation_locked'}]
 
 
-def encode_cursor(row, source, category=None):
-    return base64.urlsafe_b64encode(json.dumps([row["published_at"] or "", row["id"], source, category, 2]).encode()).decode()
+def encode_cursor(row, source, category=None, region=None, geographic_region=None):
+    filters = dict(source=source, category=category, region=region, geographic_region=geographic_region)
+    return base64.urlsafe_b64encode(json.dumps([row["published_at"] or "", row["id"], filters, 3]).encode()).decode()
 
 
-def list_articles(source=None, cursor=None, limit=20, category=None):
+def list_articles(source=None, cursor=None, limit=20, category=None, region=None, geographic_region=None):
+    source, category, region, geographic_region = source or None, category or None, region or None, geographic_region or None
     clauses, args = [], []
+    if region:
+        if region not in {'domestic', 'international'}:
+            raise ValueError('Unknown publisher region')
+        if source in SOURCES and SOURCES[source]['region'] != region:
+            raise ValueError('Source does not belong to publisher region')
+        clauses.append('s.region=?')
+        args.append(region)
+    if geographic_region:
+        if geographic_region not in GEOGRAPHIC_REGIONS:
+            raise ValueError('Unknown geographic region')
+        if source in SOURCES and SOURCES[source].get('geographic_region') != geographic_region:
+            raise ValueError('Source does not belong to geographic region')
+        clauses.append('s.geographic_region=?')
+        args.append(geographic_region)
     if category:
         if category not in CATEGORIES:
             raise ValueError('Unknown category')
-        region, kind = CATEGORIES[category]
+        category_region, kind = CATEGORIES[category]
         if source and source in SOURCES and (SOURCES[source]['publisher_kind'] != kind or
-                                              (region and SOURCES[source]['region'] != region)):
+                                              (category_region and SOURCES[source]['region'] != category_region)):
             raise ValueError('Source does not belong to category')
         clauses.append('s.publisher_kind=?')
         args.append(kind)
-        if region:
+        if category_region:
             clauses.append('s.region=?')
-            args.append(region)
+            args.append(category_region)
     if source:
         if source not in SOURCES:
             raise ValueError("Unknown source")
@@ -342,12 +381,17 @@ def list_articles(source=None, cursor=None, limit=20, category=None):
     if cursor:
         try:
             decoded = json.loads(base64.urlsafe_b64decode(cursor))
-            if len(decoded) == 3 and not category:
+            if len(decoded) == 4 and decoded[-1] == 3:
+                date, article_id, cursor_filters, version = decoded
+                if cursor_filters != dict(source=source, category=category, region=region, geographic_region=geographic_region):
+                    raise ValueError()
+                cursor_source, cursor_category = source, category
+            elif len(decoded) == 3 and not category and not region and not geographic_region:
                 date, article_id, cursor_source = decoded
                 cursor_category = None
             else:
                 date, article_id, cursor_source, cursor_category, version = decoded
-                if version != 2:
+                if version != 2 or region or geographic_region:
                     raise ValueError()
             if not isinstance(date, str) or type(article_id) is not int or cursor_source != source or cursor_category != category:
                 raise ValueError()
@@ -357,18 +401,20 @@ def list_articles(source=None, cursor=None, limit=20, category=None):
         args.extend([date, date, article_id])
     where = " WHERE " + " AND ".join(clauses) if clauses else ""
     with connect() as conn:
-        rows = [dict(row) for row in conn.execute("""SELECT a.*,s.name AS source_name,s.region,s.publisher_kind,s.enabled AS source_enabled FROM articles a
+        rows = [dict(row) for row in conn.execute("""SELECT a.*,s.name AS source_name,s.region,s.publisher_kind,s.enabled AS source_enabled,
+            s.geographic_region,s.country_code FROM articles a
             JOIN sources s ON a.source_id=s.id""" + where +
             " ORDER BY COALESCE(a.published_at,'') DESC,a.id DESC LIMIT ?", [*args, limit + 1])]
     has_more = len(rows) > limit
     rows = rows[:limit]
-    return {"items": rows, "next_cursor": encode_cursor(rows[-1], source, category) if has_more else None}
+    return {"items": rows, "next_cursor": encode_cursor(rows[-1], source, category, region, geographic_region) if has_more else None}
 
 
 def sources_status():
     with connect() as conn:
         return [dict(row) for row in conn.execute("""SELECT s.id,s.name,s.last_attempt_at,s.last_success_at,
             s.last_error,s.last_item_count,s.collector_kind,s.region,s.publisher_kind,s.enabled,s.last_result,
+            s.geographic_region,s.country_code,s.availability_note,
             COUNT(a.id) AS stored_articles
             FROM sources s LEFT JOIN articles a ON a.source_id=s.id GROUP BY s.id ORDER BY s.id""")]
 

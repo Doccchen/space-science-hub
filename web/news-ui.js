@@ -5,15 +5,19 @@
   const element = (tag, cls, text) => { const node = document.createElement(tag); if (cls) node.className = cls; if (text) node.textContent = text; return node; };
   const filters = element('div', 'news-filters'); filters.setAttribute('role', 'group'); filters.setAttribute('aria-label', '按新闻类别筛选');
   const selectLabel = element('label', '', '来源 '), select = element('select'); select.id = 'news-source'; select.setAttribute('aria-label', '来源'); selectLabel.htmlFor = select.id; selectLabel.append(select);
+  const regionLabel = element('label', '', '商业地区 '), regionSelect = element('select'); regionSelect.id = 'news-region'; regionSelect.setAttribute('aria-label', '商业地区'); regionLabel.htmlFor = regionSelect.id; regionLabel.append(regionSelect); regionLabel.hidden = true;
   const resultLabel = element('p', 'news-message'), status = element('p', 'news-message'), list = element('div', 'real-news'); status.setAttribute('role', 'status');
   const more = element('button', 'secondary load-more', '加载更多'); more.hidden = true;
-  toolbar.after(filters, selectLabel, resultLabel, status, list, more);
+  toolbar.after(filters, regionLabel, selectLabel, resultLabel, status, list, more);
   const categories = [['', '全部'], ['domestic_agency', '国内机构'], ['commercial', '商业航天'], ['international_agency', '国际机构']], buttons = [];
-  let source = '', category = '', cursor = null, generation = 0, busy = false, sources = [], displayedKey = null;
-  const key = () => JSON.stringify([category, source]);
+  let source = '', category = '', regionChoice = '', cursor = null, generation = 0, busy = false, sources = [], displayedKey = null, geographicRegions = [];
+  const regionFilters = () => ['domestic', 'international'].includes(regionChoice) ? {region: regionChoice} : {geographic_region: regionChoice};
+  const key = () => JSON.stringify([category, regionChoice, source]);
   function matches(item) {
-    return !category || (category === 'commercial' ? item.publisher_kind === 'company' :
+    const categoryMatch = !category || (category === 'commercial' ? item.publisher_kind === 'company' :
       item.publisher_kind === 'agency' && item.region === (category === 'domestic_agency' ? 'domestic' : 'international'));
+    const filter = regionFilters();
+    return categoryMatch && (!regionChoice || (filter.region ? item.region === filter.region : item.geographic_region === filter.geographic_region));
   }
   function formatDate(date, precision) {
     if (!date) return '未提供发布时间';
@@ -21,7 +25,11 @@
     return new Date(date).toLocaleString('zh-CN', {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false});
   }
   const kind = item => item.publisher_kind === 'company' ? '企业动态' : '官方机构';
-  const language = item => ({zh: '中文原文', en: '英文原文', es: '西班牙文原文'}[item.lang] || '原始语言');
+  const language = item => ({zh: '中文原文', en: '英文原文', es: '西班牙文原文', ja: '日文原文', fr: '法文原文', de: '德文原文'}[item.lang] || '原始语言');
+  const geography = item => (geographicRegions.find(region => region.id === item.geographic_region)?.name || '') +
+    (item.country_code ? '（' + ({CN: '中国', US: '美国', JP: '日本', FR: '法国', IN: '印度', AU: '澳大利亚'}[item.country_code] || item.country_code) + '发布主体）' : '');
+  const publicationDate = item => item.published_time_status === 'timezone_missing' ? (item.published_raw || '未提供发布时间') + '（来源未标时区）' :
+    item.published_precision === 'day' && item.published_calendar_date ? item.published_calendar_date.replaceAll('-', '/') : formatDate(item.published_at, item.published_precision);
   const summaryKind = item => ({source_summary: '来源摘要节选', body_excerpt: '正文节选', none: '未提供摘要'}[item.summary_kind] || '来源摘要节选');
   function originalLink(item, label) {
     const link = element('a', '', label);
@@ -31,7 +39,7 @@
   }
   function renderItem(item) {
     const row = element('article', 'news-article'); row.dataset.articleId = item.id;
-    const meta = element('div', 'news-meta', [item.source_name, formatDate(item.published_at, item.published_precision), kind(item), language(item), item.source_enabled === 0 ? '采集已停用 · 历史内容' : ''].filter(Boolean).join(' · '));
+    const meta = element('div', 'news-meta', [item.source_name, publicationDate(item), kind(item), geography(item), language(item), item.source_enabled === 0 ? '采集已停用 · 历史内容' : ''].filter(Boolean).join(' · '));
     const heading = element('h2'); heading.append(originalLink(item, item.title));
     const summary = element('p', '', item.summary || '来源未提供摘要，请查看原文。');
     const bottom = element('div', 'news-row-bottom'), action = element('button', 'link-button', '查看新闻详情 →');
@@ -42,7 +50,7 @@
   function openDetail(item) {
     detail.replaceChildren(); const top = element('div', 'dialog-heading'), close = element('button', '', '×');
     close.setAttribute('aria-label', '关闭新闻详情'); close.addEventListener('click', () => detail.close()); top.append(element('h2', '', '新闻详情'), close);
-    const meta = element('p', 'source-disclaimer', [item.source_name, kind(item), formatDate(item.published_at, item.published_precision), language(item)].join(' · '));
+    const meta = element('p', 'source-disclaimer', [item.source_name, kind(item), geography(item), publicationDate(item), language(item)].filter(Boolean).join(' · '));
     const origin = element('p', 'source-disclaimer', '原文内容来源/署名：' + (item.content_source || '未提供'));
     const boundary = element('p', 'news-detail-boundary', '此处展示' + summaryKind(item) + '，不是完整报道。企业新闻中的自述来自发布方。科普 Agent 尚未接入这篇新闻。');
     detail.append(top, element('h3', '', item.title), meta, origin, element('p', '', item.summary || '来源未提供摘要。'), boundary, originalLink(item, '阅读发布方原文 ↗')); detail.showModal();
@@ -55,37 +63,49 @@
     select.replaceChildren(); const all = element('option', '', '本组全部来源'); all.value = ''; select.append(all);
     sources.filter(matches).forEach(item => { const option = element('option', '', item.name + (!item.enabled ? '（采集未启用）' : '')); option.value = item.id; select.append(option); }); select.value = source;
   }
+  function renderRegion() {
+    regionLabel.hidden = category !== 'commercial'; regionSelect.replaceChildren();
+    [['', '全部商业地区'], ['domestic', '国内'], ['international', '国际'], ...geographicRegions.map(item => [item.id, item.name])].forEach(([value, name]) => {
+      const option = element('option', '', name); option.value = value; regionSelect.append(option);
+    }); regionSelect.value = regionChoice;
+  }
   function renderSources(items) {
     const relevant = items.filter(matches).filter(item => !source || item.id === source), dates = relevant.map(item => item.last_success_at).filter(Boolean).sort();
     const failures = relevant.filter(item => item.enabled && item.last_error), disabled = relevant.filter(item => !item.enabled);
     document.getElementById('news-update').textContent = (dates.length ? '最近成功采集：' + formatDate(dates.at(-1)) : '尚未成功采集') +
       (failures.length ? ' · ' + failures.length + '个来源更新失败，保留历史' : '') + (disabled.length ? ' · ' + disabled.length + '个来源未启用' : '');
-    document.getElementById('news-update').title = relevant.map(item => item.name + '：' + (!item.enabled ? '未启用；' : item.last_error ? '本轮失败或部分失败，保留历史；' : '') + '最近成功 ' + formatDate(item.last_success_at)).join('\n');
+    document.getElementById('news-update').title = relevant.map(item => item.name + '：' + (!item.enabled ? (item.availability_note || '未启用') + '；' : item.last_error ? '本轮失败或部分失败，保留历史；' : '') + '最近成功 ' + formatDate(item.last_success_at)).join('\n');
   }
   async function load(reset = false) {
     if (busy && !reset) return; if (!reset && displayedKey !== key()) return;
     const request = ++generation, requestKey = key(); busy = true; more.disabled = true;
+    if (reset && displayedKey !== requestKey) {
+      list.replaceChildren(); cursor = null; displayedKey = null; more.hidden = true; resultLabel.textContent = '';
+    }
     status.textContent = displayedKey && displayedKey !== requestKey ? '正在切换筛选，下方暂为上一筛选结果…' : '正在读取已入库的新闻…';
     const params = new URLSearchParams({limit: '20'});
     if (source) params.set('source', source); if (category) params.set('category', category); if (!reset && cursor) params.set('cursor', cursor);
+    if (category === 'commercial' && regionChoice) { const filter = regionFilters(); Object.entries(filter).forEach(([name, value]) => params.set(name, value)); }
     try {
       const [data, state] = await Promise.all([getJSON('/api/news?' + params), getJSON('/api/news/sources')]); if (request !== generation) return;
-      sources = state.items; renderSelect(); const fragment = document.createDocumentFragment(); data.items.forEach(item => fragment.append(renderItem(item)));
+      sources = state.items; geographicRegions = state.geographic_regions || []; renderRegion(); renderSelect(); const fragment = document.createDocumentFragment(); data.items.forEach(item => fragment.append(renderItem(item)));
       if (reset) list.replaceChildren(fragment); else list.append(fragment);
       cursor = data.next_cursor; displayedKey = requestKey; more.hidden = !cursor; renderSources(sources);
       resultLabel.textContent = '当前结果：' + categories.find(([id]) => id === category)[1] + (source ? ' / ' + sources.find(item => item.id === source).name : '');
+      if (regionChoice) resultLabel.textContent += ' / ' + regionSelect.selectedOptions[0].textContent;
       status.textContent = list.children.length ? '' : '此筛选下暂无已入库新闻。未启用的来源不会自动采集。';
     } catch (error) {
       if (request !== generation) return;
-      status.textContent = displayedKey && displayedKey !== requestKey ? '切换失败，下方保留上一筛选结果，请刷新重试。' : '列表请求失败，已显示的内容仍可阅读。请刷新重试。';
+      status.textContent = list.children.length ? '列表请求失败，已显示的内容仍可阅读。请刷新重试。' : '当前筛选读取失败，请刷新重试。';
     } finally { if (request === generation) { busy = false; more.disabled = displayedKey !== key(); } }
   }
   categories.forEach(([id, name]) => {
     const button = element('button', id === '' ? 'active' : '', name); button.setAttribute('aria-pressed', String(id === ''));
-    button.addEventListener('click', () => { category = id; source = ''; renderSelect(); buttons.forEach(item => { item.node.classList.toggle('active', item.id === id); item.node.setAttribute('aria-pressed', String(item.id === id)); }); load(true); });
+    button.addEventListener('click', () => { category = id; source = ''; regionChoice = ''; renderRegion(); renderSelect(); buttons.forEach(item => { item.node.classList.toggle('active', item.id === id); item.node.setAttribute('aria-pressed', String(item.id === id)); }); load(true); });
     buttons.push({id, node: button}); filters.append(button);
   });
   select.addEventListener('change', () => { source = select.value; load(true); });
+  regionSelect.addEventListener('change', () => { regionChoice = regionSelect.value; source = ''; renderSelect(); load(true); });
   const refresh = element('button', 'refresh-news', '刷新列表 ↻'); refresh.addEventListener('click', () => load(true)); filters.append(refresh);
-  more.addEventListener('click', () => load(false)); renderSelect(); load(true);
+  more.addEventListener('click', () => load(false)); renderRegion(); renderSelect(); load(true);
 })();

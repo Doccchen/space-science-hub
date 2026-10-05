@@ -1,0 +1,62 @@
+{
+  "arianespace": {
+    "list_sha256": "7107ec92d95e36215d908135e145ff6f63e6b637ba59c63da02151fd72bc9066",
+    "details": [
+      {
+        "url": "https://newsroom.arianespace.com/?p=50355",
+        "resolved_url": "https://newsroom.arianespace.com/eutelsat-selects-arianespace-for-two-launches-to-support-the-renewal-of-its-oneweb-constellation/",
+        "sha256": "b10f795e55c6596f998889af41cfcd44d4e729a03f715ca09e6e5813e356f114"
+      },
+      {
+        "url": "https://newsroom.arianespace.com/?p=50193",
+        "resolved_url": "https://newsroom.arianespace.com/amazon-leo-and-arianespace-strengthen-partnership-with-six-additional-ariane-64-launches/",
+        "sha256": "749eb55b186e276d5f38db003bec70a57ffca6c8b588d20ad8fe64c02f9b62a8"
+      },
+      {
+        "url": "https://newsroom.arianespace.com/?p=51105",
+        "resolved_url": "https://newsroom.arianespace.com/arianespace-and-aerospacelab-sign-mou-to-prepare-for-their-european-customers-future-launch-needs/",
+        "sha256": "f8901c4ec35445a0c327ebbc4c08a772c8d4569eaa00009bd268e8a1fcefbdb6"
+      }
+    ]
+  },
+  "ispace": {
+    "list_sha256": "15fa0b0a0359f07df4dedd8a09e1ae843c1b7e8a6a11f852cc27cc602238b974",
+    "details": [
+      {
+        "url": "https://www.ispace-inc.com/2026/09/17/argo-space-and-ispace-u-s-head-to-the-moon-with-finalized-contract-for-lunar-satellite-delivery-mission-2-5/",
+        "resolved_url": "https://www.ispace-inc.com/2026/09/17/argo-space-and-ispace-u-s-head-to-the-moon-with-finalized-contract-for-lunar-satellite-delivery-mission-2-5/",
+        "sha256": "75dfc889c867c4ae53351eff00c2913f71df84526faaa54e23c2f12388b6a4ce"
+      },
+      {
+        "url": "https://www.ispace-inc.com/2026/09/09/ispace-secures-approximately-19-million-in-bank-financing-from-shizuoka-bank/",
+        "resolved_url": "https://www.ispace-inc.com/2026/09/09/ispace-secures-approximately-19-million-in-bank-financing-from-shizuoka-bank/",
+        "sha256": "65b871f266b969c1fff2ed0015ae8486ed13643d538383e4654dd6fc01b7af7a"
+      },
+      {
+        "url": "https://www.ispace-inc.com/2026/09/02/esa-and-ispace-europe-mark-official-signing-of-europes-first-lunar-polar-ice-exploration-rover-mission/",
+        "resolved_url": "https://www.ispace-inc.com/2026/09/02/esa-and-ispace-europe-mark-official-signing-of-europes-first-lunar-polar-ice-exploration-rover-mission/",
+        "sha256": "19e56fc6e7544abaaa1b5c05799c3e6e26baac4684978e58f04027a5039d5aba"
+      }
+    ]
+  },
+  "gilmour": {
+    "list_sha256": "5a88d7e36aec49565fe43b72e4794d0ef3e084c64f1245600c2c4630c6226e9b",
+    "details": [
+      {
+        "url": "https://www.gspace.com/post/gilmour-space-and-hypersonix-partner-to-advance-australian-hypersonic-capability",
+        "resolved_url": "https://www.gspace.com/post/gilmour-space-and-hypersonix-partner-to-advance-australian-hypersonic-capability",
+        "sha256": "6a3ec562d1dba1cc0ebd12529a2079f8bfdb5d002b138a947b017f705b1ee98d"
+      },
+      {
+        "url": "https://www.gspace.com/post/former-nasa-deputy-administrator-pamela-melroy-joins-gilmour-space-board-of-directors",
+        "resolved_url": "https://www.gspace.com/post/former-nasa-deputy-administrator-pamela-melroy-joins-gilmour-space-board-of-directors",
+        "sha256": "510bf0cf4f4283537ab595c2f66b242b0a1c66fd125ff105b5554f3c61d7b286"
+      },
+      {
+        "url": "https://www.gspace.com/post/gilmour-space-expands-iso-certifications",
+        "resolved_url": "https://www.gspace.com/post/gilmour-space-expands-iso-certifications",
+        "sha256": "2d980703261fd51dfa04f9996b06f7114cb1d67bfcdc91bfc56e5855a637c754"
+      }
+    ]
+  }
+}

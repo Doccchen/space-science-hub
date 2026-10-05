@@ -16,7 +16,7 @@ from tools.accept_news import api, identities
 ROOT = news.DB_PATH.parent / 'domestic-acceptance'
 
 
-def pages(source=None, category=None):
+def pages(source=None, category=None, region=None, geographic_region=None):
     from urllib.parse import urlencode
     ids, cursor = [], None
     for _ in range(10000):
@@ -25,6 +25,10 @@ def pages(source=None, category=None):
             params['source'] = source
         if category:
             params['category'] = category
+        if region:
+            params['region'] = region
+        if geographic_region:
+            params['geographic_region'] = geographic_region
         if cursor:
             params['cursor'] = cursor
         result = api('/api/news?' + urlencode(params))
@@ -36,7 +40,8 @@ def pages(source=None, category=None):
         raise AssertionError('Pagination never terminated')
     expected, cursor = [], None
     while True:
-        result = news.list_articles(source=source, category=category, cursor=cursor, limit=50)
+        result = news.list_articles(source=source, category=category, cursor=cursor, limit=50,
+                                    region=region, geographic_region=geographic_region)
         expected.extend(row['id'] for row in result['items'])
         cursor = result['next_cursor']
         if not cursor:
@@ -63,7 +68,8 @@ async def validate():
                 items, total = parse_listing(source, await fetcher.get(url), url)
                 samples = []
                 for item in items[:3]:
-                    samples.append(parse_detail(source, await fetcher.get(item['url']), item))
+                    raw = await fetcher.get(item['url'])
+                    samples.append(parse_detail(source, raw, {**item, 'resolved_url':fetcher.last_url}))
                 news.store_records(samples)
                 before = identities()
                 news.store_records(samples)
@@ -92,6 +98,18 @@ async def validate():
                                             'historical_coverage': 'not yet verified; use separate backfill reports'}
         for category in news.CATEGORIES:
             result['categories'][category] = pages(category=category)
+        result['commercial_regions'] = {value:pages(category='commercial', region=value) for value in ('domestic','international')}
+        result['commercial_geography'] = {value:pages(category='commercial', geographic_region=value) for value in news.GEOGRAPHIC_REGIONS}
+        if len(news.list_articles(category='commercial', region='international')['items']) > 2:
+            from urllib.error import HTTPError
+            from urllib.parse import urlencode
+            cursor = api('/api/news?category=commercial&region=international&limit=2')['next_cursor']
+            try:
+                api('/api/news?' + urlencode(dict(category='commercial',region='domestic',cursor=cursor)))
+            except HTTPError as error:
+                assert error.code == 400
+            else:
+                raise AssertionError('Commercial region cursor was accepted under a different filter')
         assert pages('nasa') and pages('esa'), 'Original RSS history missing'
         backup_path = ROOT / 'backup.sqlite3'
         with closing(sqlite3.connect(news.DB_PATH)) as origin, closing(sqlite3.connect(backup_path)) as backup:

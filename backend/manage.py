@@ -12,9 +12,12 @@ from .locking import operation_lock
 
 async def probe(source_id, enable=False):
     if news.SOURCES[source_id]['collector_kind'] != 'html':
-        raise ValueError('This command probes domestic HTML sources')
+        raise ValueError('This command probes fixed HTML news sources')
     with operation_lock(news.DB_PATH):
         news._initialize()
+        state = news.source_state(source_id)
+        if state['retry_after_at'] and state['retry_after_at'] > news.now():
+            raise ValueError(f'Publisher Retry-After active until {state["retry_after_at"]}')
         records = []
         async with httpx.AsyncClient(timeout=15, trust_env=False) as client:
             fetcher = PublisherHTTP(client, source_id)
@@ -24,7 +27,8 @@ async def probe(source_id, enable=False):
             if len(items) < 3:
                 raise ValueError('Require at least three valid news samples before enabling')
             for item in items[:3]:
-                records.append(parse_detail(source_id, await fetcher.get(item['url']), item))
+                raw = await fetcher.get(item['url'])
+                records.append(parse_detail(source_id, raw, {**item, 'resolved_url': fetcher.last_url}))
         if enable:
             news.store_records(records)
             news.update_source(source_id, attempt=True)

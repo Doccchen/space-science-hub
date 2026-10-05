@@ -9,7 +9,7 @@ from datetime import datetime, timedelta, timezone
 import httpx
 
 from . import news
-from .html_sources import BudgetExceeded, PublisherHTTP, listing_page, parse_detail, parse_listing
+from .html_sources import BudgetExceeded, PublisherHTTP, SELECTORS, listing_page, parse_detail, parse_listing
 from .locking import operation_lock
 
 
@@ -41,7 +41,7 @@ def report(run_id):
 
 async def execute(source_id, *, start='2025-10-01', end=None, resume=None,
                   max_pages=5, max_articles=50, max_seconds=240, dry_run=False, client=None, retry_undated=False):
-    if source_id not in news.SOURCES or news.SOURCES[source_id]['collector_kind'] != 'html':
+    if source_id not in SELECTORS:
         raise ValueError('Historical backfill is limited to the four reviewed domestic publishers')
     if max_pages < 2 or max_articles < 1 or max_seconds < 1:
         raise ValueError('Require max-pages>=2, max-articles>=1, max-seconds>=1')
@@ -218,7 +218,7 @@ async def execute(source_id, *, start='2025-10-01', end=None, resume=None,
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--source', required=True, choices=[key for key, value in news.SOURCES.items() if value['collector_kind'] == 'html'])
+    parser.add_argument('--source', required=True, choices=SELECTORS)
     parser.add_argument('--since', default='2025-10-01')
     parser.add_argument('--until', help='Fixed end datetime; default is this new run start time')
     parser.add_argument('--resume', help='Run ID; uses its saved date range')
