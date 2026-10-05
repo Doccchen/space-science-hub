@@ -7,21 +7,19 @@ import json
 import logging
 import os
 import sqlite3
-from contextlib import contextmanager
+from contextlib import closing, contextmanager
 from datetime import datetime, timezone
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
+from .sources import SOURCES, CATEGORIES
+from .locking import operation_lock
 
 import feedparser
 import httpx
 
 LOG = logging.getLogger("space_news")
 DB_PATH = Path(os.environ.get("NEWS_DB_PATH", "data/news.sqlite3"))
-SOURCES = {
-    "nasa": {"name": "NASA", "url": "https://www.nasa.gov/news-release/feed/", "domain": "nasa.gov"},
-    "esa": {"name": "ESA", "url": "https://www.esa.int/rssfeed/Our_Activities/Space_News", "domain": "esa.int"},
-}
 MAX_FEED_BYTES = 2 * 1024 * 1024
 
 
@@ -88,6 +86,11 @@ def connect():
 
 
 def initialize():
+    with operation_lock(DB_PATH, timeout=10):
+        _initialize()
+
+
+def _initialize():
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     with connect() as conn:
         conn.execute("PRAGMA journal_mode=WAL")
@@ -107,10 +110,55 @@ def initialize():
         CREATE INDEX IF NOT EXISTS article_order ON articles(published_at DESC,id DESC);
         CREATE INDEX IF NOT EXISTS article_source ON articles(source_id,published_at DESC,id DESC);
         """)
+        columns = {row[1] for row in conn.execute('PRAGMA table_info(sources)')}
+        if 'collector_kind' not in columns and conn.execute('SELECT COUNT(*) FROM articles').fetchone()[0]:
+            # SQLite backup includes WAL and does not change existing article identities.
+            backup = DB_PATH.with_name(DB_PATH.name + '.before-v2.sqlite3')
+            if not backup.exists():
+                with closing(sqlite3.connect(DB_PATH)) as origin, closing(sqlite3.connect(backup)) as target:
+                    origin.backup(target)
+        legacy = conn.execute('PRAGMA user_version').fetchone()[0] < 2
+        additions = {
+            'sources': {'collector_kind': "TEXT NOT NULL DEFAULT 'rss'", 'region': "TEXT NOT NULL DEFAULT 'international'",
+                        'publisher_kind': "TEXT NOT NULL DEFAULT 'agency'", 'enabled': 'INTEGER NOT NULL DEFAULT 1',
+                        'last_result': "TEXT NOT NULL DEFAULT 'never'", 'retry_after_at': 'TEXT'},
+            'articles': {'summary_kind': "TEXT NOT NULL DEFAULT 'source_summary'", 'content_source': 'TEXT',
+                         'published_precision': "TEXT NOT NULL DEFAULT 'second'", 'published_raw': 'TEXT',
+                         'published_origin': "TEXT NOT NULL DEFAULT 'feed'"},
+        }
+        for table, fields in additions.items():
+            existing = {row[1] for row in conn.execute(f'PRAGMA table_info({table})')}
+            for field, definition in fields.items():
+                if field not in existing:
+                    conn.execute(f'ALTER TABLE {table} ADD COLUMN {field} {definition}')
+        if legacy:
+            conn.execute("UPDATE articles SET published_precision='missing' WHERE published_at IS NULL")
+            conn.execute("UPDATE articles SET summary_kind='none' WHERE summary=''")
+            # v1 assigned en to every entry without checking a language declaration.
+            conn.execute("UPDATE articles SET lang='und' WHERE lang='en'")
+        conn.executescript('''
+        CREATE TABLE IF NOT EXISTS backfill_runs (
+          id TEXT PRIMARY KEY, source_id TEXT NOT NULL, start_at TEXT NOT NULL, end_at TEXT NOT NULL,
+          created_at TEXT NOT NULL, updated_at TEXT NOT NULL, status TEXT NOT NULL,
+          next_page INTEGER NOT NULL DEFAULT 0, total_pages INTEGER, stats TEXT NOT NULL DEFAULT '{}');
+        CREATE TABLE IF NOT EXISTS backfill_items (
+          run_id TEXT NOT NULL REFERENCES backfill_runs(id), url TEXT NOT NULL, listing TEXT NOT NULL,
+          status TEXT NOT NULL DEFAULT 'pending', error TEXT, published_at TEXT,
+          PRIMARY KEY(run_id,url));
+        ''')
+        item_columns = {row[1] for row in conn.execute('PRAGMA table_info(backfill_items)')}
+        if 'attempts' not in item_columns:
+            conn.execute('ALTER TABLE backfill_items ADD COLUMN attempts INTEGER NOT NULL DEFAULT 0')
+        if 'last_attempt_at' not in item_columns:
+            conn.execute('ALTER TABLE backfill_items ADD COLUMN last_attempt_at TEXT')
         for source_id, source in SOURCES.items():
-            conn.execute("""INSERT INTO sources(id,name,feed_url) VALUES(?,?,?)
-              ON CONFLICT(id) DO UPDATE SET name=excluded.name,feed_url=excluded.feed_url""",
-                         (source_id, source["name"], source["url"]))
+            conn.execute('''INSERT INTO sources(id,name,feed_url,collector_kind,region,publisher_kind,enabled)
+              VALUES(?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET name=excluded.name,
+              feed_url=excluded.feed_url,collector_kind=excluded.collector_kind,
+              region=excluded.region,publisher_kind=excluded.publisher_kind''',
+                         (source_id, source['name'], source['url'], source['collector_kind'],
+                          source['region'], source['publisher_kind'], int(source['enabled'])))
+        conn.execute('PRAGMA user_version=2')
 
 
 def parse_feed(source_id, raw):
@@ -136,7 +184,11 @@ def parse_feed(source_id, raw):
         records.append({"source_id": source_id, "source_item_id": str(entry.get("id", ""))[:600],
                         "canonical_url": canonical_url(url), "original_url": url,
                         "title": title, "summary": summary, "published_at": date, "date_status": date_status,
-                        "content_hash": hashlib.sha256((title + "\n" + summary).encode()).hexdigest()})
+                        "content_hash": hashlib.sha256((title + "\n" + summary).encode()).hexdigest(),
+                        'lang': str(entry.get('language') or feed.feed.get('language') or 'und').split('-')[0].lower(),
+                        'summary_kind': 'source_summary' if summary else 'none',
+                        'published_precision': 'second' if date else 'missing',
+                        'published_raw': entry.get('published'), 'published_origin': 'feed', 'content_source': None})
     if feed.entries and not records:
         raise ValueError("Feed contained no acceptable entries")
     return records, rejected
@@ -147,17 +199,25 @@ def store_records(records):
     with connect() as conn:
         for record in records:
             conn.execute("""INSERT INTO articles(source_id,source_item_id,canonical_url,original_url,
-              title,summary,published_at,date_status,first_seen_at,last_seen_at,content_hash)
+              title,summary,published_at,date_status,first_seen_at,last_seen_at,content_hash,
+              lang,summary_kind,content_source,published_precision,published_raw,published_origin)
               VALUES(:source_id,:source_item_id,:canonical_url,:original_url,:title,:summary,
-              :published_at,:date_status,:first_seen_at,:last_seen_at,:content_hash)
+              :published_at,:date_status,:first_seen_at,:last_seen_at,:content_hash,
+              :lang,:summary_kind,:content_source,:published_precision,:published_raw,:published_origin)
               ON CONFLICT(source_id,canonical_url) DO UPDATE SET
                 title=excluded.title,summary=excluded.summary,original_url=excluded.original_url,
                 source_item_id=excluded.source_item_id,
                 published_at=COALESCE(excluded.published_at,articles.published_at),
                 date_status=CASE WHEN excluded.published_at IS NOT NULL THEN excluded.date_status
                                 ELSE articles.date_status END,
-                last_seen_at=excluded.last_seen_at,content_hash=excluded.content_hash""",
-                         {**record, "first_seen_at": stamp, "last_seen_at": stamp})
+                last_seen_at=excluded.last_seen_at,content_hash=excluded.content_hash,
+                lang=excluded.lang,summary_kind=excluded.summary_kind,content_source=excluded.content_source,
+                published_precision=CASE WHEN excluded.published_at IS NOT NULL THEN excluded.published_precision ELSE articles.published_precision END,
+                published_raw=CASE WHEN excluded.published_at IS NOT NULL THEN excluded.published_raw ELSE articles.published_raw END,
+                published_origin=CASE WHEN excluded.published_at IS NOT NULL THEN excluded.published_origin ELSE articles.published_origin END""",
+                         {'lang': 'und', 'summary_kind': 'source_summary', 'content_source': None,
+                          'published_precision': 'second', 'published_raw': None, 'published_origin': 'feed',
+                          **record, "first_seen_at": stamp, "last_seen_at": stamp})
 
 
 def source_state(source_id):
@@ -170,11 +230,11 @@ def update_source(source_id, *, attempt=False, success=False, error=None, etag=N
         if attempt:
             conn.execute("UPDATE sources SET last_attempt_at=? WHERE id=?", (now(), source_id))
         elif success:
-            conn.execute("""UPDATE sources SET last_success_at=?,last_error=NULL,
+            conn.execute("""UPDATE sources SET last_success_at=?,last_error=NULL,last_result='success',retry_after_at=NULL,
                 etag=COALESCE(?,etag),last_modified=COALESCE(?,last_modified),
                 last_item_count=COALESCE(?,last_item_count) WHERE id=?""", (now(), etag, modified, count, source_id))
         else:
-            conn.execute("UPDATE sources SET last_error=? WHERE id=?", (str(error)[:300], source_id))
+            conn.execute("UPDATE sources SET last_error=?,last_result='failed' WHERE id=?", (str(error)[:300], source_id))
 
 
 async def fetch_feed(client, source_id, state):
@@ -205,6 +265,9 @@ async def fetch_feed(client, source_id, state):
 
 
 async def collect_source(client, source_id):
+    if SOURCES[source_id]['collector_kind'] == 'html':
+        from .html_sources import collect_html
+        return await collect_html(client, source_id)
     await asyncio.to_thread(update_source, source_id, attempt=True)
     state = await asyncio.to_thread(source_state, source_id)
     try:
@@ -238,16 +301,39 @@ async def collect_source(client, source_id):
 
 
 async def collect_all():
-    async with httpx.AsyncClient(timeout=15, limits=httpx.Limits(max_connections=2), trust_env=False) as client:
-        return await asyncio.gather(*(collect_source(client, source_id) for source_id in SOURCES))
+    try:
+        with operation_lock(DB_PATH):
+            semaphore = asyncio.Semaphore(2)
+            async with httpx.AsyncClient(timeout=15, limits=httpx.Limits(max_connections=2), trust_env=False) as client:
+                async def limited(source_id):
+                    async with semaphore:
+                        return await collect_source(client, source_id)
+                enabled = [row['id'] for row in sources_status() if row['enabled']]
+                return await asyncio.gather(*(limited(source_id) for source_id in enabled))
+    except RuntimeError as error:
+        if 'operation lock' not in str(error):
+            raise
+        return [{'skipped': 'operation_locked'}]
 
 
-def encode_cursor(row, source):
-    return base64.urlsafe_b64encode(json.dumps([row["published_at"] or "", row["id"], source]).encode()).decode()
+def encode_cursor(row, source, category=None):
+    return base64.urlsafe_b64encode(json.dumps([row["published_at"] or "", row["id"], source, category, 2]).encode()).decode()
 
 
-def list_articles(source=None, cursor=None, limit=20):
+def list_articles(source=None, cursor=None, limit=20, category=None):
     clauses, args = [], []
+    if category:
+        if category not in CATEGORIES:
+            raise ValueError('Unknown category')
+        region, kind = CATEGORIES[category]
+        if source and source in SOURCES and (SOURCES[source]['publisher_kind'] != kind or
+                                              (region and SOURCES[source]['region'] != region)):
+            raise ValueError('Source does not belong to category')
+        clauses.append('s.publisher_kind=?')
+        args.append(kind)
+        if region:
+            clauses.append('s.region=?')
+            args.append(region)
     if source:
         if source not in SOURCES:
             raise ValueError("Unknown source")
@@ -255,8 +341,15 @@ def list_articles(source=None, cursor=None, limit=20):
         args.append(source)
     if cursor:
         try:
-            date, article_id, cursor_source = json.loads(base64.urlsafe_b64decode(cursor))
-            if not isinstance(date, str) or type(article_id) is not int or cursor_source != source:
+            decoded = json.loads(base64.urlsafe_b64decode(cursor))
+            if len(decoded) == 3 and not category:
+                date, article_id, cursor_source = decoded
+                cursor_category = None
+            else:
+                date, article_id, cursor_source, cursor_category, version = decoded
+                if version != 2:
+                    raise ValueError()
+            if not isinstance(date, str) or type(article_id) is not int or cursor_source != source or cursor_category != category:
                 raise ValueError()
         except Exception as error:
             raise ValueError("Invalid cursor or source mismatch") from error
@@ -264,18 +357,19 @@ def list_articles(source=None, cursor=None, limit=20):
         args.extend([date, date, article_id])
     where = " WHERE " + " AND ".join(clauses) if clauses else ""
     with connect() as conn:
-        rows = [dict(row) for row in conn.execute("""SELECT a.*,s.name AS source_name FROM articles a
+        rows = [dict(row) for row in conn.execute("""SELECT a.*,s.name AS source_name,s.region,s.publisher_kind,s.enabled AS source_enabled FROM articles a
             JOIN sources s ON a.source_id=s.id""" + where +
             " ORDER BY COALESCE(a.published_at,'') DESC,a.id DESC LIMIT ?", [*args, limit + 1])]
     has_more = len(rows) > limit
     rows = rows[:limit]
-    return {"items": rows, "next_cursor": encode_cursor(rows[-1], source) if has_more else None}
+    return {"items": rows, "next_cursor": encode_cursor(rows[-1], source, category) if has_more else None}
 
 
 def sources_status():
     with connect() as conn:
         return [dict(row) for row in conn.execute("""SELECT s.id,s.name,s.last_attempt_at,s.last_success_at,
-            s.last_error,s.last_item_count,COUNT(a.id) AS stored_articles
+            s.last_error,s.last_item_count,s.collector_kind,s.region,s.publisher_kind,s.enabled,s.last_result,
+            COUNT(a.id) AS stored_articles
             FROM sources s LEFT JOIN articles a ON a.source_id=s.id GROUP BY s.id ORDER BY s.id""")]
 
 

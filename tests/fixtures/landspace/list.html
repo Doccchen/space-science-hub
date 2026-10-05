@@ -1,0 +1,264 @@
+<div class="page-news"><section class="section-1 w12">
+<div class="content">
+<div class="swiper-container" id="swiper1">
+<div class="swiper-wrapper">
+<div class="swiper-slide">
+<div class="slide-left" data-scroll-reveal="">
+<a href="news-detail.html?itemid=77">
+
+</a>
+</div>
+<div class="slide-right" data-scroll-reveal="">
+<a href="news-detail.html?itemid=77">
+<h6>2026-09-15 </h6>
+<h4>朱雀二号改进型遥七运载火箭首次执行规模化卫星互联网星座组网任务</h4>
+<p></p>
+</a>
+<a class="more" href="news-detail.html?itemid=77">Learn more<i class="line"></i></a>
+</div>
+</div>
+<div class="swiper-slide">
+<div class="slide-left" data-scroll-reveal="">
+<a href="news-detail.html?itemid=76">
+
+</a>
+</div>
+<div class="slide-right" data-scroll-reveal="">
+<a href="news-detail.html?itemid=76">
+<h6>2026-08-19 </h6>
+<h4>朱雀三号重复使用遥二运载火箭实现入轨及回收圆满成功</h4>
+<p>推动我国商业航天重复使用火箭加快迈入工程化验证阶段。</p>
+</a>
+<a class="more" href="news-detail.html?itemid=76">Learn more<i class="line"></i></a>
+</div>
+</div>
+</div>
+</div>
+<div class="item1">
+<div class="ye">
+<i>01</i>/02                </div>
+<div class="list-more" data-scroll-reveal="">
+<a class="arrow swiper-button-prev1" href="javascript:;"></a>
+<a class="arrow swiper-button-next1" href="javascript:;"></a>
+</div>
+</div>
+</div>
+</section><section class="section-2">
+<div class="content">
+<div class="list">
+<a class="link w12" data-scroll-reveal="" href="news-detail.html?itemid=75">
+<div class="slide-left">
+
+<i class="arrow"></i>
+</div>
+<div class="slide-center">
+<span class="date">02</span>
+<span class="month">07月</span>
+<span class="year">2026</span>
+</div>
+<div class="slide-right">
+<h4>蓝箭航天党委获评“全国先进基层党组织”称号</h4>
+<p></p>
+</div>
+</a>
+</div>
+<div class="list">
+<a class="link w12" data-scroll-reveal="" href="news-detail.html?itemid=74">
+<div class="slide-left">
+
+<i class="arrow"></i>
+</div>
+<div class="slide-center">
+<span class="date">29</span>
+<span class="month">06月</span>
+<span class="year">2026</span>
+</div>
+<div class="slide-right">
+<h4>朱雀三号重复使用遥二运载火箭完成静态点火试验</h4>
+<p></p>
+</div>
+</a>
+</div>
+<div class="list">
+<a class="link w12" data-scroll-reveal="" href="news-detail.html?itemid=72">
+<div class="slide-left">
+
+<i class="arrow"></i>
+</div>
+<div class="slide-center">
+<span class="date">09</span>
+<span class="month">06月</span>
+<span class="year">2026</span>
+</div>
+<div class="slide-right">
+<h4>朱雀二号改进型遥六运载火箭发射任务取得圆满成功</h4>
+<p></p>
+</div>
+</a>
+</div>
+<div class="list">
+<a class="link w12" data-scroll-reveal="" href="news-detail.html?itemid=73">
+<div class="slide-left">
+
+<i class="arrow"></i>
+</div>
+<div class="slide-center">
+<span class="date">09</span>
+<span class="month">06月</span>
+<span class="year">2026</span>
+</div>
+<div class="slide-right">
+<h4>液氧甲烷动力体系日趋成熟 朱雀二号支撑高频次发射服务</h4>
+<p></p>
+</div>
+</a>
+</div>
+<div class="list">
+<a class="link w12" data-scroll-reveal="" href="news-detail.html?itemid=71">
+<div class="slide-left">
+
+<i class="arrow"></i>
+</div>
+<div class="slide-center">
+<span class="date">14</span>
+<span class="month">05月</span>
+<span class="year">2026</span>
+</div>
+<div class="slide-right">
+<h4>朱雀二号改进型遥五运载火箭飞行试验任务圆满成功</h4>
+<p></p>
+</div>
+</a>
+</div>
+<div class="list">
+<a class="link w12" data-scroll-reveal="" href="news-detail.html?itemid=69">
+<div class="slide-left">
+
+<i class="arrow"></i>
+</div>
+<div class="slide-center">
+<span class="date">06</span>
+<span class="month">03月</span>
+<span class="year">2026</span>
+</div>
+<div class="slide-right">
+<h4>蓝箭航天新型大推力发动机完成整机全系统长程试车</h4>
+<p></p>
+</div>
+</a>
+</div>
+<div class="paging">
+<!-- <a href="#" class="prev"></a>
+                <a href="#" class="active">1</a>
+                <a href="#">2</a>
+                <a href="#">3</a>
+                <span>...</span>
+                <a href="#" class="next"></a> -->
+</div>
+</div>
+</section></div><script>
+    $(function() {
+        let swiper1 = new Swiper('#swiper1', {
+            normalizeSlideIndex: false,
+            watchOverflow: true,
+            observer: true,
+            observeSlideChildren: true,
+            navigation: {
+                prevEl: '.swiper-button-prev1',
+                nextEl: '.swiper-button-next1',
+            },
+            resizeObserver: true,
+            on: {
+                slideChangeTransitionEnd: function() {
+                    let index = this.activeIndex + 1;
+                    if (index > $('.page-news .section-1 .swiper-slide').length) {
+                        return;
+                    }
+                    index = index < 9 ? '0' + index : index;
+                    $('.ye i').html(index);
+                },
+                init: function(swiper) {
+                    let index = this.activeIndex + 1;
+                    index = index < 9 ? '0' + index : index;
+                    $('.ye i').html(index);
+                },
+            },
+        });
+
+        goPage(1, 9, 2);
+    });
+
+    function goPage(page_now, page_count, max) {
+        var url = 'news.html?catid=1&page=';
+        var html = '';
+
+        if(page_now == 1)
+        {
+            html += '<a href="javascript:;" class="prev"></a>';
+        }else{
+            var prev = page_now-1;
+            html += '<a href="'+url+prev+'#mao" class="prev"></a>';
+        }
+
+        if (page_count <= max*2) {
+            for (let index = 1; index <= page_count; index++) {
+                if(page_now == index)
+                {
+                    html += '<a href="javascript:;" class="active">'+index+'</a>';
+                }else{
+                    html += '<a href="'+url+index+'#mao">'+index+'</a>';
+                }
+            }
+        }else{
+            var data = Array();
+
+            for (let index = 0; index <= max; index++) {
+                var now = page_now-max+index
+                if(now > 0 && now <= page_count)
+                {
+                    data.push(now);
+                }
+            }
+
+            for (let index = 1; index <= max; index++) {
+                var now = page_now+index
+                if(now > 0 && now <= page_count)
+                {
+                    data.push(now);
+                }
+            }
+
+            //取首页
+            if(data[0] > 2)
+            {
+                html += '<a href="'+url+'1#mao">1</a>';
+                html += '<span>...</span>';
+            }
+
+            data.forEach(index => {
+                if(page_now == index)
+                {
+                    html += '<a href="javascript:;" class="active">'+index+'</a>';
+                }else{
+                    html += '<a href="'+url+index+'#mao">'+index+'</a>';
+                }
+            });
+
+            if(data[data.length-1] < page_count-1)
+            {
+                html += '<span>...</span>';
+                html += '<a href="'+url+page_count+'#mao">'+page_count+'</a>';
+            }
+        }
+
+        if(page_now == page_count)
+        {
+            html += '<a href="javascript:;" class="next"></a>';
+        }else{
+            var prev = page_now+1;
+            html += '<a href="'+url+prev+'#mao" class="next"></a>';
+        }
+
+        $('.paging').html(html);
+    }
+</script>

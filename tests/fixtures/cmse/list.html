@@ -1,0 +1,65 @@
+<ul id="list" page="1">
+<li> <a href="../202608/t20260828_57758.html" target="_blank">神舟二十三号航天员乘组圆满完成出舱活动</a> <span class="pc_none">2026-08-28</span> </li>
+<li> <a href="../202608/t20260823_57750.html" target="_blank">嫦娥七号任务不满足发射条件 不能在今年预定窗口实施</a> <span class="pc_none">2026-08-23</span> </li>
+<li> <a href="../202608/t20260823_57749.html" target="_blank">中共中央、国务院、中央军委决定给张陆、武飞、张洪章颁发航天功勋奖章</a> <span class="pc_none">2026-08-20</span> </li>
+<li> <a href="../202608/t20260819_57744.html" target="_blank">嫦娥七号飞行任务器箭组合体完成垂直转运 计划近日择机实施发射</a> <span class="pc_none">2026-08-19</span> </li>
+<li> <a href="../202608/t20260805_57713.html" target="_blank">神舟二十一号航天员乘组返回后与记者见面会在北京航天城举行</a> <span class="pc_none">2026-08-05</span> </li>
+<li> <a href="../202607/t20260720_57699.html" target="_blank">空间站应用与发展工程科学研究与应用类项目指南征集公告（2026年）</a> <span class="pc_none">2026-07-20</span> </li>
+<li> <a href="../202607/t20260713_57676.html" target="_blank">长征五号遥十四火箭安全运抵文昌航天发射场 后续将执行嫦娥七号发射任务</a> <span class="pc_none">2026-07-13</span> </li>
+<li> <a href="../202606/t20260616_57652.html" target="_blank">第七届载人航天学术大会征文通知</a> <span class="pc_none">2026-06-16</span> </li>
+<li> <a href="../202605/t20260530_57642.html" target="_blank">神舟二十一号航天员乘组平安抵京</a> <span class="pc_none">2026-05-30</span> </li>
+<li> <a href="../202605/t20260529_57641.html" target="_blank">神舟二十一号航天员乘组安全顺利出舱</a> <span class="pc_none">2026-05-29</span> </li>
+<li> <a href="../202605/t20260529_57637.html" target="_blank">神舟二十二号载人飞船返回舱成功着陆 神舟二十一号航天员乘组凯旋</a> <span class="pc_none">2026-05-29</span> </li>
+<li> <a href="../202605/t20260529_57633.html" target="_blank">神舟二十二号载人飞船顺利撤离空间站组合体</a> <span class="pc_none">2026-05-29</span> </li>
+<li> <a href="../202605/t20260528_57605.html" target="_blank">神舟二十一号和神舟二十三号航天员乘组完成在轨交接</a> <span class="pc_none">2026-05-28</span> </li>
+<li> <a href="../202605/t20260525_57570.html" target="_blank">神舟二十三号航天员乘组顺利进驻“天宫” 中国航天员完成第8次“太空会师”</a> <span class="pc_none">2026-05-25</span> </li>
+<li> <a href="../202605/t20260525_57566.html" target="_blank">神舟二十三号载人飞船与空间站组合体完成自主快速交会对接</a> <span class="pc_none">2026-05-25</span> </li>
+</ul><script language="javascript" type="text/javascript">
+				var currentPage = 0;//所在页从0开始
+				var prevPage = currentPage-1//上一页
+				var nextPage = currentPage+1//下一页
+				var countPage = 34//共多少页
+				
+				document.write("<span>共"+countPage+"页&nbsp;&nbsp;</span>");
+				//设置上一页代码
+				if(countPage>1&&currentPage!=0&&currentPage!=1)
+					document.write("<a  target=\"_self\" href=\"index.html\">首页</a><a target=\"_self\" href=\"index"+"_" + prevPage + "."+"html\"><span class=\" disable\">上一页</span></a>");
+				else if(countPage>1&&currentPage!=0&&currentPage==1)
+					document.write("<a target=\"_self\" href=\"index.html\">首页</a><a target=\"_self\" href=\"index.html\"><span class=\"disable\">上一页</span></a>");
+				else
+					document.write("<a>首页</a><span class=\"disabled\">上一页</span>");
+					
+				//循环
+				var num =4;
+				for(var i=0+(currentPage-1-(currentPage-1)%num) ; i<=(num+(currentPage-1-(currentPage-1)%num))&&(i<countPage) ; i++){
+					if(currentPage==i)
+						document.write("<span class=\"current\">"+(i+1)+"</span>");
+					else if(i==0){
+						document.write("<a target=\"_self\" href=\"index.html\"><span class=\"curren\">"+1+"</span></a>");
+					}else 
+						document.write("<a target=\"_self\" href=\"index"+"_" + i + "."+"html\"><span class=\"curren\">"+(i+1)+"</span></a>");
+				}
+				
+				//设置下一页代码 
+				if(countPage>1&&currentPage!=(countPage-1))
+					document.write("<a target=\"_self\" href=\"index"+"_" + nextPage + "."+"html\">下一页</a><a target=\"_self\" href=\"index_" + (countPage-1) + ".html\">尾页</a>");
+				else
+					document.write("<a>下一页</a><a>尾页</a>");	
+				//跳转页面
+				document.write('<div class="badoo1_txt">&nbsp;转到第</div><input type="text" id="num" value='+(currentPage+1)+' style="width:30px;text-align:center;" /><div class="badoo1_txt">\/'+countPage+'页</div>'+'<input type="submit" value="&nbsp;前往&nbsp;" onClick="javascript:toPage()" /></font>');
+				
+												 
+				function toPage(){
+					var _num = document.getElementById("num").value;
+					var str = "index"+"_"+(_num-1)+"."+"html";
+					var url = location.href.substring(0,location.href.lastIndexOf("/")+1);
+					if(_num<=1||_num==null)
+						location.href = url+"index"+"."+"html";
+					else if(_num>countPage)
+						alert("本频道最多"+countPage+"页");
+					else
+						location.href = url+str;
+				}
+				
+				
+				</script>

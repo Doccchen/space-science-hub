@@ -1,0 +1,70 @@
+{
+  "cnsa": {
+    "list_sha256": "6a9adc31267b26e1b32f594e8f675de14625d106aa9d56254d656ef5ac33d527",
+    "details": [
+      {
+        "url": "https://www.cnsa.gov.cn/n6758823/n6758838/c10774462/content.html",
+        "sha256": "45ac4d4319be7d54c61b685be013d03db0bcffd95d172c69a79cac5d73522534"
+      },
+      {
+        "url": "https://www.cnsa.gov.cn/n6758823/n6758838/c10774500/content.html",
+        "sha256": "d7babe285e64e6c8bf731c05d2dd9441e27c440ac9a214ae7019e5f7219301a6"
+      },
+      {
+        "url": "https://www.cnsa.gov.cn/n6758823/n6758838/c10774260/content.html",
+        "sha256": "b7229a3b4933ba214d3ade40cbb159da4cc98b737609f224d8e9212bb6645f70"
+      }
+    ]
+  },
+  "cmse": {
+    "list_sha256": "548cc79c146ed43389632c9dc40c373038f049500077af27c5696da0da1cd939",
+    "details": [
+      {
+        "url": "https://www.cmse.gov.cn/xwzx/202608/t20260828_57758.html",
+        "sha256": "8dff69e507655338d6f2d07fdc14a2a43a5b719448314471199bfb94ee022e7b"
+      },
+      {
+        "url": "https://www.cmse.gov.cn/xwzx/202608/t20260823_57750.html",
+        "sha256": "e3abb827b59d1b5900208b7f19a39d5a4c11def28c4b7bebfd8b036ae4e817c9"
+      },
+      {
+        "url": "https://www.cmse.gov.cn/xwzx/202608/t20260823_57749.html",
+        "sha256": "5730b619db9becd8202ccdd314ee64c4867f379d868f5ec85caa0f596592a634"
+      }
+    ]
+  },
+  "cas_space": {
+    "list_sha256": "e3c64624c2889ae9acbec2251355496cb614e77e91ae9b1dc6a970f4bde96344",
+    "details": [
+      {
+        "url": "https://www.cas-space.com/article/607.html",
+        "sha256": "546da8846fe0e721b818c6bcdbadf536809a2acaa5e08b56477c0ec34d4ada49"
+      },
+      {
+        "url": "https://www.cas-space.com/article/606.html",
+        "sha256": "2f93dc5b4d26dc8f8e075a5e07e7c9ddc4020bec80c03068fef5b0635602fb00"
+      },
+      {
+        "url": "https://www.cas-space.com/article/605.html",
+        "sha256": "d55309854f0a85e403a60fa3b5bca33b754fda08974ebd4dec6b5aca579007d2"
+      }
+    ]
+  },
+  "landspace": {
+    "list_sha256": "eee7779576885b3102ad8a34cf63f6796351879bf64784b31f2c5efb6e57975e",
+    "details": [
+      {
+        "url": "https://www.landspace.com/news-detail.html?itemid=77",
+        "sha256": "b6e5636dccf50b77b48167eceabd46c3c47f849d3400692c8d67bdd547db5534"
+      },
+      {
+        "url": "https://www.landspace.com/news-detail.html?itemid=76",
+        "sha256": "1886dc4fdf020042cd89b3e8e9253683a130495ee4996924420ec5c757fe818b"
+      },
+      {
+        "url": "https://www.landspace.com/news-detail.html?itemid=75",
+        "sha256": "870330b6088465a3aee6df7d72f7559368a15164784427cab8fd29d69e3d8b0a"
+      }
+    ]
+  }
+}

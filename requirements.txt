@@ -1,5 +1,6 @@
 annotated-doc==0.0.5
 annotated-types==0.8.0
+beautifulsoup4==4.14.3
 anyio==4.15.1
 certifi==2026.7.22
 click==8.5.0
@@ -14,6 +15,7 @@ opentelemetry-api==1.45.0
 pydantic==2.13.5
 pydantic_core==2.46.5
 starlette==1.7.0
+soupsieve==2.8.1
 typing-inspection==0.4.4
 typing_extensions==4.16.0
 uvicorn==0.54.0

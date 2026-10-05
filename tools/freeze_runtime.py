@@ -4,7 +4,7 @@ from pathlib import Path
 from packaging.requirements import Requirement
 
 seen = {}
-todo = ["fastapi", "uvicorn", "httpx", "feedparser"]
+todo = ["fastapi", "uvicorn", "httpx", "feedparser", "beautifulsoup4"]
 while todo:
     dist = distribution(todo.pop())
     name = dist.metadata["Name"]

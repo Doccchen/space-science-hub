@@ -56,9 +56,9 @@ def sources():
 
 @app.get("/api/news")
 def articles(source: str | None = None, cursor: str | None = Query(None, max_length=500),
-             limit: int = Query(20, ge=1, le=50)):
+             limit: int = Query(20, ge=1, le=50), category: str | None = None):
     try:
-        return news.list_articles(source, cursor, limit)
+        return news.list_articles(source, cursor, limit, category)
     except ValueError as error:
         raise HTTPException(400, str(error)) from error
 
@@ -66,7 +66,7 @@ def articles(source: str | None = None, cursor: str | None = Query(None, max_len
 @app.get("/api/news/{article_id}")
 def article(article_id: int):
     with news.connect() as conn:
-        row = conn.execute("""SELECT a.*,s.name AS source_name FROM articles a
+        row = conn.execute("""SELECT a.*,s.name AS source_name,s.region,s.publisher_kind,s.enabled AS source_enabled FROM articles a
             JOIN sources s ON s.id=a.source_id WHERE a.id=?""", (article_id,)).fetchone()
     if row is None:
         raise HTTPException(404, "Article not found")

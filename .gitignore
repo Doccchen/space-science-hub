@@ -7,3 +7,9 @@ __pycache__/
 *.tar
 *.zip
 .pytest_cache/
+*.tar.gz
+.env.before-*
+acceptance-*/
+domestic-upgrade-*/
+backfill-evidence/
+final-acceptance-*/

@@ -9,6 +9,7 @@ RUN python -m pip install --no-cache-dir --index-url ${PIP_INDEX_URL} -r require
     && mkdir /data && chown app:app /data
 COPY backend ./backend
 COPY web ./web
+COPY tools ./tools
 USER 10001:10001
 EXPOSE 8000
 CMD ["python","-m","uvicorn","backend.app:app","--host","0.0.0.0","--port","8000","--workers","1"]
