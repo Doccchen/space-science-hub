@@ -5,6 +5,8 @@
 !backend/**
 !web/
 !web/**
+!content/
+!content/resources.json
 !tools/
 !tools/**
 backend/__pycache__/

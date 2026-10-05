@@ -1,0 +1,1384 @@
+[
+  {
+    "id": "3d-imaging-reconstruction",
+    "title": "3D成像反求技术",
+    "original_filename": "3D成像反求技术.pdf",
+    "object_key": null,
+    "cover_key": null,
+    "description_short": "",
+    "description": "",
+    "authors": [],
+    "edition": null,
+    "language": null,
+    "category": null,
+    "tags": [],
+    "format": "PDF",
+    "size_bytes": 98584348,
+    "source_note": "名称来自文件名对照表；内容、来源说明和发布条件待审核。",
+    "published": false,
+    "updated_at": "2026-10-05T21:33:10+08:00",
+    "display_order": 1,
+    "review": {
+      "uploaded_filename": "3d-imaging-reconstruction.pdf",
+      "listed_in_oss_document": false,
+      "size_source": "local_stat",
+      "metadata_status": "pending",
+      "publication_status": "pending",
+      "remote_status": "not_verified",
+      "cover_status": "pending"
+    }
+  },
+  {
+    "id": "cpp-programming",
+    "title": "C++程序设计",
+    "original_filename": "C++程序设计 (姜学锋,周果清,刘君瑞编著 etc.) .pdf",
+    "object_key": "public/cpp-programming.pdf",
+    "cover_key": null,
+    "description_short": "封面显示书名为《C++程序设计》。本资料为该书的PDF版本，作者姓名与具体章节范围待进一步核对。",
+    "description": "封面显示书名为《C++程序设计》。本资料为该书的PDF版本，作者姓名与具体章节范围待进一步核对。",
+    "authors": [],
+    "edition": null,
+    "language": "zh",
+    "category": "程序设计",
+    "tags": [
+      "程序设计",
+      "C++程序设计"
+    ],
+    "format": "PDF",
+    "size_bytes": 195150026,
+    "source_note": "根据用户提供的本地PDF封面或前4页整理；详细书目信息与发布说明待审核。",
+    "published": false,
+    "updated_at": "2026-10-05T21:33:10+08:00",
+    "display_order": 2,
+    "review": {
+      "uploaded_filename": "cpp-programming.pdf",
+      "listed_in_oss_document": true,
+      "size_source": "local_stat",
+      "metadata_status": "draft",
+      "publication_status": "pending",
+      "remote_status": "manual_download_passed",
+      "cover_status": "visually_checked_candidate",
+      "manual_download": {
+        "checked_on": "2026-10-05",
+        "evidence_source": "user_browser_confirmation",
+        "downloadable": true,
+        "size_matches_local": true,
+        "pdf_opens": true,
+        "direct_download": true,
+        "headers_independently_verified": false,
+        "record": "docs/acceptance/OSS样本重新检查-20261005.md"
+      },
+      "evidence_pages": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "evidence_file": "artifacts/resources-preparation/cpp-programming.evidence.json",
+      "proposed_cover_key": "public/covers/cpp-programming-v1.jpg"
+    }
+  },
+  {
+    "id": "fundamentals-of-aerodynamics",
+    "title": "Fundamentals of Aerodynamics",
+    "original_filename": "Fundamental of Aerodynamics.pdf",
+    "object_key": "public/fundamentals-of-aerodynamics.pdf",
+    "cover_key": null,
+    "description_short": "John Anderson的空气动力学教材，封面标注为第6版。资料为英文PDF；本次未据目录核对章节范围。",
+    "description": "John Anderson的空气动力学教材，封面标注为第6版。资料为英文PDF；本次未据目录核对章节范围。",
+    "authors": [
+      "John Anderson"
+    ],
+    "edition": "第6版",
+    "language": "en",
+    "category": "气动与热学",
+    "tags": [
+      "气动与热学",
+      "Fundamentals of Aerodynamics"
+    ],
+    "format": "PDF",
+    "size_bytes": 185625926,
+    "source_note": "根据用户提供的本地PDF封面或前4页整理；详细书目信息与发布说明待审核。",
+    "published": false,
+    "updated_at": "2026-10-05T21:33:10+08:00",
+    "display_order": 3,
+    "review": {
+      "uploaded_filename": "fundamentals-of-aerodynamics.pdf",
+      "listed_in_oss_document": true,
+      "size_source": "local_stat",
+      "metadata_status": "draft",
+      "publication_status": "pending",
+      "remote_status": "verification_waived_by_user",
+      "cover_status": "visually_checked_candidate",
+      "remote_check_waiver": {
+        "on": "2026-10-05",
+        "scope": "remaining_25_oss_objects",
+        "reason": "user_requested_skip"
+      },
+      "evidence_pages": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "evidence_file": "artifacts/resources-preparation/fundamentals-of-aerodynamics.evidence.json",
+      "proposed_cover_key": "public/covers/fundamentals-of-aerodynamics-v1.jpg"
+    }
+  },
+  {
+    "id": "sensor-principles-and-applications",
+    "title": "传感器原理及应用",
+    "original_filename": "传感器原理及应用.pdf",
+    "object_key": "public/sensor-principles-and-applications.pdf",
+    "cover_key": null,
+    "description_short": "以传感器原理与应用为主题的教材，封面标注第4版。本次核对了封面，详细内容范围以原书为准。",
+    "description": "以传感器原理与应用为主题的教材，封面标注第4版。本次核对了封面，详细内容范围以原书为准。",
+    "authors": [],
+    "edition": "第4版",
+    "language": "zh",
+    "category": "电路与电子",
+    "tags": [
+      "电路与电子",
+      "传感器原理及应用"
+    ],
+    "format": "PDF",
+    "size_bytes": 57310399,
+    "source_note": "根据用户提供的本地PDF封面或前4页整理；详细书目信息与发布说明待审核。",
+    "published": false,
+    "updated_at": "2026-10-05T21:33:10+08:00",
+    "display_order": 4,
+    "review": {
+      "uploaded_filename": "sensor-principles-and-applications.pdf",
+      "listed_in_oss_document": true,
+      "size_source": "local_stat",
+      "metadata_status": "draft",
+      "publication_status": "pending",
+      "remote_status": "verification_waived_by_user",
+      "cover_status": "visually_checked_candidate",
+      "remote_check_waiver": {
+        "on": "2026-10-05",
+        "scope": "remaining_25_oss_objects",
+        "reason": "user_requested_skip"
+      },
+      "evidence_pages": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "evidence_file": "artifacts/resources-preparation/sensor-principles-and-applications.evidence.json",
+      "proposed_cover_key": "public/covers/sensor-principles-and-applications-v1.jpg"
+    }
+  },
+  {
+    "id": "heat-transfer-4th-edition",
+    "title": "传热学",
+    "original_filename": "传热学（第四版）杨世铭+陶文铨.pdf",
+    "object_key": "public/heat-transfer-4th-edition.pdf",
+    "cover_key": null,
+    "description_short": "杨世铭、陶文铨编著的《传热学》，封面标注第4版。资料为原书PDF，具体章节与例题范围未在本次逐项核对。",
+    "description": "杨世铭、陶文铨编著的《传热学》，封面标注第4版。资料为原书PDF，具体章节与例题范围未在本次逐项核对。",
+    "authors": [
+      "杨世铭",
+      "陶文铨"
+    ],
+    "edition": "第4版",
+    "language": "zh",
+    "category": "气动与热学",
+    "tags": [
+      "气动与热学",
+      "传热学"
+    ],
+    "format": "PDF",
+    "size_bytes": 16814353,
+    "source_note": "根据用户提供的本地PDF封面或前4页整理；详细书目信息与发布说明待审核。",
+    "published": false,
+    "updated_at": "2026-10-05T21:33:10+08:00",
+    "display_order": 5,
+    "review": {
+      "uploaded_filename": "heat-transfer-4th-edition.pdf",
+      "listed_in_oss_document": true,
+      "size_source": "local_stat",
+      "metadata_status": "draft",
+      "publication_status": "pending",
+      "remote_status": "verification_waived_by_user",
+      "cover_status": "visually_checked_candidate",
+      "remote_check_waiver": {
+        "on": "2026-10-05",
+        "scope": "remaining_25_oss_objects",
+        "reason": "user_requested_skip"
+      },
+      "evidence_pages": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "evidence_file": "artifacts/resources-preparation/heat-transfer-4th-edition.evidence.json",
+      "proposed_cover_key": "public/covers/heat-transfer-4th-edition-v1.jpg"
+    }
+  },
+  {
+    "id": "signals-and-systems",
+    "title": "信号与系统",
+    "original_filename": "信号与系统 (段哲民).pdf",
+    "object_key": "public/signals-and-systems.pdf",
+    "cover_key": null,
+    "description_short": "段哲民主编的《信号与系统》，封面标注第3版。资料为该教材的PDF版本，详细介绍待目录核对后补充。",
+    "description": "段哲民主编的《信号与系统》，封面标注第3版。资料为该教材的PDF版本，详细介绍待目录核对后补充。",
+    "authors": [
+      "段哲民"
+    ],
+    "edition": "第3版",
+    "language": "zh",
+    "category": "控制与信号",
+    "tags": [
+      "控制与信号",
+      "信号与系统"
+    ],
+    "format": "PDF",
+    "size_bytes": 11796140,
+    "source_note": "根据用户提供的本地PDF封面或前4页整理；详细书目信息与发布说明待审核。",
+    "published": false,
+    "updated_at": "2026-10-05T21:33:10+08:00",
+    "display_order": 6,
+    "review": {
+      "uploaded_filename": "signals-and-systems.pdf",
+      "listed_in_oss_document": true,
+      "size_source": "local_stat",
+      "metadata_status": "draft",
+      "publication_status": "pending",
+      "remote_status": "verification_waived_by_user",
+      "cover_status": "visually_checked_candidate",
+      "remote_check_waiver": {
+        "on": "2026-10-05",
+        "scope": "remaining_25_oss_objects",
+        "reason": "user_requested_skip"
+      },
+      "evidence_pages": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "evidence_file": "artifacts/resources-preparation/signals-and-systems.evidence.json",
+      "proposed_cover_key": "public/covers/signals-and-systems-v1.jpg"
+    }
+  },
+  {
+    "id": "solid-rocket-motor-design",
+    "title": "固体火箭发动机设计",
+    "original_filename": "固体火箭发动机设计.pdf",
+    "object_key": "public/solid-rocket-motor-design.pdf",
+    "cover_key": null,
+    "description_short": "《固体火箭发动机设计》PDF教材，封面书名已核对。本次不根据书名补写设计步骤、参数或未经查证的章节。",
+    "description": "《固体火箭发动机设计》PDF教材，封面书名已核对。本次不根据书名补写设计步骤、参数或未经查证的章节。",
+    "authors": [],
+    "edition": null,
+    "language": "zh",
+    "category": "航天推进",
+    "tags": [
+      "航天推进",
+      "固体火箭发动机设计"
+    ],
+    "format": "PDF",
+    "size_bytes": 80819509,
+    "source_note": "根据用户提供的本地PDF封面或前4页整理；详细书目信息与发布说明待审核。",
+    "published": false,
+    "updated_at": "2026-10-05T21:33:10+08:00",
+    "display_order": 7,
+    "review": {
+      "uploaded_filename": "solid-rocket-motor-design.pdf",
+      "listed_in_oss_document": true,
+      "size_source": "local_stat",
+      "metadata_status": "draft",
+      "publication_status": "pending",
+      "remote_status": "verification_waived_by_user",
+      "cover_status": "visually_checked_candidate",
+      "remote_check_waiver": {
+        "on": "2026-10-05",
+        "scope": "remaining_25_oss_objects",
+        "reason": "user_requested_skip"
+      },
+      "evidence_pages": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "evidence_file": "artifacts/resources-preparation/solid-rocket-motor-design.evidence.json",
+      "proposed_cover_key": "public/covers/solid-rocket-motor-design-v1.jpg"
+    }
+  },
+  {
+    "id": "solid-rocket-propellants",
+    "title": "固体火箭推进剂",
+    "original_filename": "固体火箭推进剂.pdf",
+    "object_key": "public/solid-rocket-propellants.pdf",
+    "cover_key": null,
+    "description_short": "王英红主编的课程材料，书名页署西北工业大学。目录涉及推进剂分类、性能及燃烧等主题；资料形态为讲义，第一页为书名页。",
+    "description": "王英红主编的课程材料，书名页署西北工业大学。目录涉及推进剂分类、性能及燃烧等主题；资料形态为讲义，第一页为书名页。",
+    "authors": [
+      "王英红"
+    ],
+    "edition": null,
+    "language": "zh",
+    "category": "航天推进",
+    "tags": [
+      "航天推进",
+      "固体火箭推进剂"
+    ],
+    "format": "PDF",
+    "size_bytes": 9888244,
+    "source_note": "根据用户提供的本地PDF封面或前4页整理；详细书目信息与发布说明待审核。",
+    "published": false,
+    "updated_at": "2026-10-05T21:33:10+08:00",
+    "display_order": 8,
+    "review": {
+      "uploaded_filename": "solid-rocket-propellants.pdf",
+      "listed_in_oss_document": true,
+      "size_source": "local_stat",
+      "metadata_status": "draft",
+      "publication_status": "pending",
+      "remote_status": "verification_waived_by_user",
+      "cover_status": "title_page",
+      "remote_check_waiver": {
+        "on": "2026-10-05",
+        "scope": "remaining_25_oss_objects",
+        "reason": "user_requested_skip"
+      },
+      "evidence_pages": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "evidence_file": "artifacts/resources-preparation/solid-rocket-propellants.evidence.json",
+      "proposed_cover_key": null
+    }
+  },
+  {
+    "id": "multidimensional-gasdynamics-3rd-edition",
+    "title": "多维气体动力学基础",
+    "original_filename": "多维气体动力学基础 第3版 (单鹏编著).pdf",
+    "object_key": "public/multidimensional-gasdynamics-3rd-edition.pdf",
+    "cover_key": null,
+    "description_short": "封面书名为《多维气体动力学基础》，标注第3版。资料为该教材的PDF版本，本次尚未确认完整作者信息与具体章节。",
+    "description": "封面书名为《多维气体动力学基础》，标注第3版。资料为该教材的PDF版本，本次尚未确认完整作者信息与具体章节。",
+    "authors": [],
+    "edition": "第3版",
+    "language": "zh",
+    "category": "气动与热学",
+    "tags": [
+      "气动与热学",
+      "多维气体动力学基础"
+    ],
+    "format": "PDF",
+    "size_bytes": 32756647,
+    "source_note": "根据用户提供的本地PDF封面或前4页整理；详细书目信息与发布说明待审核。",
+    "published": false,
+    "updated_at": "2026-10-05T21:33:10+08:00",
+    "display_order": 9,
+    "review": {
+      "uploaded_filename": "multidimensional-gasdynamics-3rd-edition.pdf",
+      "listed_in_oss_document": true,
+      "size_source": "local_stat",
+      "metadata_status": "draft",
+      "publication_status": "pending",
+      "remote_status": "verification_waived_by_user",
+      "cover_status": "visually_checked_candidate",
+      "remote_check_waiver": {
+        "on": "2026-10-05",
+        "scope": "remaining_25_oss_objects",
+        "reason": "user_requested_skip"
+      },
+      "evidence_pages": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "evidence_file": "artifacts/resources-preparation/multidimensional-gasdynamics-3rd-edition.evidence.json",
+      "proposed_cover_key": "public/covers/multidimensional-gasdynamics-3rd-edition-v1.jpg"
+    }
+  },
+  {
+    "id": "guidance-systems-lecture-notes",
+    "title": "导引系统原理笔记",
+    "original_filename": "导引系统原理-笔记.pdf",
+    "object_key": "public/guidance-systems-lecture-notes.pdf",
+    "cover_key": null,
+    "description_short": "按名称映射整理的导引系统原理手写笔记，第一页为带批注的学习内页。编写者未确认，不能当成正式出版教材或采用内页冒充封面。",
+    "description": "按名称映射整理的导引系统原理手写笔记，第一页为带批注的学习内页。编写者未确认，不能当成正式出版教材或采用内页冒充封面。",
+    "authors": [],
+    "edition": null,
+    "language": "zh",
+    "category": "控制与信号",
+    "tags": [
+      "控制与信号",
+      "导引系统原理笔记"
+    ],
+    "format": "PDF",
+    "size_bytes": 281843279,
+    "source_note": "根据用户提供的本地PDF封面或前4页整理；详细书目信息与发布说明待审核。",
+    "published": false,
+    "updated_at": "2026-10-05T21:33:10+08:00",
+    "display_order": 10,
+    "review": {
+      "uploaded_filename": "guidance-systems-lecture-notes.pdf",
+      "listed_in_oss_document": true,
+      "size_source": "local_stat",
+      "metadata_status": "draft",
+      "publication_status": "pending",
+      "remote_status": "manual_download_passed",
+      "cover_status": "internal_page",
+      "manual_download": {
+        "checked_on": "2026-10-05",
+        "evidence_source": "user_browser_confirmation",
+        "downloadable": true,
+        "size_matches_local": true,
+        "pdf_opens": true,
+        "direct_download": true,
+        "headers_independently_verified": false,
+        "record": "docs/acceptance/OSS样本重新检查-20261005.md"
+      },
+      "evidence_pages": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "evidence_file": "artifacts/resources-preparation/guidance-systems-lecture-notes.evidence.json",
+      "proposed_cover_key": null
+    }
+  },
+  {
+    "id": "guidance-systems",
+    "title": "导引系统原理",
+    "original_filename": "导引系统原理.pdf",
+    "object_key": "public/guidance-systems.pdf",
+    "cover_key": null,
+    "description_short": "本资料从《导弹导引系统导论》正文开始，介绍导引系统的基本含义和类别。名称沿用本地映射；作者、版本和正式封面未确认。",
+    "description": "本资料从《导弹导引系统导论》正文开始，介绍导引系统的基本含义和类别。名称沿用本地映射；作者、版本和正式封面未确认。",
+    "authors": [],
+    "edition": null,
+    "language": "zh",
+    "category": "控制与信号",
+    "tags": [
+      "控制与信号",
+      "导引系统原理"
+    ],
+    "format": "PDF",
+    "size_bytes": 23724503,
+    "source_note": "根据用户提供的本地PDF封面或前4页整理；详细书目信息与发布说明待审核。",
+    "published": false,
+    "updated_at": "2026-10-05T21:33:10+08:00",
+    "display_order": 11,
+    "review": {
+      "uploaded_filename": "guidance-systems.pdf",
+      "listed_in_oss_document": true,
+      "size_source": "local_stat",
+      "metadata_status": "draft",
+      "publication_status": "pending",
+      "remote_status": "verification_waived_by_user",
+      "cover_status": "internal_page",
+      "remote_check_waiver": {
+        "on": "2026-10-05",
+        "scope": "remaining_25_oss_objects",
+        "reason": "user_requested_skip"
+      },
+      "evidence_pages": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "evidence_file": "artifacts/resources-preparation/guidance-systems.evidence.json",
+      "proposed_cover_key": null
+    }
+  },
+  {
+    "id": "introduction-to-missile-system-design",
+    "title": "导弹总体设计导论",
+    "original_filename": "导弹总体设计导论.pdf",
+    "object_key": "public/introduction-to-missile-system-design.pdf",
+    "cover_key": null,
+    "description_short": "《导弹总体设计导论》PDF教材，封面书名已核对。这里只整理题名与资料信息，未据正文核对详细内容范围。",
+    "description": "《导弹总体设计导论》PDF教材，封面书名已核对。这里只整理题名与资料信息，未据正文核对详细内容范围。",
+    "authors": [],
+    "edition": null,
+    "language": "zh",
+    "category": "飞行器工程",
+    "tags": [
+      "飞行器工程",
+      "导弹总体设计导论"
+    ],
+    "format": "PDF",
+    "size_bytes": 73920177,
+    "source_note": "根据用户提供的本地PDF封面或前4页整理；详细书目信息与发布说明待审核。",
+    "published": false,
+    "updated_at": "2026-10-05T21:33:10+08:00",
+    "display_order": 12,
+    "review": {
+      "uploaded_filename": "introduction-to-missile-system-design.pdf",
+      "listed_in_oss_document": true,
+      "size_source": "local_stat",
+      "metadata_status": "draft",
+      "publication_status": "pending",
+      "remote_status": "verification_waived_by_user",
+      "cover_status": "visually_checked_candidate",
+      "remote_check_waiver": {
+        "on": "2026-10-05",
+        "scope": "remaining_25_oss_objects",
+        "reason": "user_requested_skip"
+      },
+      "evidence_pages": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "evidence_file": "artifacts/resources-preparation/introduction-to-missile-system-design.evidence.json",
+      "proposed_cover_key": "public/covers/introduction-to-missile-system-design-v1.jpg"
+    }
+  },
+  {
+    "id": "engineering-math-complex-analysis",
+    "title": "工程数学：复变函数",
+    "original_filename": "工程数学-复变函数.pdf",
+    "object_key": "public/engineering-math-complex-analysis.pdf",
+    "cover_key": null,
+    "description_short": "复变函数教材第5版，内容提要涉及解析函数、积分、级数、留数及共形映射。新版保留原教材体系，每章设有内容小结。",
+    "description": "复变函数教材第5版，内容提要涉及解析函数、积分、级数、留数及共形映射。新版保留原教材体系，每章设有内容小结。",
+    "authors": [],
+    "edition": "第5版",
+    "language": "zh",
+    "category": "数学与力学",
+    "tags": [
+      "数学与力学",
+      "工程数学：复变函数"
+    ],
+    "format": "PDF",
+    "size_bytes": 92378922,
+    "source_note": "根据用户提供的本地PDF封面或前4页整理；详细书目信息与发布说明待审核。",
+    "published": false,
+    "updated_at": "2026-10-05T21:33:10+08:00",
+    "display_order": 13,
+    "review": {
+      "uploaded_filename": "engineering-math-complex-analysis.pdf",
+      "listed_in_oss_document": true,
+      "size_source": "local_stat",
+      "metadata_status": "draft",
+      "publication_status": "pending",
+      "remote_status": "verification_waived_by_user",
+      "cover_status": "visually_checked_candidate",
+      "remote_check_waiver": {
+        "on": "2026-10-05",
+        "scope": "remaining_25_oss_objects",
+        "reason": "user_requested_skip"
+      },
+      "evidence_pages": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "evidence_file": "artifacts/resources-preparation/engineering-math-complex-analysis.evidence.json",
+      "proposed_cover_key": "public/covers/engineering-math-complex-analysis-v1.jpg"
+    }
+  },
+  {
+    "id": "engineering-math-integral-transforms",
+    "title": "工程数学：积分变换",
+    "original_filename": "工程数学-积分变换.pdf",
+    "object_key": "public/engineering-math-integral-transforms.pdf",
+    "cover_key": null,
+    "description_short": "《工程数学：积分变换》PDF教材，封面标注第4版。资料主题与版本已据封面核对，作者信息与章节范围仍待确认。",
+    "description": "《工程数学：积分变换》PDF教材，封面标注第4版。资料主题与版本已据封面核对，作者信息与章节范围仍待确认。",
+    "authors": [],
+    "edition": "第4版",
+    "language": "zh",
+    "category": "数学与力学",
+    "tags": [
+      "数学与力学",
+      "工程数学：积分变换"
+    ],
+    "format": "PDF",
+    "size_bytes": 44710723,
+    "source_note": "根据用户提供的本地PDF封面或前4页整理；详细书目信息与发布说明待审核。",
+    "published": false,
+    "updated_at": "2026-10-05T21:33:10+08:00",
+    "display_order": 14,
+    "review": {
+      "uploaded_filename": "engineering-math-integral-transforms.pdf",
+      "listed_in_oss_document": true,
+      "size_source": "local_stat",
+      "metadata_status": "draft",
+      "publication_status": "pending",
+      "remote_status": "verification_waived_by_user",
+      "cover_status": "visually_checked_candidate",
+      "remote_check_waiver": {
+        "on": "2026-10-05",
+        "scope": "remaining_25_oss_objects",
+        "reason": "user_requested_skip"
+      },
+      "evidence_pages": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "evidence_file": "artifacts/resources-preparation/engineering-math-integral-transforms.evidence.json",
+      "proposed_cover_key": "public/covers/engineering-math-integral-transforms-v1.jpg"
+    }
+  },
+  {
+    "id": "engineering-thermodynamics-5th-edition",
+    "title": "工程热力学",
+    "original_filename": "工程热力学(第5版) (沈维道 童钧耕).pdf",
+    "object_key": "public/engineering-thermodynamics-5th-edition.pdf",
+    "cover_key": null,
+    "description_short": "《工程热力学》PDF教材，封面标注第5版。本次确认书名和版次，未仅凭原文件名补入作者或出版年份。",
+    "description": "《工程热力学》PDF教材，封面标注第5版。本次确认书名和版次，未仅凭原文件名补入作者或出版年份。",
+    "authors": [],
+    "edition": "第5版",
+    "language": "zh",
+    "category": "气动与热学",
+    "tags": [
+      "气动与热学",
+      "工程热力学"
+    ],
+    "format": "PDF",
+    "size_bytes": 79201882,
+    "source_note": "根据用户提供的本地PDF封面或前4页整理；详细书目信息与发布说明待审核。",
+    "published": false,
+    "updated_at": "2026-10-05T21:33:10+08:00",
+    "display_order": 15,
+    "review": {
+      "uploaded_filename": "engineering-thermodynamics-5th-edition.pdf",
+      "listed_in_oss_document": true,
+      "size_source": "local_stat",
+      "metadata_status": "draft",
+      "publication_status": "pending",
+      "remote_status": "verification_waived_by_user",
+      "cover_status": "visually_checked_candidate",
+      "remote_check_waiver": {
+        "on": "2026-10-05",
+        "scope": "remaining_25_oss_objects",
+        "reason": "user_requested_skip"
+      },
+      "evidence_pages": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "evidence_file": "artifacts/resources-preparation/engineering-thermodynamics-5th-edition.evidence.json",
+      "proposed_cover_key": "public/covers/engineering-thermodynamics-5th-edition-v1.jpg"
+    }
+  },
+  {
+    "id": "tactical-missile-and-solid-rocket-motor-overview",
+    "title": "战术导弹与火箭固体发动机技术概论",
+    "original_filename": "战术导弹与火箭固体发动机技术概论.pdf",
+    "object_key": "public/tactical-missile-and-solid-rocket-motor-overview.pdf",
+    "cover_key": null,
+    "description_short": "《战术导弹与火箭固体发动机技术概论》PDF教材，书名依据实际封面整理。具体章节范围与编著信息待进一步核对。",
+    "description": "《战术导弹与火箭固体发动机技术概论》PDF教材，书名依据实际封面整理。具体章节范围与编著信息待进一步核对。",
+    "authors": [],
+    "edition": null,
+    "language": "zh",
+    "category": "航天推进",
+    "tags": [
+      "航天推进",
+      "战术导弹与火箭固体发动机技术概论"
+    ],
+    "format": "PDF",
+    "size_bytes": 163038948,
+    "source_note": "根据用户提供的本地PDF封面或前4页整理；详细书目信息与发布说明待审核。",
+    "published": false,
+    "updated_at": "2026-10-05T21:33:10+08:00",
+    "display_order": 16,
+    "review": {
+      "uploaded_filename": "tactical-missile-and-solid-rocket-motor-overview.pdf",
+      "listed_in_oss_document": true,
+      "size_source": "local_stat",
+      "metadata_status": "draft",
+      "publication_status": "pending",
+      "remote_status": "verification_waived_by_user",
+      "cover_status": "visually_checked_candidate",
+      "remote_check_waiver": {
+        "on": "2026-10-05",
+        "scope": "remaining_25_oss_objects",
+        "reason": "user_requested_skip"
+      },
+      "evidence_pages": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "evidence_file": "artifacts/resources-preparation/tactical-missile-and-solid-rocket-motor-overview.evidence.json",
+      "proposed_cover_key": "public/covers/tactical-missile-and-solid-rocket-motor-overview-v1.jpg"
+    }
+  },
+  {
+    "id": "numerical-analysis-2nd-edition",
+    "title": "数值分析",
+    "original_filename": "数值分析第2版 (李红).pdf",
+    "object_key": "public/numerical-analysis-2nd-edition.pdf",
+    "cover_key": null,
+    "description_short": "《数值分析》PDF教材，实际封面标注第2版。作者与具体章节未在本次核对，介绍仅保留已确认的题名和版本信息。",
+    "description": "《数值分析》PDF教材，实际封面标注第2版。作者与具体章节未在本次核对，介绍仅保留已确认的题名和版本信息。",
+    "authors": [],
+    "edition": "第2版",
+    "language": "zh",
+    "category": "数学与力学",
+    "tags": [
+      "数学与力学",
+      "数值分析"
+    ],
+    "format": "PDF",
+    "size_bytes": 9472498,
+    "source_note": "根据用户提供的本地PDF封面或前4页整理；详细书目信息与发布说明待审核。",
+    "published": false,
+    "updated_at": "2026-10-05T21:33:10+08:00",
+    "display_order": 17,
+    "review": {
+      "uploaded_filename": "numerical-analysis-2nd-edition.pdf",
+      "listed_in_oss_document": true,
+      "size_source": "local_stat",
+      "metadata_status": "draft",
+      "publication_status": "pending",
+      "remote_status": "manual_download_passed",
+      "cover_status": "visually_checked_candidate",
+      "manual_download": {
+        "checked_on": "2026-10-05",
+        "evidence_source": "user_browser_confirmation",
+        "downloadable": true,
+        "size_matches_local": true,
+        "pdf_opens": true,
+        "direct_download": true,
+        "headers_independently_verified": false,
+        "record": "docs/acceptance/OSS样本重新检查-20261005.md"
+      },
+      "evidence_pages": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "evidence_file": "artifacts/resources-preparation/numerical-analysis-2nd-edition.evidence.json",
+      "proposed_cover_key": "public/covers/numerical-analysis-2nd-edition-v1.jpg"
+    }
+  },
+  {
+    "id": "digital-electronics-fundamentals",
+    "title": "数字电子技术基础",
+    "original_filename": "数字电子技术基础 (阎石主编).pdf",
+    "object_key": "public/digital-electronics-fundamentals.pdf",
+    "cover_key": null,
+    "description_short": "《数字电子技术基础》PDF教材，实际封面标注第6版。资料归入电子技术基础，详细作者与章节信息尚待核对。",
+    "description": "《数字电子技术基础》PDF教材，实际封面标注第6版。资料归入电子技术基础，详细作者与章节信息尚待核对。",
+    "authors": [],
+    "edition": "第6版",
+    "language": "zh",
+    "category": "电路与电子",
+    "tags": [
+      "电路与电子",
+      "数字电子技术基础"
+    ],
+    "format": "PDF",
+    "size_bytes": 69914879,
+    "source_note": "根据用户提供的本地PDF封面或前4页整理；详细书目信息与发布说明待审核。",
+    "published": false,
+    "updated_at": "2026-10-05T21:33:10+08:00",
+    "display_order": 18,
+    "review": {
+      "uploaded_filename": "digital-electronics-fundamentals.pdf",
+      "listed_in_oss_document": true,
+      "size_source": "local_stat",
+      "metadata_status": "draft",
+      "publication_status": "pending",
+      "remote_status": "verification_waived_by_user",
+      "cover_status": "visually_checked_candidate",
+      "remote_check_waiver": {
+        "on": "2026-10-05",
+        "scope": "remaining_25_oss_objects",
+        "reason": "user_requested_skip"
+      },
+      "evidence_pages": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "evidence_file": "artifacts/resources-preparation/digital-electronics-fundamentals.evidence.json",
+      "proposed_cover_key": "public/covers/digital-electronics-fundamentals-v1.jpg"
+    }
+  },
+  {
+    "id": "mechanics-of-materials-3rd-edition",
+    "title": "材料力学",
+    "original_filename": "材料力学 第3版.pdf",
+    "object_key": "public/mechanics-of-materials-3rd-edition.pdf",
+    "cover_key": null,
+    "description_short": "《材料力学》PDF教材，封面标注第3版。资料按力学基础整理，作者与详细章节范围未在本次逐项确认。",
+    "description": "《材料力学》PDF教材，封面标注第3版。资料按力学基础整理，作者与详细章节范围未在本次逐项确认。",
+    "authors": [],
+    "edition": "第3版",
+    "language": "zh",
+    "category": "数学与力学",
+    "tags": [
+      "数学与力学",
+      "材料力学"
+    ],
+    "format": "PDF",
+    "size_bytes": 72753724,
+    "source_note": "根据用户提供的本地PDF封面或前4页整理；详细书目信息与发布说明待审核。",
+    "published": false,
+    "updated_at": "2026-10-05T21:33:10+08:00",
+    "display_order": 19,
+    "review": {
+      "uploaded_filename": "mechanics-of-materials-3rd-edition.pdf",
+      "listed_in_oss_document": true,
+      "size_source": "local_stat",
+      "metadata_status": "draft",
+      "publication_status": "pending",
+      "remote_status": "verification_waived_by_user",
+      "cover_status": "visually_checked_candidate",
+      "remote_check_waiver": {
+        "on": "2026-10-05",
+        "scope": "remaining_25_oss_objects",
+        "reason": "user_requested_skip"
+      },
+      "evidence_pages": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "evidence_file": "artifacts/resources-preparation/mechanics-of-materials-3rd-edition.evidence.json",
+      "proposed_cover_key": "public/covers/mechanics-of-materials-3rd-edition-v1.jpg"
+    }
+  },
+  {
+    "id": "analog-electronics-6th-edition",
+    "title": "模拟电子技术基础 第六版 (清华大学电子学教研组编,童诗白,华成英,叶朝辉)",
+    "original_filename": "模拟电子技术基础 第六版 (清华大学电子学教研组编,童诗白,华成英,叶朝辉).pdf",
+    "object_key": null,
+    "cover_key": null,
+    "description_short": "",
+    "description": "",
+    "authors": [],
+    "edition": null,
+    "language": null,
+    "category": null,
+    "tags": [],
+    "format": "PDF",
+    "size_bytes": 304485147,
+    "source_note": "名称来自文件名对照表；内容、来源说明和发布条件待审核。",
+    "published": false,
+    "updated_at": "2026-10-05T21:33:10+08:00",
+    "display_order": 20,
+    "review": {
+      "uploaded_filename": "analog-electronics-6th-edition.pdf",
+      "listed_in_oss_document": false,
+      "size_source": "local_stat",
+      "metadata_status": "pending",
+      "publication_status": "pending",
+      "remote_status": "not_verified",
+      "cover_status": "pending"
+    }
+  },
+  {
+    "id": "gasdynamics-fundamentals",
+    "title": "气体动力学基础",
+    "original_filename": "气体动力学基础.pdf",
+    "object_key": "public/gasdynamics-fundamentals.pdf",
+    "cover_key": null,
+    "description_short": "《气体动力学基础》PDF教材，实际封面书名已核对。本次仅整理已确认的题名，未据书名推断章节和适用专业。",
+    "description": "《气体动力学基础》PDF教材，实际封面书名已核对。本次仅整理已确认的题名，未据书名推断章节和适用专业。",
+    "authors": [],
+    "edition": null,
+    "language": "zh",
+    "category": "气动与热学",
+    "tags": [
+      "气动与热学",
+      "气体动力学基础"
+    ],
+    "format": "PDF",
+    "size_bytes": 16631468,
+    "source_note": "根据用户提供的本地PDF封面或前4页整理；详细书目信息与发布说明待审核。",
+    "published": false,
+    "updated_at": "2026-10-05T21:33:10+08:00",
+    "display_order": 21,
+    "review": {
+      "uploaded_filename": "gasdynamics-fundamentals.pdf",
+      "listed_in_oss_document": true,
+      "size_source": "local_stat",
+      "metadata_status": "draft",
+      "publication_status": "pending",
+      "remote_status": "verification_waived_by_user",
+      "cover_status": "visually_checked_candidate",
+      "remote_check_waiver": {
+        "on": "2026-10-05",
+        "scope": "remaining_25_oss_objects",
+        "reason": "user_requested_skip"
+      },
+      "evidence_pages": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "evidence_file": "artifacts/resources-preparation/gasdynamics-fundamentals.evidence.json",
+      "proposed_cover_key": "public/covers/gasdynamics-fundamentals-v1.jpg"
+    }
+  },
+  {
+    "id": "rocket-engine-fundamentals",
+    "title": "火箭发动机理论基础",
+    "original_filename": "火箭发动机理论基础.pdf",
+    "object_key": "public/rocket-engine-fundamentals.pdf",
+    "cover_key": null,
+    "description_short": "《火箭发动机理论基础》PDF教材，实际封面标注第2版。作者与完整章节范围仍待核对，本次不补写未经证实的参数或方法。",
+    "description": "《火箭发动机理论基础》PDF教材，实际封面标注第2版。作者与完整章节范围仍待核对，本次不补写未经证实的参数或方法。",
+    "authors": [],
+    "edition": "第2版",
+    "language": "zh",
+    "category": "航天推进",
+    "tags": [
+      "航天推进",
+      "火箭发动机理论基础"
+    ],
+    "format": "PDF",
+    "size_bytes": 121080620,
+    "source_note": "根据用户提供的本地PDF封面或前4页整理；详细书目信息与发布说明待审核。",
+    "published": false,
+    "updated_at": "2026-10-05T21:33:10+08:00",
+    "display_order": 22,
+    "review": {
+      "uploaded_filename": "rocket-engine-fundamentals.pdf",
+      "listed_in_oss_document": true,
+      "size_source": "local_stat",
+      "metadata_status": "draft",
+      "publication_status": "pending",
+      "remote_status": "verification_waived_by_user",
+      "cover_status": "visually_checked_candidate",
+      "remote_check_waiver": {
+        "on": "2026-10-05",
+        "scope": "remaining_25_oss_objects",
+        "reason": "user_requested_skip"
+      },
+      "evidence_pages": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "evidence_file": "artifacts/resources-preparation/rocket-engine-fundamentals.evidence.json",
+      "proposed_cover_key": "public/covers/rocket-engine-fundamentals-v1.jpg"
+    }
+  },
+  {
+    "id": "modern-missile-guidance-and-control",
+    "title": "现代导弹制导控制",
+    "original_filename": "现代导弹制导控制,杨军.pdf",
+    "object_key": "public/modern-missile-guidance-and-control.pdf",
+    "cover_key": null,
+    "description_short": "《现代导弹制导控制》PDF教材，封面书名已核对。资料按控制相关主题整理，编著信息与详细内容范围待进一步确认。",
+    "description": "《现代导弹制导控制》PDF教材，封面书名已核对。资料按控制相关主题整理，编著信息与详细内容范围待进一步确认。",
+    "authors": [],
+    "edition": null,
+    "language": "zh",
+    "category": "控制与信号",
+    "tags": [
+      "控制与信号",
+      "现代导弹制导控制"
+    ],
+    "format": "PDF",
+    "size_bytes": 71268295,
+    "source_note": "根据用户提供的本地PDF封面或前4页整理；详细书目信息与发布说明待审核。",
+    "published": false,
+    "updated_at": "2026-10-05T21:33:10+08:00",
+    "display_order": 23,
+    "review": {
+      "uploaded_filename": "modern-missile-guidance-and-control.pdf",
+      "listed_in_oss_document": true,
+      "size_source": "local_stat",
+      "metadata_status": "draft",
+      "publication_status": "pending",
+      "remote_status": "verification_waived_by_user",
+      "cover_status": "visually_checked_candidate",
+      "remote_check_waiver": {
+        "on": "2026-10-05",
+        "scope": "remaining_25_oss_objects",
+        "reason": "user_requested_skip"
+      },
+      "evidence_pages": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "evidence_file": "artifacts/resources-preparation/modern-missile-guidance-and-control.evidence.json",
+      "proposed_cover_key": "public/covers/modern-missile-guidance-and-control-v1.jpg"
+    }
+  },
+  {
+    "id": "modern-control-theory-3rd-edition",
+    "title": "现代控制理论",
+    "original_filename": "现代控制理论（第3版） (刘豹,唐万生).pdf",
+    "object_key": "public/modern-control-theory-3rd-edition.pdf",
+    "cover_key": null,
+    "description_short": "刘豹、唐万生主编的现代控制理论教材第3版。内容提要涉及状态空间、能控性与能观性、稳定性、反馈控制及最优控制等主题。",
+    "description": "刘豹、唐万生主编的现代控制理论教材第3版。内容提要涉及状态空间、能控性与能观性、稳定性、反馈控制及最优控制等主题。",
+    "authors": [
+      "刘豹",
+      "唐万生"
+    ],
+    "edition": "第3版",
+    "language": "zh",
+    "category": "控制与信号",
+    "tags": [
+      "控制与信号",
+      "现代控制理论"
+    ],
+    "format": "PDF",
+    "size_bytes": 36793202,
+    "source_note": "根据用户提供的本地PDF封面或前4页整理；详细书目信息与发布说明待审核。",
+    "published": false,
+    "updated_at": "2026-10-05T21:33:10+08:00",
+    "display_order": 24,
+    "review": {
+      "uploaded_filename": "modern-control-theory-3rd-edition.pdf",
+      "listed_in_oss_document": true,
+      "size_source": "local_stat",
+      "metadata_status": "draft",
+      "publication_status": "pending",
+      "remote_status": "verification_waived_by_user",
+      "cover_status": "visually_checked_candidate",
+      "remote_check_waiver": {
+        "on": "2026-10-05",
+        "scope": "remaining_25_oss_objects",
+        "reason": "user_requested_skip"
+      },
+      "evidence_pages": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "evidence_file": "artifacts/resources-preparation/modern-control-theory-3rd-edition.evidence.json",
+      "proposed_cover_key": "public/covers/modern-control-theory-3rd-edition-v1.jpg"
+    }
+  },
+  {
+    "id": "theoretical-mechanics-nwpu",
+    "title": "理论力学",
+    "original_filename": "理论力学(西工大版本).pdf",
+    "object_key": "public/theoretical-mechanics-nwpu.pdf",
+    "cover_key": null,
+    "description_short": "《理论力学》PDF教材，实际封面标注第3版。原文件名称中的“西工大版本”保留为内部映射依据，不作为正式书名的一部分。",
+    "description": "《理论力学》PDF教材，实际封面标注第3版。原文件名称中的“西工大版本”保留为内部映射依据，不作为正式书名的一部分。",
+    "authors": [],
+    "edition": "第3版",
+    "language": "zh",
+    "category": "数学与力学",
+    "tags": [
+      "数学与力学",
+      "理论力学"
+    ],
+    "format": "PDF",
+    "size_bytes": 61437899,
+    "source_note": "根据用户提供的本地PDF封面或前4页整理；详细书目信息与发布说明待审核。",
+    "published": false,
+    "updated_at": "2026-10-05T21:33:10+08:00",
+    "display_order": 25,
+    "review": {
+      "uploaded_filename": "theoretical-mechanics-nwpu.pdf",
+      "listed_in_oss_document": true,
+      "size_source": "local_stat",
+      "metadata_status": "draft",
+      "publication_status": "pending",
+      "remote_status": "verification_waived_by_user",
+      "cover_status": "visually_checked_candidate",
+      "remote_check_waiver": {
+        "on": "2026-10-05",
+        "scope": "remaining_25_oss_objects",
+        "reason": "user_requested_skip"
+      },
+      "evidence_pages": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "evidence_file": "artifacts/resources-preparation/theoretical-mechanics-nwpu.evidence.json",
+      "proposed_cover_key": "public/covers/theoretical-mechanics-nwpu-v1.jpg"
+    }
+  },
+  {
+    "id": "circuit-analysis-fundamentals",
+    "title": "电路分析基础",
+    "original_filename": "电路分析基础 (周巍,段哲民).pdf",
+    "object_key": "public/circuit-analysis-fundamentals.pdf",
+    "cover_key": null,
+    "description_short": "《电路分析基础》PDF教材，书名依据实际封面整理。作者和版本待确认，本次不把文件名括号中的人名当成已核验信息。",
+    "description": "《电路分析基础》PDF教材，书名依据实际封面整理。作者和版本待确认，本次不把文件名括号中的人名当成已核验信息。",
+    "authors": [],
+    "edition": null,
+    "language": "zh",
+    "category": "电路与电子",
+    "tags": [
+      "电路与电子",
+      "电路分析基础"
+    ],
+    "format": "PDF",
+    "size_bytes": 84005165,
+    "source_note": "根据用户提供的本地PDF封面或前4页整理；详细书目信息与发布说明待审核。",
+    "published": false,
+    "updated_at": "2026-10-05T21:33:10+08:00",
+    "display_order": 26,
+    "review": {
+      "uploaded_filename": "circuit-analysis-fundamentals.pdf",
+      "listed_in_oss_document": true,
+      "size_source": "local_stat",
+      "metadata_status": "draft",
+      "publication_status": "pending",
+      "remote_status": "verification_waived_by_user",
+      "cover_status": "visually_checked_candidate",
+      "remote_check_waiver": {
+        "on": "2026-10-05",
+        "scope": "remaining_25_oss_objects",
+        "reason": "user_requested_skip"
+      },
+      "evidence_pages": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "evidence_file": "artifacts/resources-preparation/circuit-analysis-fundamentals.evidence.json",
+      "proposed_cover_key": "public/covers/circuit-analysis-fundamentals-v1.jpg"
+    }
+  },
+  {
+    "id": "automatic-control-principles",
+    "title": "自动控制原理 (卢京潮)",
+    "original_filename": "自动控制原理 (卢京潮).pdf",
+    "object_key": null,
+    "cover_key": null,
+    "description_short": "",
+    "description": "",
+    "authors": [],
+    "edition": null,
+    "language": null,
+    "category": null,
+    "tags": [],
+    "format": "PDF",
+    "size_bytes": 65944819,
+    "source_note": "名称来自文件名对照表；内容、来源说明和发布条件待审核。",
+    "published": false,
+    "updated_at": "2026-10-05T21:33:10+08:00",
+    "display_order": 27,
+    "review": {
+      "uploaded_filename": "automatic-control-principles.pdf",
+      "listed_in_oss_document": false,
+      "size_source": "local_stat",
+      "metadata_status": "pending",
+      "publication_status": "pending",
+      "remote_status": "not_verified",
+      "cover_status": "pending"
+    }
+  },
+  {
+    "id": "spacecraft-attitude-orbit-control",
+    "title": "航天器姿态与轨道控制原理",
+    "original_filename": "航天器姿态与轨道控制原理.pdf",
+    "object_key": "public/spacecraft-attitude-orbit-control.pdf",
+    "cover_key": null,
+    "description_short": "《航天器姿态与轨道控制原理》PDF教材，实际封面书名已核对。具体章节、编著信息与出版年份仍待确认。",
+    "description": "《航天器姿态与轨道控制原理》PDF教材，实际封面书名已核对。具体章节、编著信息与出版年份仍待确认。",
+    "authors": [],
+    "edition": null,
+    "language": "zh",
+    "category": "飞行器工程",
+    "tags": [
+      "飞行器工程",
+      "航天器姿态与轨道控制原理"
+    ],
+    "format": "PDF",
+    "size_bytes": 68365784,
+    "source_note": "根据用户提供的本地PDF封面或前4页整理；详细书目信息与发布说明待审核。",
+    "published": false,
+    "updated_at": "2026-10-05T21:33:10+08:00",
+    "display_order": 28,
+    "review": {
+      "uploaded_filename": "spacecraft-attitude-orbit-control.pdf",
+      "listed_in_oss_document": true,
+      "size_source": "local_stat",
+      "metadata_status": "draft",
+      "publication_status": "pending",
+      "remote_status": "verification_waived_by_user",
+      "cover_status": "visually_checked_candidate",
+      "remote_check_waiver": {
+        "on": "2026-10-05",
+        "scope": "remaining_25_oss_objects",
+        "reason": "user_requested_skip"
+      },
+      "evidence_pages": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "evidence_file": "artifacts/resources-preparation/spacecraft-attitude-orbit-control.evidence.json",
+      "proposed_cover_key": "public/covers/spacecraft-attitude-orbit-control-v1.jpg"
+    }
+  },
+  {
+    "id": "space-propulsion-technology",
+    "title": "航天推进技术",
+    "original_filename": "航天推进技术.pdf",
+    "object_key": "public/space-propulsion-technology.pdf",
+    "cover_key": null,
+    "description_short": "《航天推进技术》PDF教材，实际封面书名已核对。本次仅整理题名与格式信息，详细内容介绍待核对目录后完善。",
+    "description": "《航天推进技术》PDF教材，实际封面书名已核对。本次仅整理题名与格式信息，详细内容介绍待核对目录后完善。",
+    "authors": [],
+    "edition": null,
+    "language": "zh",
+    "category": "航天推进",
+    "tags": [
+      "航天推进",
+      "航天推进技术"
+    ],
+    "format": "PDF",
+    "size_bytes": 144776672,
+    "source_note": "根据用户提供的本地PDF封面或前4页整理；详细书目信息与发布说明待审核。",
+    "published": false,
+    "updated_at": "2026-10-05T21:33:10+08:00",
+    "display_order": 29,
+    "review": {
+      "uploaded_filename": "space-propulsion-technology.pdf",
+      "listed_in_oss_document": true,
+      "size_source": "local_stat",
+      "metadata_status": "draft",
+      "publication_status": "pending",
+      "remote_status": "verification_waived_by_user",
+      "cover_status": "visually_checked_candidate",
+      "remote_check_waiver": {
+        "on": "2026-10-05",
+        "scope": "remaining_25_oss_objects",
+        "reason": "user_requested_skip"
+      },
+      "evidence_pages": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "evidence_file": "artifacts/resources-preparation/space-propulsion-technology.evidence.json",
+      "proposed_cover_key": "public/covers/space-propulsion-technology-v1.jpg"
+    }
+  },
+  {
+    "id": "propulsion-thermal-protection-fundamentals",
+    "title": "航天推进热防护基础",
+    "original_filename": "航天推进热防护基础.pdf",
+    "object_key": "public/propulsion-thermal-protection-fundamentals.pdf",
+    "cover_key": null,
+    "description_short": "本书介绍航天推进系统的热防护，覆盖传热、热防护材料、烧蚀与热结构等主题。内容简介还涉及液体火箭发动机和冲压发动机的热防护；第一页为书名页。",
+    "description": "本书介绍航天推进系统的热防护，覆盖传热、热防护材料、烧蚀与热结构等主题。内容简介还涉及液体火箭发动机和冲压发动机的热防护；第一页为书名页。",
+    "authors": [
+      "李江",
+      "刘洋",
+      "石磊",
+      "景婷婷",
+      "王德",
+      "孙冰",
+      "陈军"
+    ],
+    "edition": null,
+    "language": "zh",
+    "category": "航天推进",
+    "tags": [
+      "航天推进",
+      "航天推进热防护基础"
+    ],
+    "format": "PDF",
+    "size_bytes": 15607917,
+    "source_note": "根据用户提供的本地PDF封面或前4页整理；详细书目信息与发布说明待审核。",
+    "published": false,
+    "updated_at": "2026-10-05T21:33:10+08:00",
+    "display_order": 30,
+    "review": {
+      "uploaded_filename": "propulsion-thermal-protection-fundamentals.pdf",
+      "listed_in_oss_document": true,
+      "size_source": "local_stat",
+      "metadata_status": "draft",
+      "publication_status": "pending",
+      "remote_status": "verification_waived_by_user",
+      "cover_status": "title_page",
+      "remote_check_waiver": {
+        "on": "2026-10-05",
+        "scope": "remaining_25_oss_objects",
+        "reason": "user_requested_skip"
+      },
+      "evidence_pages": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "evidence_file": "artifacts/resources-preparation/propulsion-thermal-protection-fundamentals.evidence.json",
+      "proposed_cover_key": null
+    }
+  },
+  {
+    "id": "space-flight-dynamics",
+    "title": "航天飞行动力学",
+    "original_filename": "航天飞行动力学.pdf",
+    "object_key": "public/space-flight-dynamics.pdf",
+    "cover_key": null,
+    "description_short": "《航天飞行动力学》PDF教材，封面书名已核对。本次归入飞行器工程资料，作者与具体章节范围待进一步确认。",
+    "description": "《航天飞行动力学》PDF教材，封面书名已核对。本次归入飞行器工程资料，作者与具体章节范围待进一步确认。",
+    "authors": [],
+    "edition": null,
+    "language": "zh",
+    "category": "飞行器工程",
+    "tags": [
+      "飞行器工程",
+      "航天飞行动力学"
+    ],
+    "format": "PDF",
+    "size_bytes": 75883573,
+    "source_note": "根据用户提供的本地PDF封面或前4页整理；详细书目信息与发布说明待审核。",
+    "published": false,
+    "updated_at": "2026-10-05T21:33:10+08:00",
+    "display_order": 31,
+    "review": {
+      "uploaded_filename": "space-flight-dynamics.pdf",
+      "listed_in_oss_document": true,
+      "size_source": "local_stat",
+      "metadata_status": "draft",
+      "publication_status": "pending",
+      "remote_status": "verification_waived_by_user",
+      "cover_status": "visually_checked_candidate",
+      "remote_check_waiver": {
+        "on": "2026-10-05",
+        "scope": "remaining_25_oss_objects",
+        "reason": "user_requested_skip"
+      },
+      "evidence_pages": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "evidence_file": "artifacts/resources-preparation/space-flight-dynamics.evidence.json",
+      "proposed_cover_key": "public/covers/space-flight-dynamics-v1.jpg"
+    }
+  }
+]

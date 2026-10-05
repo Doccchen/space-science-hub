@@ -11,6 +11,8 @@ services:
       NEWS_DB_PATH: /data/news.sqlite3
       COLLECT_INTERVAL_SECONDS: ${COLLECT_INTERVAL_SECONDS:-3600}
       COLLECT_ENABLED: "${COLLECT_ENABLED:-1}"
+      RESOURCE_OSS_ORIGIN: ${RESOURCE_OSS_ORIGIN:-https://space-hub-pub.oss-cn-chengdu.aliyuncs.com}
+      RESOURCES_PATH: ${RESOURCES_PATH:-/app/content/resources.json}
     volumes:
       - news-data:/data
     mem_limit: 640m

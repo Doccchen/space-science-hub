@@ -9,6 +9,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from . import news
+from . import resources
 
 ROOT = Path(__file__).resolve().parent.parent
 STATIC = ROOT / "web"
@@ -28,6 +29,7 @@ async def scheduled_collection():
 @asynccontextmanager
 async def lifespan(app):
     news.initialize()
+    resources.catalog.load()
     task = asyncio.create_task(scheduled_collection()) if os.environ.get("COLLECT_ENABLED", "1") == "1" else None
     yield
     if task:
@@ -39,6 +41,7 @@ async def lifespan(app):
 
 
 app = FastAPI(title="Space News", lifespan=lifespan, docs_url=None, redoc_url=None)
+app.include_router(resources.router)
 
 
 @app.get("/api/health")

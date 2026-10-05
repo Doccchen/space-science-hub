@@ -1,6 +1,6 @@
 'use strict';
 const el=id=>document.getElementById(id);let version='science',toastTimer;
-function showPage(page){document.querySelectorAll('.page').forEach(node=>node.classList.toggle('hidden',node.id!==page));document.querySelectorAll('nav [data-page]').forEach(node=>node.classList.toggle('active',node.dataset.page===page));window.scrollTo({top:0,behavior:'instant'});}
+function showPage(page){document.querySelectorAll('.page').forEach(node=>node.classList.toggle('hidden',node.id!==page));document.querySelectorAll('nav [data-page]').forEach(node=>node.classList.toggle('active',node.dataset.page===page));window.scrollTo({top:0,behavior:'instant'});document.dispatchEvent(new CustomEvent('pagechange',{detail:page}));}
 document.querySelectorAll('[data-page]').forEach(node=>node.addEventListener('click',()=>showPage(node.dataset.page)));el('home-link').addEventListener('click',event=>{event.preventDefault();showPage('news');});
 function setVersion(next){version=next;['science','summary'].forEach(name=>{el(name).classList.toggle('hidden',name!==next);el(name+'-tab').classList.toggle('active',name===next);el(name+'-tab').setAttribute('aria-pressed',String(name===next));});}
 el('science-tab').addEventListener('click',()=>setVersion('science'));el('summary-tab').addEventListener('click',()=>setVersion('summary'));

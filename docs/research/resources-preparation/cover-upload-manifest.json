@@ -1,0 +1,170 @@
+[
+  {
+    "id": "cpp-programming",
+    "local_path": "artifacts/resources-preparation/cpp-programming.jpg",
+    "object_key": "public/covers/cpp-programming-v1.jpg",
+    "size_bytes": 56261,
+    "uploaded": false
+  },
+  {
+    "id": "fundamentals-of-aerodynamics",
+    "local_path": "artifacts/resources-preparation/fundamentals-of-aerodynamics.jpg",
+    "object_key": "public/covers/fundamentals-of-aerodynamics-v1.jpg",
+    "size_bytes": 42032,
+    "uploaded": false
+  },
+  {
+    "id": "sensor-principles-and-applications",
+    "local_path": "artifacts/resources-preparation/sensor-principles-and-applications.jpg",
+    "object_key": "public/covers/sensor-principles-and-applications-v1.jpg",
+    "size_bytes": 45729,
+    "uploaded": false
+  },
+  {
+    "id": "heat-transfer-4th-edition",
+    "local_path": "artifacts/resources-preparation/heat-transfer-4th-edition.jpg",
+    "object_key": "public/covers/heat-transfer-4th-edition-v1.jpg",
+    "size_bytes": 45712,
+    "uploaded": false
+  },
+  {
+    "id": "signals-and-systems",
+    "local_path": "artifacts/resources-preparation/signals-and-systems.jpg",
+    "object_key": "public/covers/signals-and-systems-v1.jpg",
+    "size_bytes": 65923,
+    "uploaded": false
+  },
+  {
+    "id": "solid-rocket-motor-design",
+    "local_path": "artifacts/resources-preparation/solid-rocket-motor-design.jpg",
+    "object_key": "public/covers/solid-rocket-motor-design-v1.jpg",
+    "size_bytes": 69683,
+    "uploaded": false
+  },
+  {
+    "id": "multidimensional-gasdynamics-3rd-edition",
+    "local_path": "artifacts/resources-preparation/multidimensional-gasdynamics-3rd-edition.jpg",
+    "object_key": "public/covers/multidimensional-gasdynamics-3rd-edition-v1.jpg",
+    "size_bytes": 71125,
+    "uploaded": false
+  },
+  {
+    "id": "introduction-to-missile-system-design",
+    "local_path": "artifacts/resources-preparation/introduction-to-missile-system-design.jpg",
+    "object_key": "public/covers/introduction-to-missile-system-design-v1.jpg",
+    "size_bytes": 74777,
+    "uploaded": false
+  },
+  {
+    "id": "engineering-math-complex-analysis",
+    "local_path": "artifacts/resources-preparation/engineering-math-complex-analysis.jpg",
+    "object_key": "public/covers/engineering-math-complex-analysis-v1.jpg",
+    "size_bytes": 78028,
+    "uploaded": false
+  },
+  {
+    "id": "engineering-math-integral-transforms",
+    "local_path": "artifacts/resources-preparation/engineering-math-integral-transforms.jpg",
+    "object_key": "public/covers/engineering-math-integral-transforms-v1.jpg",
+    "size_bytes": 68005,
+    "uploaded": false
+  },
+  {
+    "id": "engineering-thermodynamics-5th-edition",
+    "local_path": "artifacts/resources-preparation/engineering-thermodynamics-5th-edition.jpg",
+    "object_key": "public/covers/engineering-thermodynamics-5th-edition-v1.jpg",
+    "size_bytes": 100579,
+    "uploaded": false
+  },
+  {
+    "id": "tactical-missile-and-solid-rocket-motor-overview",
+    "local_path": "artifacts/resources-preparation/tactical-missile-and-solid-rocket-motor-overview.jpg",
+    "object_key": "public/covers/tactical-missile-and-solid-rocket-motor-overview-v1.jpg",
+    "size_bytes": 49379,
+    "uploaded": false
+  },
+  {
+    "id": "numerical-analysis-2nd-edition",
+    "local_path": "artifacts/resources-preparation/numerical-analysis-2nd-edition.jpg",
+    "object_key": "public/covers/numerical-analysis-2nd-edition-v1.jpg",
+    "size_bytes": 75816,
+    "uploaded": false
+  },
+  {
+    "id": "digital-electronics-fundamentals",
+    "local_path": "artifacts/resources-preparation/digital-electronics-fundamentals.jpg",
+    "object_key": "public/covers/digital-electronics-fundamentals-v1.jpg",
+    "size_bytes": 41525,
+    "uploaded": false
+  },
+  {
+    "id": "mechanics-of-materials-3rd-edition",
+    "local_path": "artifacts/resources-preparation/mechanics-of-materials-3rd-edition.jpg",
+    "object_key": "public/covers/mechanics-of-materials-3rd-edition-v1.jpg",
+    "size_bytes": 41567,
+    "uploaded": false
+  },
+  {
+    "id": "gasdynamics-fundamentals",
+    "local_path": "artifacts/resources-preparation/gasdynamics-fundamentals.jpg",
+    "object_key": "public/covers/gasdynamics-fundamentals-v1.jpg",
+    "size_bytes": 62934,
+    "uploaded": false
+  },
+  {
+    "id": "rocket-engine-fundamentals",
+    "local_path": "artifacts/resources-preparation/rocket-engine-fundamentals.jpg",
+    "object_key": "public/covers/rocket-engine-fundamentals-v1.jpg",
+    "size_bytes": 88943,
+    "uploaded": false
+  },
+  {
+    "id": "modern-missile-guidance-and-control",
+    "local_path": "artifacts/resources-preparation/modern-missile-guidance-and-control.jpg",
+    "object_key": "public/covers/modern-missile-guidance-and-control-v1.jpg",
+    "size_bytes": 64565,
+    "uploaded": false
+  },
+  {
+    "id": "modern-control-theory-3rd-edition",
+    "local_path": "artifacts/resources-preparation/modern-control-theory-3rd-edition.jpg",
+    "object_key": "public/covers/modern-control-theory-3rd-edition-v1.jpg",
+    "size_bytes": 105555,
+    "uploaded": false
+  },
+  {
+    "id": "theoretical-mechanics-nwpu",
+    "local_path": "artifacts/resources-preparation/theoretical-mechanics-nwpu.jpg",
+    "object_key": "public/covers/theoretical-mechanics-nwpu-v1.jpg",
+    "size_bytes": 42738,
+    "uploaded": false
+  },
+  {
+    "id": "circuit-analysis-fundamentals",
+    "local_path": "artifacts/resources-preparation/circuit-analysis-fundamentals.jpg",
+    "object_key": "public/covers/circuit-analysis-fundamentals-v1.jpg",
+    "size_bytes": 68902,
+    "uploaded": false
+  },
+  {
+    "id": "spacecraft-attitude-orbit-control",
+    "local_path": "artifacts/resources-preparation/spacecraft-attitude-orbit-control.jpg",
+    "object_key": "public/covers/spacecraft-attitude-orbit-control-v1.jpg",
+    "size_bytes": 69722,
+    "uploaded": false
+  },
+  {
+    "id": "space-propulsion-technology",
+    "local_path": "artifacts/resources-preparation/space-propulsion-technology.jpg",
+    "object_key": "public/covers/space-propulsion-technology-v1.jpg",
+    "size_bytes": 44155,
+    "uploaded": false
+  },
+  {
+    "id": "space-flight-dynamics",
+    "local_path": "artifacts/resources-preparation/space-flight-dynamics.jpg",
+    "object_key": "public/covers/space-flight-dynamics-v1.jpg",
+    "size_bytes": 72923,
+    "uploaded": false
+  }
+]

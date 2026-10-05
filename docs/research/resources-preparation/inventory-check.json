@@ -1,0 +1,35 @@
+{
+  "generated_at": "2026-10-05T21:33:10+08:00",
+  "local_count": 31,
+  "oss_document_count": 28,
+  "published_count": 0,
+  "total_size_bytes": 2665985688,
+  "repaired_rows": [
+    {
+      "line": 3,
+      "uploaded_filename": "cpp-programming.pdf"
+    },
+    {
+      "line": 21,
+      "uploaded_filename": "analog-electronics-6th-edition.pdf"
+    },
+    {
+      "line": 24,
+      "uploaded_filename": "modern-missile-guidance-and-control.pdf"
+    },
+    {
+      "line": 25,
+      "uploaded_filename": "modern-control-theory-3rd-edition.pdf"
+    },
+    {
+      "line": 27,
+      "uploaded_filename": "circuit-analysis-fundamentals.pdf"
+    }
+  ],
+  "not_listed_in_oss_document": [
+    "3d-imaging-reconstruction.pdf",
+    "analog-electronics-6th-edition.pdf",
+    "automatic-control-principles.pdf"
+  ],
+  "note": "Local inventory only; no remote headers, full downloads or metadata approval implied."
+}
