@@ -1,8 +1,8 @@
 # 航天新闻测试版部署
 
-2026-10-05最终验收已完成：298条记录、容器healthy、全部回填数据重建保留及备份恢复通过，浏览器操作由用户确认正常。当前结果见[新闻扩源阶段收尾](docs/新闻扩源阶段收尾.md)。历史覆盖限制和断点保留，不需重复部署。
+2026-10-05最终验收已完成：298条记录、容器healthy、全部回填数据重建保留及备份恢复通过，浏览器操作由用户确认正常。当前结果见[新闻扩源阶段收尾](docs/acceptance/新闻扩源阶段收尾.md)。历史覆盖限制和断点保留，不需重复部署。
 
-国内扩源新版请使用[国内扩源迁移与部署](docs/国内扩源迁移与部署.md)中的升级流程。保持现有.env和持久卷，不重复执行首次部署；2025-10-01起历史任务单独运行。以下为原版本部署记录。
+国内扩源新版请使用[国内扩源迁移与部署](docs/deployment/国内扩源迁移与部署.md)中的升级流程。保持现有.env和持久卷，不重复执行首次部署；2025-10-01起历史任务单独运行。以下为原版本部署记录。
 
 ## 临时公网 IP 测试入口
 
@@ -31,7 +31,7 @@ docker compose ps
 
 ## 本轮部署与验收入口（2026-10-05）
 
-更新：用户已在服务器执行脚本，2026-10-05 13:29:26（北京时间）五项服务器检查通过，实际入库 NASA 10 / ESA 9，共 19 条。证据目录 `/opt/space-news/acceptance-20261005T052833Z`。后续已确认容器 healthy，浏览器交互待确认，详见 `docs/新闻部署验收记录.md`。以下未部署描述属于此前准备阶段记录。
+更新：用户已在服务器执行脚本，2026-10-05 13:29:26（北京时间）五项服务器检查通过，实际入库 NASA 10 / ESA 9，共 19 条。证据目录 `/opt/space-news/acceptance-20261005T052833Z`。后续已确认容器 healthy，浏览器交互待确认，详见 `docs/acceptance/新闻部署验收记录.md`。以下未部署描述属于此前准备阶段记录。
 
 本轮 Agent 在受限环境连接 SSH 返回 Permission denied，获准重试后返回
 `Connection closed by 8.137.164.100 port 22`。未登录服务器，未执行部署，不能声明服务器验收通过。
@@ -89,7 +89,7 @@ timeout 90s docker pull public.ecr.aws/docker/library/python:3.12-slim
 在本机PowerShell运行：
 
 ```powershell
-scp -i "D:\Documents\竞赛\AI+信息素养\GPT.pem" "D:\Documents\竞赛\AI+信息素养\GPT-WebSite\space-news-release.tar.gz" root@8.137.164.100:/root/
+scp -i "D:\Documents\竞赛\AI+信息素养\GPT.pem" "D:\Documents\竞赛\AI+信息素养\GPT-WebSite\artifacts\packages\space-news-release.tar.gz" root@8.137.164.100:/root/
 ```
 
 部署包仅包含backend、web、测试、Dockerfile、Compose、依赖和说明，不包含私钥、本机数据库、.env或虚拟环境。
