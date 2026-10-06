@@ -1,97 +1,394 @@
-# 航天新闻与科普平台
+# 知航 · 航天新闻与知识库问答平台
 
-项目暂定名称：Space Science Hub。包含航天新闻、科普 Agent、资料下载三个栏目。当前AI定位为独立知识库科普问答，用户直接提问，由已有百炼应用及其关联知识库回答，不绑定新闻；新闻与资料功能继续独立维护。
+让知识易懂，让依据可见。
 
-## 当前状态
+知航面向航天爱好者与学习者，将官方航天新闻、知识库科普问答和学习资料下载整合在一个网站中。前端采用 HTML、CSS 和 JavaScript，后端采用 Python / FastAPI；一个 Docker 应用容器同时提供页面与 API，适合小规模单服务器部署。
 
-2026-10-06，用户确认航天新闻、独立知识库科普问答和资料下载三项主要功能已上线并正常运行；新闻与资料页及 AI 页面采用浅色冰蓝玻璃风格。本轮整理后的状态与检查见[项目整理与上线状态记录](docs/acceptance/项目整理与上线状态记录-20261006.md)。旧部署文档中的“待用户验收”保留为当时记录，不代表当前仍未上线。
+> 当前状态（2026-10-06）：新闻、百炼知识库问答、资料下载三项主要功能已由用户确认上线正常运行。当前源码还包含最新“知航”品牌、新闻筛选与阅读优化，该轮记录为待用户部署。本 README 描述当前源码和部署方法，不代表重新完成线上验收。
 
-- 航天新闻：分类、地区与来源筛选、页码分页；政府来源按现行策略提供全文阅读弹窗，其他机构和企业提供标题及原文链接。
-- 科普 Agent：调用已有百炼 RAG 知识库服务，用户独立提问，支持有限追问、新对话和本次检索资料展示，以及超时、限流和资料不足提示。[实施记录](docs/acceptance/百炼知识库网页接入实施记录-20261006.md) · [部署说明](docs/deployment/百炼知识库网页正式接入部署.md)。检索资料不等于逐条结论已经验证。
-- 资料下载：28 份 PDF，24 张静态封面及 4 份占位，支持搜索、分类、分页与 OSS 直接下载；不做在线预览。[验收记录](docs/acceptance/资料下载部署验收记录-20261005.md)。
-- 本轮本地离线测试：109 项通过，保留一条现有依赖弃用警告；未执行新的收费问答或远程部署。
+[功能概览](#功能概览) · [架构与依赖](#架构与依赖) · [快速部署](#docker-快速部署) · [配置说明](#配置说明) · [本地开发](#本地开发) · [服务器迁移](#备份与服务器迁移) · [详细文档](#详细文档)
 
-## 新闻扩源历史基线
+## 功能概览
 
-国际商业两批已部署验收可接入的三家：Arianespace10条、ispace10条、Gilmour9条，当前327条新闻。40项测试、地区与单来源分页、数据/历史队列保留、备份恢复及重建通过，容器healthy，用户确认两批页面正常。SpaceX受CN地域限制、Blue Origin遇Vercel安全检查、Skyroot仅发现站外稿件，均保持未接入，不声明六家全部完成。详见[国际商业扩源验收与未解决清单](docs/acceptance/国际商业扩源验收与未解决清单.md)。下面298条为此前国内扩源的历史基线。
+| 模块       | 功能                                                         |
+| ---------- | ------------------------------------------------------------ |
+| 航天新闻   | 采集已批准的官方来源；按类别、地区、来源筛选；分页浏览；展示来源与发布时间 |
+| 新闻阅读   | 按来源策略提供政府新闻全文弹窗或原文链接；支持受控新闻图片展示 |
+| 科普 Agent | 调用百炼知识库服务；支持独立提问、有限追问、新对话、本次检索资料展示与额度限制 |
+| 资料下载   | 搜索、分类、分页和静态封面；PDF 由 OSS 直接下载，当前目录有 28 份资料 |
+| 私有管理   | 独立管理页面与 API，用于阅读内容、图片和维护操作，默认不启动 |
 
-2026-10-05新闻扩源与日期窗口回填阶段已收尾。服务器最终核对298条新闻：国家航天局143、中国载人航天82、中科宇航42、蓝箭12，另有NASA/ESA19条。用户确认新版分类、单来源、加载更多和详情正常；最终全部记录重建保留及独立备份恢复通过，容器healthy，小时采集已恢复。入口[测试网站](http://8.137.164.100:8080)，国内网络可访问，服务器限制国外IP访问。
+AI 问答基于独立知识库，不自动携带新闻内容。“本次检索资料”展示实际返回的资料信息，不表示回答的每一句都已经核实。资料页不提供在线 PDF 预览。
 
-历史覆盖保留两项说明：国家航天局32/301页，用户明确选择按2025-10-01起的日期窗口收尾，未全量核对；中国载人航天保留41个较早归档访问/结构异常。两家公司当前审核栏目归档已枚举，无缺口。不声称四源全部历史完整。
-
-操作见[国内扩源迁移与部署](docs/deployment/国内扩源迁移与部署.md)，最终结果见[新闻扩源阶段收尾](docs/acceptance/新闻扩源阶段收尾.md)，过程见[国内扩源实施与验收记录](docs/acceptance/国内扩源实施与验收记录.md)。用户自行Git提交，Agent未提交或推送。
-
-- 已实现：NASA/ESA RSS、四家国内官方来源适配器、幂等入库、类别与来源筛选、稳定游标分页、有限摘要/正文节选、内容来源与日期精度、详情与原文链接、断点回填及兼容迁移。
-- 新版本地与服务器29项固定测试通过；真实采集、重复内容、筛选分页、故障历史保留、备份恢复和全部回填记录容器重建检查通过。
-- 资料下载：无介绍首版已部署并验收，28份资料、24张静态封面及4份占位，支持搜索/分类/分页与OSS直接下载。服务器49项测试通过，327条新闻及历史队列保留，容器healthy；用户确认页面与下载正常。见[验收记录](docs/acceptance/资料下载部署验收记录-20261005.md)。无介绍正文，不做PDF在线预览。
-- Docker：测试服务器现有命名卷持久化，最终容器重建后298条记录身份保留，独立备份恢复通过，容器healthy。
-
-## 技术结构
-
-Python 3.12 / FastAPI / httpx / feedparser / SQLite，HTML、CSS、JavaScript 前端，Docker Compose 测试部署。测试版单个应用容器提供静态页面与 API；公开部署时再完善入口、HTTPS及反向代理。
+## 架构与依赖
 
 ```text
-backend/          新闻采集、阅读、资料、管理与知识库问答 API
-web/              当前网站前端
-admin_web/        管理页面
-content/          资料目录与阅读配置
-tests/            后端固定测试
-Dockerfile        应用镜像
-compose.yaml      测试部署，单 worker
-.env.example      无密钥的配置示例
-DEPLOY.md         现有部署说明
-tools/            部署、采集验证和验收工具
-docs/             文档索引、方案、审核、部署和验收记录
-archive/          已停止使用的早期方案与前端原型
-artifacts/        本地发布包、预览与准备产物，仅说明文件提交 Git
-data/             本地数据库与运行证据，不提交 Git
-.venv/            本地 Python 环境，不提交 Git
+浏览器
+  │ 同域页面与 /api 请求
+  ▼
+FastAPI 应用容器（单 worker）
+  ├─ web/：静态页面、样式与交互
+  ├─ 新闻 API、定时采集、全文处理
+  ├─ 资料目录 API ─────► OSS（浏览器直接下载 PDF）
+  ├─ AI API ─────────► 百炼（已发布服务及关联知识库）
+  └─ /data 持久卷
+       ├─ news.sqlite3：新闻、阅读、管理等数据
+       ├─ ai.sqlite3：AI 会话、请求状态与用量（启用 AI 后）
+       └─ news-images/：新闻图片
+
+可选私有管理容器 ─────► 同一 /data 持久卷
 ```
 
-文档导航见 [docs/README.md](docs/README.md)。当前网页入口是 `web/index.html`，应用入口是 `backend/app.py`；旧版页面仅用于回顾，见 [历史归档](archive/README.md)。
-工具用途见 [tools/README.md](tools/README.md)。
+前后端代码分目录维护，通过 API 交互；部署时共用一个应用容器和域名，无需独立前端构建。SQLite 使用 Python 标准库，无需单独安装数据库服务器。定时采集在应用进程内运行，当前必须使用单 worker、单应用实例。
 
-## 本地运行
+### 软件依赖
+
+| 用途           | 依赖                                                         |
+| -------------- | ------------------------------------------------------------ |
+| 容器部署       | Docker Engine、Docker Compose v2；宿主机无需安装 Python 或 Node.js |
+| 本地运行       | Python 3.12、pip、虚拟环境                                   |
+| 后端服务       | FastAPI、Uvicorn、Pydantic                                   |
+| 新闻采集与解析 | httpx、feedparser、Beautiful Soup                            |
+| 图片处理       | Pillow                                                       |
+| 前端运行       | 支持现代 JavaScript 的浏览器；无需 npm 构建                  |
+| 开发检查       | Python unittest；前端状态回归测试另需 Node.js                |
+
+完整运行依赖及固定版本见 [requirements.txt](requirements.txt)。Docker 构建会自动安装它们；测试工具不属于生产运行依赖。
+
+### 外部服务
+
+- **新闻来源**：服务器需要能够访问配置的官方新闻站点；个别来源可能受地域、网络或上游访问策略限制。
+- **百炼知识库**：启用 AI 需要有权限的 API Key、业务空间 ID、已发布的知识问答服务 ID及其关联知识库。当前适配器连接北京业务空间接口；切换区域需要核对并调整实现，不能只替换 ID。
+- **OSS 资料存储**：当前资料目录指向阿里云 OSS。复用原存储需要下载对象可访问；使用自己的 Bucket 时，需同步 PDF、调整目录中的对象信息，并配置存储来源。
+
+新闻浏览和资料模块不要求启用 AI。百炼调用与 OSS 服务的费用由对应云账户承担；网站请求额度不是云账单的金额硬上限。
+
+## Docker 快速部署
+
+以下服务器命令使用 **Linux Bash**，在包含 `compose.yaml` 的项目根目录执行。已有部署请先阅读[更新与日常维护](#更新与日常维护)，不要覆盖已有 `.env`。
+
+### 1. 准备服务器与源码
+
+安装 Docker Engine 和 Compose v2，确认可用：
 
 ```bash
-python -m venv .venv
-# Linux/macOS: source .venv/bin/activate
-# Windows PowerShell: .venv\Scripts\Activate.ps1
-python -m pip install -r requirements.txt
-python -m backend.news
-python -m uvicorn backend.app:app --host 127.0.0.1 --port 8000 --workers 1
+docker --version
+docker compose version
 ```
 
-访问 http://127.0.0.1:8000 。应用启动后立即进行一轮采集，之后每小时更新。首次查看可能暂时无记录。
+将当前项目完整源码上传或检出到服务器，例如 `/opt/space-news`。首次部署不需要上传本地 `.venv`、`data` 或历史发布包。迁移已有网站时，数据单独按迁移章节恢复。
+
+现有 Compose 将应用限制为 1 CPU、640 MB 内存；管理服务另有资源限制。这是容器上限，不是整机容量保证，宿主机还需要为系统、构建和磁盘增长预留空间。
+
+### 2. 创建配置
 
 ```bash
-python -m unittest discover -s tests -v
+cd /opt/space-news
+cp .env.example .env
+chmod 600 .env
 ```
 
-## 容器测试
+仅在 `.env` 不存在时执行复制。编辑 `.env`，默认适合服务器本机测试：
 
-将 `.env.example` 复制为 `.env`，按环境设置镜像来源。若 Docker Hub 不可访问，可使用已验证可拉取的 `public.ecr.aws/docker/library/python:3.12-slim`，或将其固定到已核对的 digest。镜像与包索引访问需按部署环境实测。
+```dotenv
+BIND_ADDRESS=127.0.0.1
+WEB_PORT=8080
+AI_ENABLED=0
+```
+
+首次可保持 AI 关闭，先确认新闻和资料页面可用。要开放公网访问，将 `BIND_ADDRESS` 改为 `0.0.0.0`，并开放服务器防火墙和云安全组的对应 TCP 端口。
+
+### 3. 构建并启动
 
 ```bash
 docker compose config --quiet
-docker compose up -d --build
+docker compose up -d --build app
 docker compose ps
+docker compose logs --tail=80 app
+curl -fsS http://127.0.0.1:8080/api/health
 ```
 
-默认只监听服务器本机8080，可通过SSH转发测试。数据库使用命名卷，迁移必须包含一致性备份；不要使用 `docker compose down -v` 删除持久数据。
+使用默认端口时，服务器本机入口为 `http://127.0.0.1:8080`。健康接口返回 `status: ok` 和新闻数量；首次启动立即采集，之后默认每小时更新，初始数量可能为 0。健康检查通过只说明应用健康接口可用，不代表百炼、OSS 或所有新闻源已验证。
 
-## 管理与开发
+默认仅监听本机，可在自己的电脑建立 SSH 转发后访问（替换尖括号中的值）：
 
-采用 Issues 明确目标、范围与验收；实现使用短期功能分支与 Pull Request。方案制定与结果审核由规划方负责，具体编程、测试与部署由实施 Codex 完成。后续不根据旧原型或旧方案推断新增功能。
+```bash
+ssh -L 18080:127.0.0.1:8080 <用户名>@<服务器地址>
+```
 
-开发阶段保持私有仓库，不预先指定开源许可。第三方组件或资料的许可按实际使用核对。
+保持 SSH 连接，浏览器打开 `http://127.0.0.1:18080`。公开部署时访问 `http://<服务器地址>:8080`；正式使用域名时，在应用前配置反向代理与 HTTPS。当前 Compose 没有自动配置域名或证书。
 
-## 数据与能力边界
+如果基础镜像或包索引无法访问，按服务器实际网络调整 `PYTHON_IMAGE` 和 `PIP_INDEX_URL`。已有部署曾使用 `public.ecr.aws/docker/library/python:3.12-slim` 及阿里云 PyPI 镜像；它们在新服务器上的可达性仍需实测。
 
-新闻来源限定为人工批准的官方入口；来源身份不等于内容永远正确。NASA、国家航天局和中国载人航天按运营方最新策略自动抓取政府正文并开放全文弹窗，不再逐篇审批；ESA及企业只展示元数据和原文链接，不公开摘要、正文或配图。历史节选和旧导读保留在库内，但不按旧模式公开输出。发布时间缺失时不以采集时间替代。AI 问答独立调用知识库，不自动携带新闻内容。
+### 4. 启用知识库问答（可选）
 
-新闻阅读弹窗不实现AI。政府正文由主app自动处理，无需管理员登录；原后台留作图片与维护使用；图片逐张确认后抓取到服务器持久卷并从本站受控加载，不使用新闻图片OSS。当前升级步骤见[人工审核与新闻图片部署](docs/deployment/人工审核与新闻图片部署.md)，记录见[实施记录](docs/acceptance/人工审核与服务器图片实施记录.md)。原阅读弹窗与样本历史记录继续保留。
+在服务器私有 `.env` 中设置：
 
-不要提交私钥、API key、实际 `.env`、运行数据库、日志、部署备份与虚拟环境。
+```dotenv
+AI_ENABLED=1
+DASHSCOPE_API_KEY=<有权限的 API Key>
+BAILIAN_WORKSPACE_ID=<北京业务空间 ID>
+BAILIAN_AGENT_ID=<已发布的知识问答服务 ID>
+```
 
-政府自动全文的升级步骤见[政府正文自动展示部署](docs/deployment/政府正文自动展示部署.md)。自动展示策略不等于已取得转载许可，系统保留真实的版权状态，不伪造授权。
+不要直接复制示例中的业务 ID用于自己的云账户。密钥只保存在服务器，不放入前端代码或 Git。也可使用现有交互配置工具，通过隐藏输入写入 Key：
+
+```bash
+python3 tools/configure_ai.py
+```
+
+该工具需要宿主机 Python 3，固定修改 `/opt/space-news/.env`；其他部署目录请手动编辑自己的 `.env`。运行前核对工具的默认空间及服务配置。修改后更新应用容器配置：
+
+```bash
+docker compose up -d --no-build --no-deps app
+curl -fsS http://127.0.0.1:8080/api/ai/status
+```
+
+状态检查不发送模型问题；实际网页提问会调用百炼。使用 HTTPS 后设置 `AI_COOKIE_SECURE=1`，再更新应用容器。
+
+## 配置说明
+
+完整示例见 [.env.example](.env.example)，容器实际接收的变量见 [compose.yaml](compose.yaml)。
+
+| 变量                                        | 默认值                        | 说明                                           |
+| ------------------------------------------- | ----------------------------- | ---------------------------------------------- |
+| `BIND_ADDRESS`                              | `127.0.0.1`                   | 宿主机监听地址；公网直连时设为 `0.0.0.0`       |
+| `WEB_PORT`                                  | `8080`                        | 宿主机网站端口                                 |
+| `PYTHON_IMAGE`                              | `python:3.12-slim`            | 构建基础镜像                                   |
+| `PIP_INDEX_URL`                             | `https://pypi.org/simple`     | 构建时依赖下载源                               |
+| `COLLECT_ENABLED`                           | `1`                           | 是否启用定时采集；`0` 用于关闭采集的离线运行   |
+| `COLLECT_INTERVAL_SECONDS`                  | `3600`                        | 采集间隔秒数；代码将最小间隔限制为 300 秒      |
+| `GOVERNMENT_FULLTEXT_AUTO`                  | `1`                           | 政府来源自动全文处理                           |
+| `RESOURCE_OSS_ORIGIN`                       | 现有 OSS 地址                 | 资料下载存储来源；对象清单仍需匹配             |
+| `RESOURCES_PATH`                            | `/app/content/resources.json` | 容器内资料目录路径；自定义文件需放入镜像或挂载 |
+| `AI_ENABLED`                                | `0`                           | 是否启用知识库问答                             |
+| `DASHSCOPE_API_KEY`                         | 空                            | 百炼密钥，仅服务器使用                         |
+| `BAILIAN_WORKSPACE_ID` / `BAILIAN_AGENT_ID` | 现有服务示例值                | 业务空间与已发布服务标识                       |
+| `AI_CONFIG_VERSION`                         | `1`                           | AI 服务配置版本标识                            |
+| `AI_COOKIE_SECURE`                          | `0`                           | HTTPS 部署时设为 `1`                           |
+| `AI_TIMEOUT_SECONDS`                        | `60`                          | 上游回答超时秒数                               |
+| `AI_CONCURRENCY`                            | `2`                           | AI 并发限制；代码最大允许 4                    |
+| `AI_VISITOR_DAILY_LIMIT`                    | `20`                          | 单访客每日问答次数                             |
+| `AI_IP_DAILY_LIMIT`                         | `30`                          | 单连接 IP 每日问答次数                         |
+| `AI_SITE_DAILY_LIMIT`                       | `100`                         | 全站每日问答次数                               |
+| `AI_DAILY_TOKEN_LIMIT`                      | `200000`                      | 网站每日 token 控制阈值                        |
+| `AI_TOKEN_RESERVATION`                      | `20000`                       | 每次调用前预留的 token 额度                    |
+| `ADMIN_ORIGIN`                              | `http://127.0.0.1:18080`      | 私有管理页面预期访问来源                       |
+
+Compose 固定将新闻库和 AI 库放在 `/data/news.sqlite3`、`/data/ai.sqlite3`，并挂载 `news-data` 命名卷。`.env` 由 Compose 读取并替换配置；本地直接运行 Python 时不会自动加载 `.env`。
+
+反向代理部署需要明确可信代理和访客 IP 传递方式。当前 AI 限额使用应用看到的连接 IP；代理配置不当可能让多个用户共享同一 IP 额度，不应直接信任任意客户端代理头。
+
+## 本地开发
+
+在项目根目录创建 Python 3.12 虚拟环境。
+
+**Windows PowerShell：**
+
+```powershell
+py -3.12 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+python -m uvicorn backend.app:app --host 127.0.0.1 --port 8000 --workers 1
+```
+
+**Linux / macOS：**
+
+```bash
+python3.12 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+python -m uvicorn backend.app:app --host 127.0.0.1 --port 8000 --workers 1
+```
+
+访问 `http://127.0.0.1:8000`。默认新闻库为 `data/news.sqlite3`，AI 默认关闭；采集随应用启动，无需额外运行采集命令。本地使用代码默认的资料目录路径，不要将容器示例中的 `/app/...` 路径直接导入本地环境。
+
+需要环境变量时，在当前终端设置，例如关闭联网采集：
+
+```powershell
+# Windows PowerShell
+$env:COLLECT_ENABLED = "0"
+```
+
+```bash
+# Linux / macOS
+export COLLECT_ENABLED=0
+```
+
+### 测试
+
+```bash
+python -m unittest discover -s tests -v
+node tests/test_news_state.cjs
+```
+
+第一项运行后端固定测试，第二项运行前端新闻状态回归检查；Node.js 仅为第二项所需。固定测试使用离线数据或模拟上游，不代替真实新闻采集、PDF 下载和付费问答验收。最近记录的完整离线 pytest 结果为 109 项通过，详情见验收文档；如选择 pytest，需另行安装该开发工具。
+
+## 更新与日常维护
+
+更新前备份当前源码、`.env` 和持久数据，确认要发布的版本。已有运行容器可能经过前端热更新，磁盘源码未必与其完全一致；这种情况需同时保留运行容器中的 `/app/web`，避免重建时回退页面。
+
+更新完整源码后：
+
+```bash
+docker compose config --quiet
+docker compose up -d --build app
+docker compose ps
+docker compose logs --tail=80 app
+```
+
+保持原 Compose 项目名和数据卷，重建应用不会删除已有卷。改变项目目录名或 `-p` 项目名可能创建新的空卷，表现为新闻或会话数据“消失”；先检查实际挂载，再判断数据是否丢失。
+
+`docker compose stop app` 可停止应用；`docker compose down` 保留命名卷。**不要使用 `docker compose down -v`，它会删除持久卷。**
+
+### 可选私有管理服务
+
+`admin` 使用 `review` profile，默认不启动，仅绑定服务器本机 `8090`。当前它引用镜像名 `space-news-app`，与默认 app 构建名称不自动一致；需先按现有配置构建该镜像：
+
+```bash
+docker build -t space-news-app \
+  --build-arg PYTHON_IMAGE="${PYTHON_IMAGE:-python:3.12-slim}" \
+  --build-arg PIP_INDEX_URL="${PIP_INDEX_URL:-https://pypi.org/simple}" .
+docker compose --profile review up -d admin
+docker compose --profile review exec admin python -m tools.admin_user
+```
+
+这里的构建变量来自当前 Bash 环境，不会自动读取 `.env`；若使用替代源，请先在终端设置同样的值。管理员工具交互输入至少 12 字符的密码；再次执行会重置管理员并撤销现有会话。
+
+通过 SSH 转发访问，与默认 `ADMIN_ORIGIN` 保持一致：
+
+```bash
+ssh -L 18080:127.0.0.1:8090 <用户名>@<服务器地址>
+```
+
+浏览器打开 `http://127.0.0.1:18080`。管理端详细操作见[人工审核与新闻图片部署](docs/deployment/人工审核与新闻图片部署.md)。
+
+## 备份与服务器迁移
+
+迁移需要 **程序、私有配置、持久数据** 三部分。Docker 镜像包含应用及静态资源，不包含 `.env`、数据卷、OSS PDF 或百炼知识库。
+
+| 内容             | 迁移方式                                                     |
+| ---------------- | ------------------------------------------------------------ |
+| 源码与部署配置   | 上传当前完整版本，在新服务器构建                             |
+| `.env`           | 通过私有通道传输，保持权限 600，按新入口调整配置             |
+| `/data` 持久卷   | 停止所有写入后完整备份和恢复，包含两个 SQLite 库及新闻图片   |
+| OSS PDF          | 继续使用原 Bucket 时无需搬动；更换时同步对象并更新资料目录   |
+| 百炼服务与知识库 | 继续使用原服务时无需搬动；更换账户时重新发布服务并更新标识与密钥 |
+| 域名与证书       | 在新服务器重新配置代理、证书、DNS 和防火墙                   |
+
+### 停机备份与恢复示例
+
+以下为 **Linux Bash 的新服务器迁移模板**，采用短暂停机备份整个数据卷。执行前确认没有独立采集、回填或管理写入进程；每一步成功后再继续。此模板未在本轮实际跨服务器执行。
+
+**旧服务器：** 在原项目目录执行，保持原 Compose 项目名。
+
+```bash
+umask 077
+mkdir -p migration-backup
+docker compose --profile review stop app admin
+docker compose run --rm --no-deps -T --user 0 --entrypoint tar app \
+  -C /data -czf - . > migration-backup/data.tar.gz
+tar -tzf migration-backup/data.tar.gz
+cp -p .env migration-backup/server.env
+sha256sum migration-backup/data.tar.gz > migration-backup/data.tar.gz.sha256
+```
+
+确认备份成功并将备份、校验文件、私有配置和当前完整源码传到新服务器。迁移期间保持旧服务停止，避免切换后遗漏新增数据。若取消迁移，可启动原 app，并按原状态恢复可选 admin。
+
+**新服务器：** 进入上传的项目目录，将私有配置恢复为 `.env`。按新服务器修改监听地址、端口和 HTTPS 设置，但暂不启动应用。
+
+```bash
+cp migration-backup/server.env .env
+chmod 600 .env
+sha256sum -c migration-backup/data.tar.gz.sha256
+docker compose config --quiet
+docker compose build app
+```
+
+校验文件中的路径相对于项目根目录。下一步检查目标卷为空；检查失败时停止，不要覆盖现有服务的数据。
+
+```bash
+docker compose run --rm --no-deps -T --user 0 --entrypoint python app \
+  -c "from pathlib import Path; import sys; sys.exit('Target /data is not empty; stop restore') if any(Path('/data').iterdir()) else None"
+```
+
+仅在检查成功后恢复：
+
+```bash
+docker compose run --rm --no-deps -T --user 0 --entrypoint tar app \
+  -C /data -xzf - < migration-backup/data.tar.gz
+docker compose up -d --no-build app
+docker compose ps
+curl -fsS http://127.0.0.1:8080/api/health
+curl -fsS http://127.0.0.1:8080/api/ai/status
+```
+
+整卷备份保留源文件所有权；当前镜像应用用户为 UID/GID `10001:10001`。调整过运行用户的部署需要另行核对恢复后的权限。示例健康检查使用默认 8080 端口。
+
+最后核对新闻数量、历史条目和图片、资料下载、AI 启用状态；需要实际问答验证时由运营者确认收费调用。确认新服务正常后再切换流量。原服务器与备份保留到迁移验收完成，管理容器按需单独启用。
+
+在线备份不能只复制正在写入的 SQLite 主文件，WAL 数据可能尚未合并。已有 `tools/backup_review.py` 提供新闻库及其引用图片的校验备份，但不包含 AI 库，不能单独当作完整网站迁移备份。备份中的会话与私有配置应保存到受限位置，并另留一份服务器外副本。
+
+## 常见问题
+
+| 现象                  | 检查方向                                                     |
+| --------------------- | ------------------------------------------------------------ |
+| 网站无法从外部打开    | 默认仅绑定 `127.0.0.1`；检查监听地址、端口、SSH 转发、防火墙和安全组 |
+| 首次新闻数量为 0      | 等待首轮采集，查看 app 日志及来源网络；上游失败不等于数据库损坏 |
+| AI 页面显示未开放     | `.env` 是否设置 `AI_ENABLED=1`，修改后是否更新容器配置       |
+| AI 提示服务配置不可用 | Key 权限、北京业务空间 ID、已发布服务 ID和关联知识库是否匹配 |
+| PDF 下载失败          | OSS 对象是否存在、可访问，资料目录与存储来源是否一致         |
+| 重建后出现空数据库    | Compose 项目名、实际挂载卷是否改变；不要先删除旧卷           |
+| 镜像构建失败          | 基础镜像及 Python 包索引可达性，固定依赖能否安装             |
+| 管理服务找不到镜像    | 是否构建了 Compose 引用的 `space-news-app` 镜像              |
+
+## 项目目录
+
+```text
+backend/          API、新闻采集、阅读、管理、百炼适配与数据存储
+web/              当前网站前端、品牌资源与资料封面
+admin_web/        私有管理前端
+content/          资料目录与阅读配置
+tests/            后端固定测试与前端状态回归检查
+tools/            发布、升级、备份、采集验证与预览工具
+docs/             方案、部署、验收、设计与研究文档
+archive/          已停止使用的早期方案与原型
+artifacts/        本地发布包、预览与准备产物，仅目录说明纳入 Git
+data/             本地数据库与运行数据，不纳入 Git
+Dockerfile        Python 应用镜像定义
+compose.yaml      应用与可选管理服务、命名卷、健康检查
+.env.example      无密钥配置示例
+requirements.txt  固定版本的运行依赖
+```
+
+网页入口为 `web/index.html`，应用入口为 `backend/app.py`。
+
+## 详细文档
+
+- [文档总览](docs/README.md)与[工具导航](tools/README.md)
+- [项目整理与上线状态记录](docs/acceptance/项目整理与上线状态记录-20261006.md)
+- [知航前端品牌、筛选与阅读优化记录](docs/acceptance/知航前端品牌筛选与阅读优化记录-20261006.md)
+- [知航前端升级部署](docs/deployment/知航前端品牌筛选与阅读优化部署.md)
+- [百炼知识库正式接入部署](docs/deployment/百炼知识库网页正式接入部署.md)
+- [资料下载验收记录](docs/acceptance/资料下载部署验收记录-20261005.md)
+- [国际商业扩源验收与未解决清单](docs/acceptance/国际商业扩源验收与未解决清单.md)
+- [国内扩源阶段收尾](docs/acceptance/新闻扩源阶段收尾.md)
+- [历史测试部署记录](DEPLOY.md)
+
+阶段文档保留当时的状态与命令，较早的“待实现”“待验收”不代表当前状态。首次部署以本 README 为入口；已有服务器执行差量升级时，使用对应版本的部署文档，不要混用历史发布包。
+
+## 内容、协作与许可
+
+新闻入口限定为人工批准的官方来源。NASA、国家航天局和中国载人航天按现行策略提供自动政府全文；ESA及企业来源公开标题、元数据和原文链接，不公开摘要、正文或配图。来源身份与自动展示策略不等于事实已核实或转载许可已取得；保留真实版权状态，不伪造授权。部分来源存在地域访问阻塞、归档异常及历史覆盖限制，详见验收记录。
+
+开发使用 Issues 明确目标、范围与验收，通过短期分支和 Pull Request 协作。提交前运行对应检查；不要提交密钥、私钥、实际 `.env`、运行数据库、会话数据、日志、部署备份与虚拟环境。
+
+项目目前保持私有开发，尚未指定开源许可证。引用开源项目的文档组织方式不改变本项目许可；第三方组件与资料分别遵循各自许可和授权条件。
+
+### README 结构参考
+
+- [Full Stack FastAPI Template](https://github.com/fastapi/full-stack-fastapi-template)：技术栈、功能概览与开发、部署文档入口的组织方式。
+- [Immich](https://github.com/immich-app/immich)：自托管项目的功能表、安装与文档导航、备份提示的组织方式。
+- [Docker Compose 官方文档](https://docs.docker.com/reference/cli/docker/compose/run/)及[环境变量说明](https://docs.docker.com/compose/how-tos/environment-variables/envvars/)：容器命令和配置行为的核对依据。
+
+本说明根据当前项目代码编写，未照搬参考项目的技术栈、部署配置或许可证。
