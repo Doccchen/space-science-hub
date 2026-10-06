@@ -115,6 +115,46 @@ class NewsTests(unittest.TestCase):
             self.assertEqual(client.get('/api/news/1').json()['material_status'], 'summary_only')
             self.assertEqual(client.get('/').status_code, 200)
 
+    def test_numbered_pages_counts_clamping_and_empty_filters(self):
+        for number in range(45):
+            news.store_records(news.parse_feed('nasa', rss(query=f'id={number}'))[0])
+        first = news.list_articles(page=1, page_size=20)
+        second = news.list_articles(page=2, page_size=20, snapshot=first['snapshot'])
+        last = news.list_articles(page=999, page_size=20, snapshot=first['snapshot'])
+        self.assertEqual((first['total'], first['total_pages']), (45, 3))
+        self.assertEqual(len(first['items']), 20)
+        self.assertEqual(last['page'], 3)
+        self.assertEqual(len(last['items']), 5)
+        ids = [row['id'] for data in (first, second, last) for row in data['items']]
+        self.assertEqual(len(set(ids)), 45)
+        empty = news.list_articles(source='esa', page=5, page_size=10)
+        self.assertEqual((empty['items'],empty['total'],empty['page'],empty['total_pages']), ([],0,1,1))
+
+    def test_numbered_snapshot_excludes_new_articles_until_refresh(self):
+        for number in range(12):
+            news.store_records(news.parse_feed('nasa', rss(query=f'id={number}'))[0])
+        first = news.list_articles(source='nasa', page=1, page_size=10)
+        news.store_records(news.parse_feed('nasa', rss(query='id=new'))[0])
+        second = news.list_articles(source='nasa', page=2, page_size=10, snapshot=first['snapshot'])
+        self.assertEqual(second['total'], 12)
+        self.assertFalse({row['id'] for row in first['items']} & {row['id'] for row in second['items']})
+        self.assertEqual(news.list_articles(source='nasa', page=1, page_size=10)['total'], 13)
+
+    def test_numbered_page_api_preserves_filter_and_cursor_contracts(self):
+        news.store_records(news.parse_feed('nasa', rss())[0])
+        news.store_records(news.parse_feed('esa', rss(domain='esa.int'))[0])
+        with patch.dict(os.environ, {'COLLECT_ENABLED':'0'}), TestClient(app) as client:
+            response = client.get('/api/news?page=1&page_size=10&source=nasa&category=international_agency&geographic_region=north_america')
+            self.assertEqual(response.status_code, 200, response.text)
+            self.assertEqual(response.json()['total'], 1)
+            self.assertEqual(response.json()['page_size'], 10)
+            self.assertEqual(response.headers['cache-control'], 'no-store')
+            self.assertEqual(client.get('/api/news?page=0').status_code, 422)
+            self.assertEqual(client.get('/api/news?page=1&page_size=100').status_code, 422)
+            self.assertEqual(client.get('/api/news?page=1&cursor=broken').status_code, 400)
+            self.assertEqual(client.get('/api/news?snapshot=0').status_code, 400)
+            self.assertIn('next_cursor', client.get('/api/news?limit=1').json())
+
 
 if __name__ == '__main__':
     unittest.main()

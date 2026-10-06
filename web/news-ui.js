@@ -7,10 +7,39 @@
   const selectLabel = element('label', '', '来源 '), select = element('select'); select.id = 'news-source'; select.setAttribute('aria-label', '来源'); selectLabel.htmlFor = select.id; selectLabel.append(select);
   const regionLabel = element('label', '', '商业地区 '), regionSelect = element('select'); regionSelect.id = 'news-region'; regionSelect.setAttribute('aria-label', '商业地区'); regionLabel.htmlFor = regionSelect.id; regionLabel.append(regionSelect); regionLabel.hidden = true;
   const resultLabel = element('p', 'news-message'), status = element('p', 'news-message'), list = element('div', 'real-news'); status.setAttribute('role', 'status');
-  const more = element('button', 'secondary load-more', '加载更多'); more.hidden = true;
-  toolbar.after(filters, regionLabel, selectLabel, resultLabel, status, list, more);
+  const panel = element('section', 'news-filter-panel'), controls = element('div', 'news-filter-controls');
+  panel.setAttribute('aria-label', '新闻筛选');
+  const resultBar = element('div', 'news-results-bar'); resultBar.tabIndex = -1;
+  const sizeLabel = element('label', 'news-page-size', '每页 '), size = element('select');
+  size.setAttribute('aria-label', '每页新闻条数');
+  [10,20,50].forEach(value => { const option = element('option', '', value + ' 条'); option.value = value; size.append(option); });
+  size.value = '20'; sizeLabel.append(size);
+  const totalDescription = element('span', 'news-result-count'); totalDescription.setAttribute('aria-live', 'polite');
+  resultBar.append(totalDescription, sizeLabel);
+  const pagers = [];
+  function makePager(position) {
+    const nav = element('nav', 'news-pagination'); nav.setAttribute('aria-label', '新闻分页（' + position + '）');
+    const previous = element('button', 'secondary', '上一页'), next = element('button', 'secondary', '下一页'), numbers = element('div', 'news-page-buttons');
+    const description = element('span', 'news-page-info');
+    description.tabIndex = -1;
+    const jump = element('form', 'news-page-jump'), jumpLabel = element('label', '', '跳到第 '), input = element('input');
+    input.type = 'number'; input.min = '1'; input.step = '1'; input.required = true; input.setAttribute('aria-label', '跳转页码（' + position + '）');
+    jumpLabel.append(input, document.createTextNode(' 页')); const go = element('button', 'secondary', '跳转'); jump.append(jumpLabel, go);
+    const capsule = element('div', 'news-page-capsule'), detail = element('details', 'news-jump-disclosure');
+    const summary = element('summary', '', '跳转到指定页'); detail.append(summary, jump);
+    const desktop = matchMedia('(min-width: 601px)'); detail.open = desktop.matches;
+    desktop.addEventListener('change', event => { detail.open = event.matches; });
+    capsule.append(previous, numbers, description, next); nav.append(capsule, detail);
+    previous.addEventListener('click', () => load(false, currentPage-1, true)); next.addEventListener('click', () => load(false, currentPage+1, true));
+    jump.addEventListener('submit', event => { event.preventDefault(); const target = Number(input.value); if (Number.isInteger(target) && target >= 1 && target <= totalPages) load(false, target, true); });
+    pagers.push({nav,previous,next,numbers,description,input,go,detail}); return nav;
+  }
+  const bottomPager = makePager('底部');
+  controls.append(selectLabel, regionLabel); panel.append(filters, controls, toolbar.lastElementChild, resultLabel);
+  toolbar.replaceWith(panel, resultBar, status, list, bottomPager);
   const categories = [['', '全部'], ['domestic_agency', '国内机构'], ['commercial', '商业航天'], ['international_agency', '国际机构']], buttons = [];
-  let source = '', category = '', regionChoice = '', cursor = null, generation = 0, busy = false, sources = [], displayedKey = null, geographicRegions = [];
+  let source = '', category = '', regionChoice = '', generation = 0, busy = false, sources = [], displayedKey = null, geographicRegions = [];
+  let currentPage = 1, pageSize = 20, displayedSize = 20, totalPages = 1, totalCount = 0, snapshot = null;
   const regionFilters = () => ['domestic', 'international'].includes(regionChoice) ? {region: regionChoice} : {geographic_region: regionChoice};
   const key = () => JSON.stringify([category, regionChoice, source]);
   function matches(item) {
@@ -30,7 +59,6 @@
     (item.country_code ? '（' + ({CN: '中国', US: '美国', JP: '日本', FR: '法国', IN: '印度', AU: '澳大利亚'}[item.country_code] || item.country_code) + '发布主体）' : '');
   const publicationDate = item => item.published_time_status === 'timezone_missing' ? (item.published_raw || '未提供发布时间') + '（来源未标时区）' :
     item.published_precision === 'day' && item.published_calendar_date ? item.published_calendar_date.replaceAll('-', '/') : formatDate(item.published_at, item.published_precision);
-  const summaryKind = item => ({source_summary: '来源摘要节选', body_excerpt: '正文节选', none: '未提供摘要'}[item.summary_kind] || '来源摘要节选');
   function originalLink(item, label) {
     const link = element('a', '', label);
     try { const url = new URL(item.original_url); if (['http:', 'https:'].includes(url.protocol) && !url.username && !url.password) link.href = url.href; }
@@ -40,20 +68,21 @@
   function renderItem(item) {
     const row = element('article', 'news-article'); row.dataset.articleId = item.id;
     const meta = element('div', 'news-meta', [item.source_name, publicationDate(item), kind(item), geography(item), language(item), item.source_enabled === 0 ? '采集已停用 · 历史内容' : ''].filter(Boolean).join(' · '));
-    const heading = element('h2'); heading.append(originalLink(item, item.title));
-    const summary = element('p', '', item.summary || '来源未提供摘要，请查看原文。');
-    const bottom = element('div', 'news-row-bottom'), action = element('button', 'link-button', '查看新闻详情 →');
-    action.addEventListener('click', () => openDetail(item)); bottom.append(element('span', '', summaryKind(item)), action);
-    row.append(meta, heading, summary, bottom); return row;
-  }
-  const detail = element('dialog', 'news-detail'); document.body.append(detail);
-  function openDetail(item) {
-    detail.replaceChildren(); const top = element('div', 'dialog-heading'), close = element('button', '', '×');
-    close.setAttribute('aria-label', '关闭新闻详情'); close.addEventListener('click', () => detail.close()); top.append(element('h2', '', '新闻详情'), close);
-    const meta = element('p', 'source-disclaimer', [item.source_name, kind(item), geography(item), publicationDate(item), language(item)].filter(Boolean).join(' · '));
-    const origin = element('p', 'source-disclaimer', '原文内容来源/署名：' + (item.content_source || '未提供'));
-    const boundary = element('p', 'news-detail-boundary', '此处展示' + summaryKind(item) + '，不是完整报道。企业新闻中的自述来自发布方。科普 Agent 尚未接入这篇新闻。');
-    detail.append(top, element('h3', '', item.title), meta, origin, element('p', '', item.summary || '来源未提供摘要。'), boundary, originalLink(item, '阅读发布方原文 ↗')); detail.showModal();
+    const canRead = item.reading_mode === 'full_text', heading = element('h2');
+    if (canRead) {
+      const title = element('a', '', item.title); title.href = '#news/article/' + item.id;
+      title.addEventListener('click', event => { event.preventDefault(); window.newsReader.open(item.id, title); }); heading.append(title);
+    } else heading.append(originalLink(item, item.title));
+    const bottom = element('div', 'news-row-bottom');
+    const scope = ({full_text:'本站全文', link_only:'原文阅读', unavailable:'暂不可用'}[item.reading_mode] || '原文阅读');
+    bottom.append(element('span', 'reading-badge', scope), originalLink(item, '原文 ↗'));
+    row.append(meta, heading);
+    if (canRead && item.summary?.trim()) row.append(element('p', '', item.summary));
+    if (canRead) {
+      const action = element('button', 'link-button', '阅读正文 →');
+      action.addEventListener('click', () => window.newsReader.open(item.id, action)); bottom.append(action);
+    }
+    row.append(bottom); return row;
   }
   async function getJSON(path) {
     const response = await fetch(path, {signal: AbortSignal.timeout(15000)});
@@ -76,28 +105,58 @@
       (failures.length ? ' · ' + failures.length + '个来源更新失败，保留历史' : '') + (disabled.length ? ' · ' + disabled.length + '个来源未启用' : '');
     document.getElementById('news-update').title = relevant.map(item => item.name + '：' + (!item.enabled ? (item.availability_note || '未启用') + '；' : item.last_error ? '本轮失败或部分失败，保留历史；' : '') + '最近成功 ' + formatDate(item.last_success_at)).join('\n');
   }
-  async function load(reset = false) {
-    if (busy && !reset) return; if (!reset && displayedKey !== key()) return;
-    const request = ++generation, requestKey = key(); busy = true; more.disabled = true;
-    if (reset && displayedKey !== requestKey) {
-      list.replaceChildren(); cursor = null; displayedKey = null; more.hidden = true; resultLabel.textContent = '';
+  function renderPagination() {
+    const blocked = busy || displayedKey !== key();
+    size.value = String(pageSize); size.disabled = busy;
+    totalDescription.textContent = displayedKey === null ? '正在读取结果…' : totalCount ? '共 ' + totalCount + ' 条 · 当前第 ' + currentPage + ' 页' : '共 0 条';
+    list.setAttribute('aria-busy', String(busy));
+    refresh.disabled = busy;
+    for (const pager of pagers) {
+      pager.nav.hidden = totalPages <= 1 || !totalCount;
+      pager.previous.disabled = blocked || currentPage <= 1; pager.next.disabled = blocked || currentPage >= totalPages;
+      pager.description.textContent = totalCount ? '第 ' + currentPage + ' / ' + totalPages + ' 页' : '暂无结果';
+      pager.input.max = Math.max(1,totalPages); pager.input.value = currentPage; pager.input.disabled = pager.go.disabled = blocked || !totalCount;
+      pager.numbers.replaceChildren();
+      if (!totalCount) continue;
+      const pages = new Set([1,totalPages]); for (let number=Math.max(1,currentPage-2);number<=Math.min(totalPages,currentPage+2);number++) pages.add(number);
+      let last = 0;
+      for (const number of [...pages].sort((a,b)=>a-b)) {
+        if (last && number-last>1) pager.numbers.append(element('span', 'page-gap', '…'));
+        const button = element('button', 'secondary' + (number===currentPage?' active':''), String(number));
+        button.setAttribute('aria-label', '第 ' + number + ' 页'); if(number===currentPage)button.setAttribute('aria-current','page');
+        button.disabled = blocked || number===currentPage; button.addEventListener('click',()=>load(false,number,true)); pager.numbers.append(button); last=number;
+      }
     }
+  }
+  async function load(reset = false, targetPage = currentPage, scrollAfter = false) {
+    if (busy && !reset) return;
+    if (!reset && displayedKey !== key()) return;
+    const request = ++generation, requestKey = key(), requestedSize = pageSize;
+    let succeeded = false;
+    busy = true; renderPagination();
     status.textContent = displayedKey && displayedKey !== requestKey ? '正在切换筛选，下方暂为上一筛选结果…' : '正在读取已入库的新闻…';
-    const params = new URLSearchParams({limit: '20'});
-    if (source) params.set('source', source); if (category) params.set('category', category); if (!reset && cursor) params.set('cursor', cursor);
+    const params = new URLSearchParams({page: String(reset ? 1 : targetPage), page_size: String(requestedSize)});
+    if (!reset && snapshot !== null) params.set('snapshot', snapshot);
+    if (source) params.set('source', source); if (category) params.set('category', category);
     if (category === 'commercial' && regionChoice) { const filter = regionFilters(); Object.entries(filter).forEach(([name, value]) => params.set(name, value)); }
     try {
       const [data, state] = await Promise.all([getJSON('/api/news?' + params), getJSON('/api/news/sources')]); if (request !== generation) return;
+      if (!Number.isInteger(data.page) || !Number.isInteger(data.total_pages)) throw new Error('pagination_unavailable');
       sources = state.items; geographicRegions = state.geographic_regions || []; renderRegion(); renderSelect(); const fragment = document.createDocumentFragment(); data.items.forEach(item => fragment.append(renderItem(item)));
-      if (reset) list.replaceChildren(fragment); else list.append(fragment);
-      cursor = data.next_cursor; displayedKey = requestKey; more.hidden = !cursor; renderSources(sources);
+      list.replaceChildren(fragment);
+      currentPage = data.page; pageSize = displayedSize = data.page_size; totalPages = data.total_pages; totalCount = data.total; snapshot = data.snapshot;
+      displayedKey = requestKey; renderSources(sources);
       resultLabel.textContent = '当前结果：' + categories.find(([id]) => id === category)[1] + (source ? ' / ' + sources.find(item => item.id === source).name : '');
       if (regionChoice) resultLabel.textContent += ' / ' + regionSelect.selectedOptions[0].textContent;
       status.textContent = list.children.length ? '' : '此筛选下暂无已入库新闻。未启用的来源不会自动采集。';
+      succeeded = true;
+      if (scrollAfter) window.scrollTo({top: window.scrollY + resultBar.getBoundingClientRect().top - 24, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth'});
     } catch (error) {
       if (request !== generation) return;
-      status.textContent = list.children.length ? '列表请求失败，已显示的内容仍可阅读。请刷新重试。' : '当前筛选读取失败，请刷新重试。';
-    } finally { if (request === generation) { busy = false; more.disabled = displayedKey !== key(); } }
+      if (displayedKey === requestKey) pageSize = displayedSize;
+      status.textContent = error.message === 'pagination_unavailable' ? '当前服务器尚未支持页码分页，请更新服务器版本。' :
+        list.children.length ? '分页读取失败，保留当前页内容。请重试。' : '当前筛选读取失败，请刷新重试。';
+    } finally { if (request === generation) { busy = false; renderPagination(); if (scrollAfter && succeeded) resultBar.focus({preventScroll:true}); } }
   }
   categories.forEach(([id, name]) => {
     const button = element('button', id === '' ? 'active' : '', name); button.setAttribute('aria-pressed', String(id === ''));
@@ -106,6 +165,12 @@
   });
   select.addEventListener('change', () => { source = select.value; load(true); });
   regionSelect.addEventListener('change', () => { regionChoice = regionSelect.value; source = ''; renderSelect(); load(true); });
-  const refresh = element('button', 'refresh-news', '刷新列表 ↻'); refresh.addEventListener('click', () => load(true)); filters.append(refresh);
-  more.addEventListener('click', () => load(false)); renderRegion(); renderSelect(); load(true);
+  const refresh = element('button', 'refresh-news', '刷新列表 ↻'); refresh.addEventListener('click', () => load(true)); controls.append(refresh);
+  size.addEventListener('change', () => { pageSize = Number(size.value); load(displayedKey !== key(), 1, true); });
+  renderRegion(); renderSelect(); renderPagination(); load(true);
+  document.addEventListener('readingchange', event => {
+    const item = event.detail, row = list.querySelector('[data-article-id="' + item.id + '"]');
+    if (!row) return;
+    row.replaceWith(renderItem(item));
+  });
 })();

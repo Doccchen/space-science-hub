@@ -5,8 +5,14 @@
 !backend/**
 !web/
 !web/**
+!admin_web/
+!admin_web/**
 !content/
 !content/resources.json
+!content/reading/
+!content/reading/*.json
+content/reading/nasa-model-wing-guide.json
 !tools/
 !tools/**
 backend/__pycache__/
+tools/preview_admin.py

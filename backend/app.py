@@ -4,12 +4,13 @@ import os
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Path as PathParam, Query, Response
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from . import news
 from . import resources
+from . import reading
 
 ROOT = Path(__file__).resolve().parent.parent
 STATIC = ROOT / "web"
@@ -31,7 +32,15 @@ async def lifespan(app):
     news.initialize()
     resources.catalog.load()
     task = asyncio.create_task(scheduled_collection()) if os.environ.get("COLLECT_ENABLED", "1") == "1" else None
+    from . import auto_fulltext
+    auto_task = asyncio.create_task(auto_fulltext.loop()) if task and os.environ.get('GOVERNMENT_FULLTEXT_AUTO', '1') == '1' else None
     yield
+    if auto_task:
+        auto_task.cancel()
+        try:
+            await auto_task
+        except asyncio.CancelledError:
+            pass
     if task:
         task.cancel()
         try:
@@ -59,24 +68,64 @@ def sources():
 
 
 @app.get("/api/news")
-def articles(source: str | None = None, cursor: str | None = Query(None, max_length=500),
+def articles(response: Response, source: str | None = None, cursor: str | None = Query(None, max_length=500),
              limit: int = Query(20, ge=1, le=50), category: str | None = None,
-             region: str | None = None, geographic_region: str | None = None):
+             region: str | None = None, geographic_region: str | None = None,
+             page: int | None = Query(None, ge=1, le=1000000), page_size: int | None = Query(None, ge=1, le=50),
+             snapshot: int | None = Query(None, ge=0, le=9223372036854775807)):
     try:
-        return news.list_articles(source, cursor, limit, category, region, geographic_region)
+        result = news.list_articles(source, cursor, limit, category, region, geographic_region, page, page_size, snapshot)
+        with news.connect() as conn:
+            result['items'] = reading.public_rows(conn, result['items'])
+        response.headers['Cache-Control'] = 'no-store'
+        return result
     except ValueError as error:
         raise HTTPException(400, str(error)) from error
 
 
 @app.get("/api/news/{article_id}")
-def article(article_id: int):
+def article(response: Response, article_id: int = PathParam(ge=1, le=9223372036854775807)):
     with news.connect() as conn:
         row = conn.execute("""SELECT a.*,s.name AS source_name,s.region,s.publisher_kind,s.enabled AS source_enabled,
             s.geographic_region,s.country_code FROM articles a
             JOIN sources s ON s.id=a.source_id WHERE a.id=?""", (article_id,)).fetchone()
-    if row is None:
-        raise HTTPException(404, "Article not found")
-    return dict(row)
+        if row is None:
+            raise HTTPException(404, "Article not found")
+        result = reading.public_rows(conn, [row])[0]
+    response.headers['Cache-Control'] = 'no-store'
+    return result
+
+
+@app.get('/api/news/{article_id}/content')
+def article_content(response: Response, article_id: int = PathParam(ge=1, le=9223372036854775807)):
+    with news.connect() as conn:
+        row = conn.execute('SELECT id,lang,source_id,original_url FROM articles WHERE id=?', (article_id,)).fetchone()
+        if row is None:
+            raise HTTPException(404, 'Article not found')
+        result = reading.content_with_assets(conn, dict(row), reading.editions(conn, [article_id]).get(article_id))
+    response.headers['Cache-Control'] = 'no-store'
+    return result
+
+
+@app.get('/api/news/{article_id}/assets/{asset_id}')
+def article_asset(article_id: int, asset_id: str):
+    from . import news_assets, news_image_store
+    with news.connect() as conn:
+        item = conn.execute('SELECT id,source_id,original_url,lang FROM articles WHERE id=?', (article_id,)).fetchone()
+        edition = reading.editions(conn, [article_id]).get(article_id)
+        if not item or not edition or reading.public_content(dict(item), edition)['reading_mode'] != 'full_text':
+            raise HTTPException(404, 'Image unavailable')
+        available = news_assets.available(conn, article_id, edition['version'])
+        if not any(asset['id'] == asset_id for asset in available):
+            raise HTTPException(404, 'Image unavailable')
+        row = conn.execute('SELECT object_key,mime FROM article_assets WHERE id=? AND article_id=?', (asset_id, article_id)).fetchone()
+    try:
+        path = news_image_store.path(row['object_key'])
+        if not path.is_file():
+            raise ValueError('Image file missing')
+    except Exception:
+        raise HTTPException(503, 'Image storage temporarily unavailable') from None
+    return FileResponse(path, media_type=row['mime'], headers={'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff'})
 
 
 @app.get("/")

@@ -1,7 +1,9 @@
 'use strict';
 const el=id=>document.getElementById(id);let version='science',toastTimer;
-function showPage(page){document.querySelectorAll('.page').forEach(node=>node.classList.toggle('hidden',node.id!==page));document.querySelectorAll('nav [data-page]').forEach(node=>node.classList.toggle('active',node.dataset.page===page));window.scrollTo({top:0,behavior:'instant'});document.dispatchEvent(new CustomEvent('pagechange',{detail:page}));}
-document.querySelectorAll('[data-page]').forEach(node=>node.addEventListener('click',()=>showPage(node.dataset.page)));el('home-link').addEventListener('click',event=>{event.preventDefault();showPage('news');});
+let visiblePage = 'news';
+function showPage(page){if(!document.getElementById(page)?.classList.contains('page'))page='news';const changed=visiblePage!==page;visiblePage=page;document.querySelectorAll('.page').forEach(node=>node.classList.toggle('hidden',node.id!==page));document.querySelectorAll('nav [data-page]').forEach(node=>node.classList.toggle('active',node.dataset.page===page));if(changed)window.scrollTo({top:0,behavior:'instant'});document.dispatchEvent(new CustomEvent('pagechange',{detail:page}));}
+function navigatePage(page){if(location.hash==='#'+page)showPage(page);else location.hash=page;}
+document.querySelectorAll('[data-page]').forEach(node=>node.addEventListener('click',()=>navigatePage(node.dataset.page)));el('home-link').addEventListener('click',event=>{event.preventDefault();navigatePage('news');});
 function setVersion(next){version=next;['science','summary'].forEach(name=>{el(name).classList.toggle('hidden',name!==next);el(name+'-tab').classList.toggle('active',name===next);el(name+'-tab').setAttribute('aria-pressed',String(name===next));});}
 el('science-tab').addEventListener('click',()=>setVersion('science'));el('summary-tab').addEventListener('click',()=>setVersion('summary'));
 function openExample(){el('reading-shell').classList.remove('hidden');setVersion('science');el('input-notice').textContent=el('material').value.trim()?'正在展示固定科普示例，未分析你输入的材料。':'已打开固定示例。内容预先编写，未执行真实生成。';}

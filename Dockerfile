@@ -9,6 +9,7 @@ RUN python -m pip install --no-cache-dir --index-url ${PIP_INDEX_URL} -r require
     && mkdir /data && chown app:app /data
 COPY backend ./backend
 COPY web ./web
+COPY admin_web ./admin_web
 COPY content ./content
 COPY tools ./tools
 USER 10001:10001

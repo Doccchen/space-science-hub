@@ -1,0 +1,67 @@
+{
+  "original_url": "https://www.nasa.gov/news-release/nasa-astronaut-christina-koch-to-join-nfl-fans-in-philadelphia/",
+  "mode": "full",
+  "language": "en",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "As part of NASA’s ongoing Inspiration Tour, NASA astronaut Christina Koch will highlight America’s strengths in space exploration and aeronautics innovation at the Philadelphia Eagles vs. Los Angeles Rams game in Philadelphia on Sunday, Oct. 4."
+    },
+    {
+      "type": "paragraph",
+      "text": "A self-proclaimed Philadelphia sports fan, Koch is an explorer and engineer who spent a total of 338 days in space across two missions, including serving as a mission specialist for the agency’s Artemis II mission earlier this year. On April 1, Koch launched from NASA’s Kennedy Space Center in Florida aboard the Orion spacecraft on top of the agency’s SLS (Space Launch System) rocket as part of Artemis II. Koch and her fellow crew members completed a historic lunar flyby, marking humanity’s return to the vicinity of the Moon for the first time in more than 50 years."
+    },
+    {
+      "type": "paragraph",
+      "text": "NASA team members will engage with fans at the agency’s Experience Zone, located outside the stadium from 10 a.m. to 1 p.m. before the game. Fans can learn more about NASA’s return to the Moon through the agency’s Artemis program, enjoy interactive games, and capture photos at a selfie station and with a large, inflatable NASA logo."
+    },
+    {
+      "type": "paragraph",
+      "text": "With stops across the nation, NASA’s Inspiration Tour convenes academic, industry, and public sector stakeholders to connect the agency with the people, technologies, and organizations that drive American leadership in space."
+    },
+    {
+      "type": "paragraph",
+      "text": "The tour will culminate in MAX POWER, a public exposition of American air and space innovation, Saturday, Nov. 7, and Sunday, Nov. 8, on and near the agency’s Kennedy Space Center in Florida. Held in honor of America’s historic 250th anniversary, the multi-day, family-friendly event will showcase the next-generation aircraft, spacecraft, autonomous vehicles, and technologies that will help define the future of transportation in air and space."
+    },
+    {
+      "type": "paragraph",
+      "text": "For more information about MAX POWER and the agency’s missions, visit:"
+    },
+    {
+      "type": "paragraph",
+      "text": "https://www.nasa.gov/maxpower"
+    },
+    {
+      "type": "paragraph",
+      "text": "-end-"
+    },
+    {
+      "type": "paragraph",
+      "text": "Camille Gallo / Jessica Taveau\nHeadquarters, Washington\n202-358-1600\ncamille.m.gallo@nasa.gov / jessica.c.taveau@nasa.gov"
+    }
+  ],
+  "permissions": {
+    "text": {
+      "status": "policy_reviewed",
+      "basis": "NASA Images and Media Usage Guidelines: https://www.nasa.gov/nasa-brand-center/images-and-media/ ; NASA-produced informational text, checked 2026-10-05",
+      "rightsholder": "NASA (US government agency)",
+      "purpose": "public_web_text",
+      "third_party_check": "Official NASA article. Text credited to NASA; no third-party reproduced article identified. Image blocks excluded; no logo or endorsement."
+    },
+    "image": {
+      "status": "pending"
+    },
+    "translation": {
+      "status": "pending"
+    },
+    "ai_context": {
+      "status": "pending"
+    }
+  },
+  "credit": "NASA / Jessica Taveau",
+  "reviewed_at": "2026-10-05T15:24:32+00:00",
+  "reviewer": "Codex source comparison; final browser review by site operator",
+  "completeness": "complete_checked",
+  "notes": "NASA英文正文；按2026-10-05原站快照核对，保留正文与发布稿联系人。图片未转载，链接文字保留；使用不表示NASA认可本站。",
+  "source_sha256": "6713840472253f1e526d74846e9a458f1242f4063e339c824841eee5df31343e"
+}

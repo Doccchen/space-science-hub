@@ -1,0 +1,38 @@
+{
+  "original_url": "https://www.nasa.gov/centers-and-facilities/langley/nasa-model-wing-lights-up-during-first-pressure-sensitive-paint-tests/",
+  "mode": "guide",
+  "language": "zh",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "NASA兰利研究中心在跨声速动力风洞里，将非定常压力敏感涂料用于基准超临界机翼模型。涂层亮度会随气流施加的压力变化，高速摄影机记录这种变化，为计算模型提供数据。"
+    },
+    {
+      "type": "paragraph",
+      "text": "报道指出，此次试验首次把这项技术用于低氧环境中的大型自由运动模型。基准机翼用于模型研究，并不对应某一款飞机；后续工作计划拓展到可弯曲的柔性飞机模型。"
+    }
+  ],
+  "permissions": {
+    "text": {
+      "status": "explicit_grant",
+      "basis": "本站自行组织的事实导读，未复制原文句段。事实依据：https://www.nasa.gov/centers-and-facilities/langley/nasa-model-wing-lights-up-during-first-pressure-sensitive-paint-tests/",
+      "rightsholder": "本站编辑",
+      "purpose": "public_web_text",
+      "third_party_check": "只整理报道明确的试验方法、用途和后续计划；无引用、图片或图注复制。"
+    },
+    "image": {
+      "status": "pending"
+    },
+    "translation": {
+      "status": "pending"
+    },
+    "ai_context": {
+      "status": "pending"
+    }
+  },
+  "credit": "本站事实导读；事实来源：NASA / Brandon Ingram",
+  "reviewed_at": "2026-10-05T15:24:32+00:00",
+  "reviewer": "Codex source comparison; final browser review by site operator",
+  "completeness": "own_guide_checked",
+  "notes": "这是根据NASA原文自行组织的事实导读，并非原文翻译或全文；图片请到原文查看。"
+}

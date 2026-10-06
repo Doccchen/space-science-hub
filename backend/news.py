@@ -175,7 +175,11 @@ def _initialize():
               published_timezone='Asia/Shanghai',published_time_status='date_only'
               WHERE source_id IN ('cnsa','cmse','cas_space','landspace') AND published_precision='day' AND published_at IS NOT NULL""")
             conn.execute("UPDATE articles SET published_time_status='missing' WHERE published_at IS NULL")
-        conn.execute('PRAGMA user_version=3')
+        from . import reading
+        reading.migrate(conn)
+        from . import review_store
+        review_store.migrate(conn)
+        conn.execute('PRAGMA user_version=5')
 
 
 def parse_feed(source_id, raw):
@@ -344,7 +348,18 @@ def encode_cursor(row, source, category=None, region=None, geographic_region=Non
     return base64.urlsafe_b64encode(json.dumps([row["published_at"] or "", row["id"], filters, 3]).encode()).decode()
 
 
-def list_articles(source=None, cursor=None, limit=20, category=None, region=None, geographic_region=None):
+def list_articles(source=None, cursor=None, limit=20, category=None, region=None, geographic_region=None,
+                  page=None, page_size=None, snapshot=None):
+    paged = page is not None or page_size is not None
+    if paged:
+        if cursor:
+            raise ValueError('Page pagination cannot be combined with cursor')
+        page = 1 if page is None else page
+        limit = limit if page_size is None else page_size
+        if type(page) is not int or page < 1 or type(limit) is not int or not 1 <= limit <= 50:
+            raise ValueError('Invalid page or page size')
+    elif snapshot is not None:
+        raise ValueError('Snapshot requires page pagination')
     source, category, region, geographic_region = source or None, category or None, region or None, geographic_region or None
     clauses, args = [], []
     if region:
@@ -401,6 +416,23 @@ def list_articles(source=None, cursor=None, limit=20, category=None, region=None
         args.extend([date, date, article_id])
     where = " WHERE " + " AND ".join(clauses) if clauses else ""
     with connect() as conn:
+        if paged:
+            conn.execute('BEGIN')
+            maximum = conn.execute('SELECT COALESCE(MAX(id),0) FROM articles').fetchone()[0]
+            if snapshot is not None and (type(snapshot) is not int or snapshot < 0):
+                raise ValueError('Invalid page snapshot')
+            snapshot = maximum if snapshot is None else min(snapshot, maximum)
+            clauses.append('a.id<=?')
+            args.append(snapshot)
+            where = ' WHERE ' + ' AND '.join(clauses)
+            total = conn.execute('SELECT COUNT(*) FROM articles a JOIN sources s ON a.source_id=s.id' + where, args).fetchone()[0]
+            pages = max(1, (total + limit - 1)//limit)
+            actual_page = min(page, pages)
+            rows = [dict(row) for row in conn.execute('''SELECT a.*,s.name AS source_name,s.region,s.publisher_kind,s.enabled AS source_enabled,
+              s.geographic_region,s.country_code FROM articles a JOIN sources s ON a.source_id=s.id''' + where +
+              " ORDER BY COALESCE(a.published_at,'') DESC,a.id DESC LIMIT ? OFFSET ?", [*args, limit, (actual_page-1)*limit])]
+            return {'items': rows, 'page': actual_page, 'page_size': limit, 'total': total, 'total_pages': pages,
+                    'snapshot': snapshot, 'next_cursor': None}
         rows = [dict(row) for row in conn.execute("""SELECT a.*,s.name AS source_name,s.region,s.publisher_kind,s.enabled AS source_enabled,
             s.geographic_region,s.country_code FROM articles a
             JOIN sources s ON a.source_id=s.id""" + where +

@@ -1,0 +1,51 @@
+{
+  "original_url": "https://www.nasa.gov/image-article/nasas-davinci-probe-can-stand-the-heat/",
+  "mode": "full",
+  "language": "en",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "The engineering development unit for NASA’s DAVINCI (Deep Atmosphere Venus Investigation of Noble gases, Chemistry, and Imaging) probe is photographed prior to a major thermal evaluation."
+    },
+    {
+      "type": "paragraph",
+      "text": "The DAVINCI team put the yoga ball-sized vessel into a ceramic-lined chamber with heat-scorched walls and ratcheted up the temperature to 869 F, or 465 C, over the course of about an hour — the same pace the probe will heat up during its descent to the surface of Venus."
+    },
+    {
+      "type": "paragraph",
+      "text": "DAVINCI will study the origin, evolution, and present state of Venus in unprecedented detail to help determine whether it was once wet and habitable, like Earth."
+    },
+    {
+      "type": "paragraph",
+      "text": "Read more about the test."
+    },
+    {
+      "type": "paragraph",
+      "text": "Image credit: NASA/Mike Guinto"
+    }
+  ],
+  "permissions": {
+    "text": {
+      "status": "policy_reviewed",
+      "basis": "NASA Images and Media Usage Guidelines: https://www.nasa.gov/nasa-brand-center/images-and-media/ ; NASA-produced informational text, checked 2026-10-05",
+      "rightsholder": "NASA (US government agency)",
+      "purpose": "public_web_text",
+      "third_party_check": "Official NASA article. Text credited to NASA; no third-party reproduced article identified. Image blocks excluded; no logo or endorsement."
+    },
+    "image": {
+      "status": "pending"
+    },
+    "translation": {
+      "status": "pending"
+    },
+    "ai_context": {
+      "status": "pending"
+    }
+  },
+  "credit": "NASA / HQ Web Team",
+  "reviewed_at": "2026-10-05T15:24:32+00:00",
+  "reviewer": "Codex source comparison; final browser review by site operator",
+  "completeness": "complete_checked",
+  "notes": "NASA英文正文；按2026-10-05原站快照核对，保留正文与发布稿联系人。图片未转载，链接文字保留；使用不表示NASA认可本站。",
+  "source_sha256": "e0c1ff43627eea0b2d37d1209d6aa1b27269d2a5732f0dc39aab010d14f285b5"
+}

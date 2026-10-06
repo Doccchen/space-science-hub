@@ -1,0 +1,83 @@
+{
+  "original_url": "https://www.nasa.gov/news-release/nasa-opens-applications-for-next-class-of-flight-directors/",
+  "mode": "full",
+  "language": "en",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "NASA is seeking leaders for one of the most esteemed positions on Earth for human spaceflight: flight director in mission control at the agency’s Johnson Space Center in Houston. This role is critical to advancing American leadership in space exploration, as NASA paves the way for a sustained human presence on the Moon."
+    },
+    {
+      "type": "paragraph",
+      "text": "Applications for new flight directors are open now through Monday, Oct. 12. U.S. citizens can apply at:"
+    },
+    {
+      "type": "paragraph",
+      "text": "https://www.usajobs.gov/GetJob/ViewDetails/886788000"
+    },
+    {
+      "type": "paragraph",
+      "text": "Those chosen as NASA flight directors will lead human spaceflight missions to the International Space Station, Artemis missions to the Moon, and, eventually, the first human missions to Mars."
+    },
+    {
+      "type": "paragraph",
+      "text": "Flight directors lead teams of flight controllers, astronauts, and commercial and international partners in real-time mission execution and risk management. In preparation for a mission, flight directors collaborate with engineering, safety, and program partners to ensure operational plans align with spacecraft capabilities and mission objectives."
+    },
+    {
+      "type": "paragraph",
+      "text": "“We are working in an exciting, pivotal time as we continue supporting operations to the International Space Station while building the next phase of human spaceflight with Artemis and Moon Base missions, preparing to go farther than ever before,” said Emily Nelson, chief flight director at Johnson. “Accomplishing these ambitious goals requires flight directors who are expert integrators, bringing together a broad range of teams and disciplines into a clear, unified mission effort. This integral role exemplifies the best of innovation and teamwork.”"
+    },
+    {
+      "type": "paragraph",
+      "text": "To be considered, flight director candidates must be U.S. citizens with a bachelor’s degree from an accredited institution in engineering, biological science, physical science, computer science, or mathematics. They also will need substantial related, progressively responsible professional experience, including time-critical decision-making experience in high-stress, high-risk environments. Although many NASA flight directors have previously been flight controllers working in mission control, it is not a prerequisite to apply."
+    },
+    {
+      "type": "paragraph",
+      "text": "NASA plans to announce selections by the end of the year. The new flight directors will receive extensive training in flight control and spacecraft systems, as well as operational leadership and risk management."
+    },
+    {
+      "type": "paragraph",
+      "text": "Learn more about NASA flight directors and the application process at:"
+    },
+    {
+      "type": "paragraph",
+      "text": "go.nasa.gov/BeAFlightDirector"
+    },
+    {
+      "type": "paragraph",
+      "text": "-end-"
+    },
+    {
+      "type": "paragraph",
+      "text": "Rachel Kraft\nHeadquarters, Washington\n202-358-1100\nrachel.h.kraft@nasa.gov"
+    },
+    {
+      "type": "paragraph",
+      "text": "Anna Schneider / Mary Pfister\nJohnson Space Center, Houston\n281-483-5111\nanna.c.schneider@nasa.gov / mary.m.pfister@nasa.gov"
+    }
+  ],
+  "permissions": {
+    "text": {
+      "status": "policy_reviewed",
+      "basis": "NASA Images and Media Usage Guidelines: https://www.nasa.gov/nasa-brand-center/images-and-media/ ; NASA-produced informational text, checked 2026-10-05",
+      "rightsholder": "NASA (US government agency)",
+      "purpose": "public_web_text",
+      "third_party_check": "Official NASA article. Text credited to NASA; no third-party reproduced article identified. Image blocks excluded; no logo or endorsement."
+    },
+    "image": {
+      "status": "pending"
+    },
+    "translation": {
+      "status": "pending"
+    },
+    "ai_context": {
+      "status": "pending"
+    }
+  },
+  "credit": "NASA / Lauren E. Low",
+  "reviewed_at": "2026-10-05T15:24:32+00:00",
+  "reviewer": "Codex source comparison; final browser review by site operator",
+  "completeness": "complete_checked",
+  "notes": "NASA英文正文；按2026-10-05原站快照核对，保留正文与发布稿联系人。图片未转载，链接文字保留；使用不表示NASA认可本站。",
+  "source_sha256": "9e2ec68393dbb5fcd77c99ed7f57f6c419858393312fccad3f2fe462b1b23130"
+}
