@@ -11,6 +11,7 @@ from fastapi.staticfiles import StaticFiles
 from . import news
 from . import resources
 from . import reading
+from . import ai
 
 ROOT = Path(__file__).resolve().parent.parent
 STATIC = ROOT / "web"
@@ -31,10 +32,18 @@ async def scheduled_collection():
 async def lifespan(app):
     news.initialize()
     resources.catalog.load()
+    app.state.ai = ai.service_from_env()
+    ai_cleanup = asyncio.create_task(ai.housekeeping(app.state.ai)) if not app.state.ai.problem else None
     task = asyncio.create_task(scheduled_collection()) if os.environ.get("COLLECT_ENABLED", "1") == "1" else None
     from . import auto_fulltext
     auto_task = asyncio.create_task(auto_fulltext.loop()) if task and os.environ.get('GOVERNMENT_FULLTEXT_AUTO', '1') == '1' else None
     yield
+    if ai_cleanup:
+        ai_cleanup.cancel()
+        try:
+            await ai_cleanup
+        except asyncio.CancelledError:
+            pass
     if auto_task:
         auto_task.cancel()
         try:
@@ -51,6 +60,7 @@ async def lifespan(app):
 
 app = FastAPI(title="Space News", lifespan=lifespan, docs_url=None, redoc_url=None)
 app.include_router(resources.router)
+app.include_router(ai.router)
 
 
 @app.get("/api/health")

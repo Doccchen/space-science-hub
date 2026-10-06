@@ -1,14 +1,14 @@
 'use strict';
-const el=id=>document.getElementById(id);let version='science',toastTimer;
+// Shared navigation; each page owns its controls.
 let visiblePage = 'news';
-function showPage(page){if(!document.getElementById(page)?.classList.contains('page'))page='news';const changed=visiblePage!==page;visiblePage=page;document.querySelectorAll('.page').forEach(node=>node.classList.toggle('hidden',node.id!==page));document.querySelectorAll('nav [data-page]').forEach(node=>node.classList.toggle('active',node.dataset.page===page));if(changed)window.scrollTo({top:0,behavior:'instant'});document.dispatchEvent(new CustomEvent('pagechange',{detail:page}));}
-function navigatePage(page){if(location.hash==='#'+page)showPage(page);else location.hash=page;}
-document.querySelectorAll('[data-page]').forEach(node=>node.addEventListener('click',()=>navigatePage(node.dataset.page)));el('home-link').addEventListener('click',event=>{event.preventDefault();navigatePage('news');});
-function setVersion(next){version=next;['science','summary'].forEach(name=>{el(name).classList.toggle('hidden',name!==next);el(name+'-tab').classList.toggle('active',name===next);el(name+'-tab').setAttribute('aria-pressed',String(name===next));});}
-el('science-tab').addEventListener('click',()=>setVersion('science'));el('summary-tab').addEventListener('click',()=>setVersion('summary'));
-function openExample(){el('reading-shell').classList.remove('hidden');setVersion('science');el('input-notice').textContent=el('material').value.trim()?'正在展示固定科普示例，未分析你输入的材料。':'已打开固定示例。内容预先编写，未执行真实生成。';}
-el('try-example').addEventListener('click',openExample);el('load-example').addEventListener('click',openExample);el('close-reading').addEventListener('click',()=>{el('reading-shell').classList.add('hidden');el('input-notice').textContent='';});
-el('source-open').addEventListener('click',()=>el('source-dialog').showModal());el('source-close').addEventListener('click',()=>el('source-dialog').close());
-function toast(text){el('toast').textContent=text;el('toast').classList.remove('hidden');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el('toast').classList.add('hidden'),4000);}
-document.querySelectorAll('[data-evidence]').forEach(node=>node.addEventListener('click',()=>{el('evidence-list').open=true;document.querySelectorAll('.evidence-row').forEach(row=>row.classList.remove('selected'));el('evidence-'+node.dataset.evidence).classList.add('selected');toast('已展开文章下方的事实依据，并标出对应条目。');}));
-el('download-example').addEventListener('click',()=>{const text='航天科普 · 固定演示文本\n尚未执行真实 AI 生成或自动核验\n\n'+el(version).innerText+'\n\n来源：NASA Moon Facts / Orbit and Rotation\nhttps://science.nasa.gov/moon/facts/\n输入资料为中文整理节选，非官方中文原文。';const url=URL.createObjectURL(new Blob([text],{type:'text/plain;charset=utf-8'}));const link=document.createElement('a');link.href=url;link.download=version==='science'?'航天科普-演示.txt':'航天专业摘要-演示.txt';document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);toast('已导出固定示例及来源说明。');});
+function showPage(page) {
+  if (!document.getElementById(page)?.classList.contains('page')) page = 'news';
+  const changed = visiblePage !== page; visiblePage = page;
+  document.querySelectorAll('.page').forEach(node => node.classList.toggle('hidden', node.id !== page));
+  document.querySelectorAll('header nav [data-page]').forEach(node => node.classList.toggle('active', node.dataset.page === page));
+  if (changed) window.scrollTo({top: 0, behavior: 'instant'});
+  document.dispatchEvent(new CustomEvent('pagechange', {detail: page}));
+}
+function navigatePage(page) { if (location.hash === '#' + page) showPage(page); else location.hash = page; }
+document.querySelectorAll('[data-page]').forEach(node => node.addEventListener('click', () => navigatePage(node.dataset.page)));
+document.getElementById('home-link').addEventListener('click', event => { event.preventDefault(); navigatePage('news'); });

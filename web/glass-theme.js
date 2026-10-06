@@ -9,7 +9,7 @@
     root.dataset.reduceTransparency = String(value);
     controls.forEach(control => { control.checked = value; });
   }
-  ['news', 'library'].forEach(id => {
+  ['news', 'library', 'home'].forEach(id => {
     const label = document.createElement('label'), input = document.createElement('input');
     label.className = 'theme-preference'; input.type = 'checkbox';
     label.append(input, document.createTextNode('减少透明效果'));
