@@ -32,5 +32,7 @@ for endpoint in ('/api/health','/api/news?page=1&page_size=10','/api/resources?p
         assert data['page_size']==10 and len(data['items'])<=10
     print(endpoint,{key:data[key] for key in ('status','page','page_size','total','pages','total_pages','enabled') if key in data})
 assert '<title>知航</title>' in (root/'web/index.html').read_text()
+before_flags=json.loads(Path('/tmp/runtime-before.json').read_text())
+assert all(os.environ.get(key)==value for key,value in before_flags.items()), 'Collection flags changed; inspect deployment configuration'
 print('Runtime collection flags:',{k:os.environ.get(k) for k in ('COLLECT_ENABLED','NEWS_THUMBNAILS_ENABLED','GOVERNMENT_FULLTEXT_AUTO')})
 print('RUNTIME_VERIFIED revision='+manifest['revision'])

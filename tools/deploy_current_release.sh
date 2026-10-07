@@ -26,7 +26,7 @@ printf '%s\n' "$old_image" > "$evidence/app-image.txt"
 printf '%s\n' "$old_admin_image" > "$evidence/admin-image.txt"
 docker inspect "$old_app" --format '{{range .Mounts}}{{if eq .Destination "/data"}}{{.Name}}{{end}}{{end}}' > "$evidence/data-volume.txt"
 docker compose config --quiet
-python3 - "$archive" "$evidence/stage" <<'PY'
+python3 - "$archive" "$evidence/stage" "$revision" <<'PY'
 import hashlib,json,sys,tarfile
 from pathlib import Path,PurePosixPath
 root=Path(sys.argv[2])
@@ -43,10 +43,12 @@ with tarfile.open(sys.argv[1]) as tar:
         dest=root/member.name;dest.parent.mkdir(parents=True,exist_ok=True)
         dest.write_bytes(tar.extractfile(member).read())
 manifest=json.loads((root/'release-manifest.json').read_text())
+assert manifest['revision']==sys.argv[3]
 for item in manifest['files']:
     assert hashlib.sha256((root/item['path']).read_bytes()).hexdigest()==item['sha256']
 print('Reviewed snapshot extracted:',manifest['revision'])
 PY
+docker compose exec -T app python -c 'import json,os;print(json.dumps({k:os.getenv(k) for k in ("COLLECT_ENABLED","NEWS_THUMBNAILS_ENABLED","GOVERNMENT_FULLTEXT_AUTO")}))' > "$evidence/runtime-before.json"
 # No configuration or key files are replaced or read into logs.
 tar -czf "$evidence/source-before.tar.gz" backend web admin_web content tools tests Dockerfile requirements.txt compose.yaml
 mutated=0
@@ -107,6 +109,7 @@ test "$admin_status" = healthy
 test "$(docker inspect "$app" --format '{{range .Mounts}}{{if eq .Destination "/data"}}{{.Name}}{{end}}{{end}}')" = "$(cat "$evidence/data-volume.txt")"
 docker cp "$evidence/stage/release-manifest.json" "$app:/tmp/release-manifest.json"
 docker cp "$evidence/data-before/news.sqlite3" "$app:/tmp/news-before.sqlite3"
+docker cp "$evidence/runtime-before.json" "$app:/tmp/runtime-before.json"
 docker compose exec -T app python tools/verify_current_release.py
 if [[ -n "$old_admin" ]]; then
  docker compose --profile review exec -T admin python -c 'import urllib.request; r=urllib.request.urlopen("http://127.0.0.1:8001/health",timeout=10); print("Admin health HTTP",r.status)'
