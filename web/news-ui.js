@@ -100,10 +100,10 @@
     const thumbnail=item.thumbnail;
     if (thumbnail && ['nasa','esa'].includes(item.source_id) &&
         new RegExp('^/api/news/'+Number(item.id)+'/thumbnail\\?v=[a-f0-9]{24}$').test(thumbnail.url) && thumbnail.credit) {
-      const figure=element('figure','news-thumbnail'), image=element('img'),caption=element('figcaption','',thumbnail.credit);
+      const figure=element('figure','news-thumbnail'), media=element('div','news-thumbnail-media'), image=element('img'),caption=element('figcaption','',thumbnail.credit);
       image.src=thumbnail.url;image.alt='';image.loading='lazy';image.decoding='async';
       image.addEventListener('error',()=>{if(figure.parentNode!==row)return;figure.remove();row.classList.remove('has-thumbnail');},{once:true});
-      figure.append(image,caption);
+      media.append(image);figure.append(media,caption);
       const knownRights=new Set(['https://www.nasa.gov/nasa-brand-center/images-and-media/',
         'https://www.esa.int/About_Us/Law_at_ESA/Intellectual_Property_Rights/ESA_copyright_notice',
         'https://creativecommons.org/licenses/by-sa/3.0/igo/']);

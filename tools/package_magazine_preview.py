@@ -21,7 +21,9 @@ def main():
     for item in catalog:
         item['cover_url'] = data_url(web / 'resource-covers' / item['cover_asset']) if item.get('cover_asset') else None
         item['download_url'] = '/api/resources/' + item['id'] + '/download'
-    payload = json.dumps({'articles': ARTICLES, 'sources': SOURCES, 'catalog': catalog}, ensure_ascii=False).replace('<', '\\u003c')
+    snapshot_path=ROOT/'artifacts/magazine-preview/public-news-snapshot.json'
+    snapshot=json.loads(snapshot_path.read_text(encoding='utf-8')) if snapshot_path.is_file() else None
+    payload = json.dumps({'articles': snapshot['articles'] if snapshot else ARTICLES, 'sources': snapshot['sources'] if snapshot else SOURCES, 'catalog': catalog}, ensure_ascii=False).replace('<', '\\u003c')
     script = '''<script>
 const previewData=PAYLOAD;
 window.fetch=async input=>{
@@ -46,6 +48,11 @@ document.addEventListener('click',e=>{const link=e.target.closest('a');if(link&&
     html = re.sub(r'<link rel="preload"[^>]+>', '', html)
     html = html.replace('<body class="editorial-ui">', '<body class="editorial-ui"><div style="padding:8px 20px;background:#10233f;color:#f3f1ea;font-size:12px;text-align:center">新版正式前端 · 离线预览 · 新闻为测试样本，资料为现有目录，未连接百炼</div>' + script)
     html = re.sub(r'<script src="/assets/([^"?]+)(?:\?[^\"]*)?"></script>', lambda m: '<script>' + (web / m[1]).read_text(encoding='utf-8') + '</script>', html)
+    if snapshot:
+        html=html.replace('新闻为测试样本，资料为现有目录','新闻为公开页面的离线样本，资料为现有目录')
+        pictures=json.dumps(snapshot['thumbnails'],ensure_ascii=False).replace('<','\\u003c')
+        html=html.replace('const previewData=','window.previewThumbnails='+pictures+';\nconst previewData=',1)
+        html=html.replace('image.src=thumbnail.url;', 'image.src=(window.previewThumbnails||{})[thumbnail.url]||thumbnail.url;')
     html = re.sub(r'/assets/(brand\.svg|favicon\.svg|earthrise\.jpg|history-[a-z0-9]+\.(?:jpg|png))(?:\?[^\" ]*)?', lambda m: data_url(web / m[1]), html)
     output = ROOT / 'artifacts/magazine-preview/星知航-新版正式前端预览.html'
     output.parent.mkdir(parents=True, exist_ok=True)
