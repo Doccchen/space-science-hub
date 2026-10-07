@@ -41,6 +41,10 @@ def backup(db, destination):
     with closing(sqlite3.connect(saved)) as conn:
         exists = conn.execute("SELECT 1 FROM sqlite_master WHERE name='article_assets'").fetchone()
         rows = conn.execute('SELECT object_key FROM article_assets').fetchall() if exists else []
+        thumbnail_table = conn.execute("SELECT 1 FROM sqlite_master WHERE name='news_thumbnails'").fetchone()
+        if thumbnail_table:
+            rows += conn.execute("SELECT object_key FROM news_thumbnails WHERE object_key IS NOT NULL").fetchall()
+        rows = sorted(set(rows))
     for (key,) in rows:
         source = checked_file(db.parent/'news-images', key)
         target = checked_file(destination/'news-images', key)

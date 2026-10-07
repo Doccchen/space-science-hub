@@ -13,6 +13,7 @@ from . import resources
 from . import reading
 from . import ai
 from . import ai_runtime
+from . import news_policy
 
 ROOT = Path(__file__).resolve().parent.parent
 STATIC = ROOT / "web"
@@ -40,6 +41,8 @@ async def lifespan(app):
     task = asyncio.create_task(scheduled_collection()) if os.environ.get("COLLECT_ENABLED", "1") == "1" else None
     from . import auto_fulltext
     auto_task = asyncio.create_task(auto_fulltext.loop()) if task and os.environ.get('GOVERNMENT_FULLTEXT_AUTO', '1') == '1' else None
+    from . import news_thumbnails
+    thumbnail_task = asyncio.create_task(news_thumbnails.loop()) if task and os.environ.get('NEWS_THUMBNAILS_ENABLED','0')=='1' else None
     yield
     ai_sync.cancel()
     try:
@@ -47,6 +50,10 @@ async def lifespan(app):
     except asyncio.CancelledError:
         pass
     await runtime.close()
+    if thumbnail_task:
+        thumbnail_task.cancel()
+        try: await thumbnail_task
+        except asyncio.CancelledError: pass
     if ai_cleanup:
         ai_cleanup.cancel()
         try:
@@ -108,7 +115,7 @@ def article(response: Response, article_id: int = PathParam(ge=1, le=92233720368
         row = conn.execute("""SELECT a.*,s.name AS source_name,s.region,s.publisher_kind,s.enabled AS source_enabled,
             s.geographic_region,s.country_code FROM articles a
             JOIN sources s ON s.id=a.source_id WHERE a.id=?""", (article_id,)).fetchone()
-        if row is None:
+        if row is None or news_policy.excluded_item(row):
             raise HTTPException(404, "Article not found")
         result = reading.public_rows(conn, [row])[0]
     response.headers['Cache-Control'] = 'no-store'
@@ -118,8 +125,8 @@ def article(response: Response, article_id: int = PathParam(ge=1, le=92233720368
 @app.get('/api/news/{article_id}/content')
 def article_content(response: Response, article_id: int = PathParam(ge=1, le=9223372036854775807)):
     with news.connect() as conn:
-        row = conn.execute('SELECT id,lang,source_id,original_url FROM articles WHERE id=?', (article_id,)).fetchone()
-        if row is None:
+        row = conn.execute('SELECT id,lang,source_id,original_url,title FROM articles WHERE id=?', (article_id,)).fetchone()
+        if row is None or news_policy.excluded_item(row):
             raise HTTPException(404, 'Article not found')
         result = reading.content_with_assets(conn, dict(row), reading.editions(conn, [article_id]).get(article_id))
     response.headers['Cache-Control'] = 'no-store'
@@ -130,9 +137,9 @@ def article_content(response: Response, article_id: int = PathParam(ge=1, le=922
 def article_asset(article_id: int, asset_id: str):
     from . import news_assets, news_image_store
     with news.connect() as conn:
-        item = conn.execute('SELECT id,source_id,original_url,lang FROM articles WHERE id=?', (article_id,)).fetchone()
+        item = conn.execute('SELECT id,source_id,original_url,lang,title FROM articles WHERE id=?', (article_id,)).fetchone()
         edition = reading.editions(conn, [article_id]).get(article_id)
-        if not item or not edition or reading.public_content(dict(item), edition)['reading_mode'] != 'full_text':
+        if not item or news_policy.excluded_item(item) or not edition or reading.public_content(dict(item), edition)['reading_mode'] != 'full_text':
             raise HTTPException(404, 'Image unavailable')
         available = news_assets.available(conn, article_id, edition['version'])
         if not any(asset['id'] == asset_id for asset in available):
@@ -145,6 +152,23 @@ def article_asset(article_id: int, asset_id: str):
     except Exception:
         raise HTTPException(503, 'Image storage temporarily unavailable') from None
     return FileResponse(path, media_type=row['mime'], headers={'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff'})
+
+
+@app.get('/api/news/{article_id}/thumbnail')
+def article_thumbnail(article_id: int, v: str = Query('',max_length=24)):
+    from . import news_thumbnails, news_image_store
+    with news.connect() as db:
+        db.execute('BEGIN')
+        item=db.execute('SELECT * FROM articles WHERE id=?',(article_id,)).fetchone()
+        thumbnail=news_thumbnails.public_thumbnail(db,dict(item)) if item else None
+        if not thumbnail or v and v!=thumbnail['version']:
+            raise HTTPException(404,'Thumbnail unavailable')
+        row=db.execute('SELECT object_key,mime FROM news_thumbnails WHERE article_id=?',(article_id,)).fetchone()
+    try:
+        picture=news_image_store.path(row['object_key'])
+        if not picture.is_file(): raise ValueError('Missing thumbnail')
+    except (ValueError,OSError): raise HTTPException(404,'Thumbnail unavailable') from None
+    return FileResponse(picture,media_type=row['mime'],headers={'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'})
 
 
 @app.get("/")

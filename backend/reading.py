@@ -254,6 +254,8 @@ def public_rows(conn, rows):
     for row in rows:
         item = dict(row)
         content = content_with_assets(conn, item, snapshots.get(item['id']))
+        from . import news_thumbnails
+        item['thumbnail'] = news_thumbnails.public_thumbnail(conn,item)
         item.update(summary='', summary_kind='none', reading_mode=content['reading_mode'],
                     read_scope=content['read_scope'], content_version=content['content_version'],
                     source_reading_policy=content['source_reading_policy'])

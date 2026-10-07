@@ -1,0 +1,97 @@
+[
+  {
+    "id": "earthrise",
+    "image": "/assets/earthrise.jpg",
+    "title": [
+      "换一个视角，",
+      "重新看见地球。"
+    ],
+    "label": "历史影像 / 阿波罗 8 号",
+    "date": "1968.12.24",
+    "description": "1968 年，从月球轨道拍摄的地出照片，让人们看见了升起在月球地平线上的地球。",
+    "alt": "阿波罗8号拍摄的地出：蓝白色地球升起在月球灰色地平线上",
+    "source_url": "https://www.nasa.gov/image-article/apollo-8-astronaut-bill-anders-captures-earthrise/",
+    "credit": "NASA",
+    "license": "NASA 媒体使用规范",
+    "license_url": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+    "changes": "使用 NASA 提供的网页尺寸版本；画面按屏幕比例显示，未改变图中内容。",
+    "position": "50% 57%",
+    "framing": "photo"
+  },
+  {
+    "id": "mengtian",
+    "image": "/assets/history-mengtian.jpg",
+    "title": [
+      "从文昌出发，",
+      "奔向天宫。"
+    ],
+    "label": "历史影像 / 梦天实验舱发射",
+    "date": "2022.10.31",
+    "description": "长征五号系列火箭将梦天实验舱送向太空。这张发射现场照片，记录了中国空间站建设中的一个瞬间。",
+    "alt": "梦天实验舱发射现场：长征火箭从文昌发射塔旁升起，尾部喷出明亮火焰",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Mengtian_launch.jpg",
+    "credit": "Gmandian",
+    "license": "CC0 1.0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "changes": "保留原始文件；画面按屏幕比例显示。",
+    "position": "50% 40%",
+    "framing": "launch"
+  },
+  {
+    "id": "apollo11",
+    "image": "/assets/history-apollo11.jpg",
+    "title": [
+      "点燃引擎，",
+      "向月球出发。"
+    ],
+    "label": "历史影像 / 阿波罗 11 号发射",
+    "date": "1969.07.16",
+    "description": "土星五号火箭从肯尼迪航天中心升空，开启阿波罗 11 号载人登月之旅。",
+    "alt": "阿波罗11号任务的土星五号火箭在发射塔旁升空",
+    "source_url": "https://www.nasa.gov/image-article/apollo-11-lifts-off-3/",
+    "credit": "NASA",
+    "license": "NASA 媒体使用规范",
+    "license_url": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+    "changes": "使用 NASA 提供的网页尺寸版本；画面按屏幕比例显示，未改变图中内容。",
+    "position": "50% 40%",
+    "framing": "launch"
+  },
+  {
+    "id": "tianhe",
+    "image": "/assets/history-tianhe.png",
+    "title": [
+      "在轨道之上，",
+      "建起一个家。"
+    ],
+    "label": "航天图解 / 天和核心舱（示意图）",
+    "date": "2022.04.15 · 创作日期",
+    "description": "天和核心舱的创作者模拟图，展示舱体与太阳能帆板的结构。这是示意图，并非在轨实拍照片。",
+    "alt": "Shujianyang 创作的天和核心舱示意图，包含白色舱体与两侧太阳能帆板",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Tianhe_Core_Module_Rendering_no_background.png",
+    "credit": "Shujianyang",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "changes": "保留原始透明 PNG；等比例置于深色背景，未重绘舱体。图像沿用 CC BY-SA 4.0。",
+    "position": "center",
+    "framing": "illustration"
+  },
+  {
+    "id": "rosetta",
+    "image": "/assets/history-rosetta.jpg",
+    "title": [
+      "追上一颗彗星，",
+      "走近远古世界。"
+    ],
+    "label": "历史影像 / 罗塞塔 NAVCAM",
+    "date": "2014.08.03",
+    "description": "罗塞塔的导航相机在接近途中拍下 67P 彗星。远行的探测器，将这个遥远世界的形状带回地球。",
+    "alt": "罗塞塔导航相机拍摄的67P彗星，明亮的不规则彗核位于黑色太空中",
+    "source_url": "https://www.esa.int/ESA_Multimedia/Images/2014/08/Comet_on_3_August_2014_-_NavCam",
+    "credit": "ESA/Rosetta/NAVCAM",
+    "license": "CC BY-SA 3.0 IGO",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0/igo/",
+    "changes": "采用 ESA 网页版本，画面按屏幕比例显示；图像沿用 CC BY-SA 3.0 IGO。原图已由 ESA 插值放大。",
+    "position": "50% 90%",
+    "framing": "comet"
+  }
+]

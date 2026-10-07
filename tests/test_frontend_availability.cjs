@@ -3,11 +3,11 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
 class Element {
   constructor(tag='div') {
-    this.tagName=tag;this.children=[];this.listeners={};this.dataset={};this.attributes={};this.hidden=false;this.disabled=false;this.value='';
+    this.tagName=tag;this.children=[];this.listeners={};this.dataset=new Proxy({},{set:(target,key,value)=>{target[key]=String(value);return true;}});this.attributes={};this.hidden=false;this.disabled=false;this.value='';
     const names=new Set();this.classList={add:name=>names.add(name),remove:name=>names.delete(name),contains:name=>names.has(name),toggle:(name,on)=>{if(on)names.add(name);else names.delete(name);}};
   }
   append(...nodes){nodes.forEach(n=>{if(n.tagName==='#fragment'){this.append(...[...n.children]);return;}if(n.parent)n.remove();n.parent=this;this.children.push(n);});}
-  replaceChildren(...nodes){this.children=[];this.append(...nodes);}
+  replaceChildren(...nodes){this.children.forEach(node=>{node.parent=null;});this.children=[];this.append(...nodes);}
   add(node){this.append(node);}
   addEventListener(name,fn){(this.listeners[name]??=[]).push(fn);}
   trigger(name,event={}){for(const fn of this.listeners[name]||[])fn(event);}
@@ -19,11 +19,13 @@ class Element {
   }
   querySelector(selector){return this.querySelectorAll(selector)[0];}
   get lastElementChild(){return this.children.at(-1);}
+  get parentNode(){return this.parent;}
+  get childNodes(){return this.children;}
   get options(){return this.children.filter(el=>el.tagName==='option');}
   get selectedOptions(){return this.options.filter(el=>el.value===this.value);}
   replaceWith(node){const parent=this.parent,index=parent.children.indexOf(this);this.remove();parent.children.splice(index,0,node);node.parent=parent;}
   dispatchEvent(event){this.trigger(event.type,event);}
-  remove(){if(this.parent)this.parent.children=this.parent.children.filter(n=>n!==this);}
+  remove(){if(this.parent)this.parent.children=this.parent.children.filter(n=>n!==this);this.parent=null;}
   focus(){this.focused=true;}
 }
 const flush=()=>new Promise(resolve=>setImmediate(resolve));
@@ -77,18 +79,20 @@ async function resourceCovers(){
   console.log('Resource loading/error/no-cover states keep stable download URLs');
 }
 async function newsSources(){
+  const events={};let withThumbnail=false;
   const registry=[];const make=tag=>{const el=new Element(tag);registry.push(el);return el;};
   const page=make('main');page.id='news';const toolbar=make('div');toolbar.className='library-toolbar';toolbar.append(make('span'),make('span'));page.append(toolbar);
   const sources=['nasa','cnsa','cmse','esa','arianespace','spacex','extra'].map(id=>({id,name:id,enabled:id!=='spacex',
     region:'international',publisher_kind:'agency',last_success_at:'2026-10-07T00:00:00Z',last_error:id==='nasa'}));
   const requests=[];
   const context={document:{getElementById:id=>registry.find(el=>el.id===id),createElement:make,createDocumentFragment:()=>make('#fragment'),
-      createTextNode:text=>{const el=make('#text');el.textContent=text;return el;},addEventListener(){}},
+      createTextNode:text=>{const el=make('#text');el.textContent=text;return el;},addEventListener:(name,fn)=>{events[name]=fn;}},
     window:{scrollTo(){}},matchMedia:()=>({matches:false,addEventListener(){}}),AbortSignal,URLSearchParams,URL,Event,
     fetch:async url=>{requests.push(url);return {ok:true,json:async()=>url==='/api/news/sources'?{items:sources,geographic_regions:[]}:
-      {items:[{id:1,title:'保留原文标题',source_name:'nasa',original_url:'https://example.org/1',lang:'en',reading_mode:'link_only',published_at:'2026-10-07T00:00:00Z'}],
-        page:1,page_size:20,total:1,total_pages:1,snapshot:1}};}};
-  vm.runInNewContext(read('news-ui.js'),context);await flush();
+      {items:[{id:1,title:'保留原文标题',source_id:'nasa',source_name:'nasa',original_url:'https://example.org/1',lang:'en',reading_mode:'link_only',published_at:'2026-10-07T00:00:00Z',
+        thumbnail:withThumbnail?{url:'/api/news/1/thumbnail?v='+'a'.repeat(24),credit:'NASA',rights_url:'https://www.nasa.gov/nasa-brand-center/images-and-media/'}:null}],
+        page:1,page_size:10,total:1,total_pages:1,snapshot:1}};}};
+  vm.runInNewContext(read('news-state.js'),context);vm.runInNewContext(read('news-ui.js'),context);await flush();
   const groups=registry.filter(el=>el.className==='news-source-options');
   const radios=()=>groups.flatMap(group=>group.querySelectorAll('input'));
   assert.equal(radios().length,sources.length+1);
@@ -102,6 +106,16 @@ async function newsSources(){
   const linkRows=registry.filter(el=>el.className==='news-article');
   assert.equal(linkRows.at(-1).querySelectorAll('a').length,1);
   assert.equal(linkRows.at(-1).querySelectorAll('a')[0].href,'https://example.org/1');
-  console.log('News progressive source filters retain inactive history, selection and original links');
+  withThumbnail=true;archived.checked=true;archived.trigger('change');await flush();
+  let current=page.querySelectorAll('.news-article')[0];assert.equal(current.querySelectorAll('img').length,1);
+  assert.equal(current.querySelectorAll('figcaption')[0].textContent,'NASA');
+  current.querySelectorAll('img')[0].trigger('error');assert.equal(current.querySelectorAll('img').length,0);
+  assert.equal(current.classList.contains('has-thumbnail'),false);
+  archived.trigger('change');await flush();current=page.querySelectorAll('.news-article')[0];
+  events.readingchange({detail:{id:1,thumbnail:null}});assert.equal(current.querySelectorAll('img').length,0);assert.equal(current.classList.contains('has-thumbnail'),false);
+  assert.equal(current.querySelectorAll('a')[0].href,'https://example.org/1');
+  assert.ok(requests.filter(url=>url.startsWith('/api/news?')).every(url=>new URL(url,'https://example.org').searchParams.get('page_size')==='10'));
+  assert.ok(!registry.some(el=>el.className==='news-list-settings'||el.className==='news-page-size'));
+  console.log('News uses fixed 10-item pages; source filters retain inactive history, selection and original links');
 }
 (async()=>{await aiAvailability();await resourceCovers();await newsSources();})().catch(error=>{console.error(error);process.exitCode=1;});

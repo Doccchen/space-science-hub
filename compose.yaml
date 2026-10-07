@@ -13,6 +13,7 @@ services:
       COLLECT_INTERVAL_SECONDS: ${COLLECT_INTERVAL_SECONDS:-3600}
       COLLECT_ENABLED: "${COLLECT_ENABLED:-1}"
       GOVERNMENT_FULLTEXT_AUTO: ${GOVERNMENT_FULLTEXT_AUTO:-1}
+      NEWS_THUMBNAILS_ENABLED: ${NEWS_THUMBNAILS_ENABLED:-0}
       RESOURCE_OSS_ORIGIN: ${RESOURCE_OSS_ORIGIN:-https://space-hub-pub.oss-cn-chengdu.aliyuncs.com}
       RESOURCES_PATH: ${RESOURCES_PATH:-/app/content/resources.json}
       MANAGEMENT_DB_PATH: /data/site-management.sqlite3

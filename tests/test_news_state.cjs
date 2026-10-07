@@ -17,6 +17,7 @@ assert.equal(merge(list,{id:2,title:'',source_name:null}).title,list.title);
 assert.equal(merge(list,{id:3,reading_mode:'unavailable'}),null);
 assert.equal(merge(list,{id:2,reading_mode:'unavailable',summary:'不得泄露'}).summary,'');
 assert.equal(merge(list,{id:2,reading_mode:'link_only'}).title,list.title);
+assert.equal(merge({...list,thumbnail:{url:'/api/news/2/thumbnail?v=old'}},{id:2,thumbnail:null}).thumbnail,null);
 console.log('News metadata merge regressions passed');
 const preferences = new Map([['space-reduce-transparency','true'],['fixture-retained','keep']]);
 const attributes = new Map([['data-reduce-transparency','true']]);

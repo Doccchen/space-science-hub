@@ -6,6 +6,7 @@
     for (const [name,value] of Object.entries(patch)) {
       if (value !== undefined && value !== null) next[name] = value;
     }
+    if (Object.hasOwn(patch,'thumbnail') && patch.thumbnail !== undefined) next.thumbnail=patch.thumbnail;
     // Empty detail metadata is not evidence that a list title/source disappeared.
     for (const name of ['title','source_name','original_url','source_id','published_at','lang']) {
       if (!next[name] && previous[name]) next[name] = previous[name];

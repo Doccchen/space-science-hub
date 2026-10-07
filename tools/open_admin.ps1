@@ -5,12 +5,18 @@ param(
     [string]$Username = 'root',
     [ValidateRange(1024, 65535)][int]$LocalPort = 18080,
     [ValidateRange(1, 65535)][int]$RemotePort = 8090,
-    [string]$KeyPath = (Join-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) 'GPT.pem')
+    [string]$KeyPath = '',
+    [switch]$Diagnostic
 )
 
 # Local launcher only: no credentials copied, server commands or configuration changes.
 $ErrorActionPreference = 'Stop'
 $projectPath = Split-Path $PSScriptRoot -Parent
+if ([string]::IsNullOrWhiteSpace($KeyPath)) {
+    # Windows PowerShell 5.1 has not populated PSScriptRoot while evaluating
+    # parameter defaults. Resolve it only after parameter binding completes.
+    $KeyPath = Join-Path (Split-Path $projectPath -Parent) 'GPT.pem'
+}
 $stateDirectory = Join-Path $projectPath 'artifacts\admin-tunnel'
 $statePath = Join-Path $stateDirectory ('connection-' + $LocalPort + '.json')
 $stderrPath = Join-Path $stateDirectory ('ssh-' + $LocalPort + '.stderr.log')
@@ -22,8 +28,14 @@ $mutex = $null
 $locked = $false
 
 function Show-Notice([string]$Text) {
+    if ($Diagnostic) { Write-Output $Text; return }
     Add-Type -AssemblyName System.Windows.Forms
     [void][System.Windows.Forms.MessageBox]::Show($Text, '星知航 · 管理后台')
+}
+
+function Open-AdminPage {
+    if ($Diagnostic) { Write-Output ('ADMIN_READY=' + $adminUrl); return }
+    Start-Process -FilePath $adminUrl
 }
 
 function Test-AdminPage {
@@ -73,7 +85,7 @@ try {
 
     if (Test-AdminPage) {
         # Reuse an existing tunnel, including one opened manually; never terminate it.
-        Start-Process -FilePath $adminUrl
+        Open-AdminPage
         exit
     }
     if ($managed) {
@@ -103,7 +115,7 @@ try {
     do {
         if ($sshProcess.HasExited) { break }
         if (Test-AdminPage) {
-            Start-Process -FilePath $adminUrl
+            Open-AdminPage
             exit
         }
         Start-Sleep -Milliseconds 500

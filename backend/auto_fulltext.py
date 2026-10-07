@@ -9,6 +9,7 @@ import time
 from . import news, reading, review_store, review_capture, review_worker
 from .locking import operation_lock
 from .reading_policy import direct_enabled, source_policy
+from . import news_policy
 
 
 def seed(limit=5):
@@ -22,6 +23,7 @@ def seed(limit=5):
           LEFT JOIN article_contents c ON c.article_id=h.article_id AND c.version=h.version
           LEFT JOIN review_drafts d ON d.article_id=a.id
           WHERE s.enabled=1 AND a.source_id IN ('nasa','cnsa','cmse')
+          AND news_is_excluded(a.source_id,a.title,a.original_url)=0
           ORDER BY a.published_at DESC,a.id DESC''').fetchall()
         for item in candidates:
             if added >= limit or source_policy(item['source_id']) != 'government_candidate':
@@ -55,6 +57,8 @@ def seed(limit=5):
 
 
 def process(item, payload):
+    if news_policy.excluded_item(item):
+        return {'skipped':True, 'reason':'excluded_apod'}
     if not direct_enabled() or source_policy(item['source_id']) != 'government_candidate':
         raise ValueError('Government automatic publication disabled')
     document, candidates = review_capture.capture(item, 'government-auto', strict=True)

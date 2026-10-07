@@ -21,12 +21,9 @@
   const desktopFilter = matchMedia('(min-width: 1024px)'); panel.open = desktopFilter.matches;
   desktopFilter.addEventListener('change', event => { panel.open = event.matches; });
   const resultBar = element('div', 'news-results-bar'); resultBar.tabIndex = -1;
-  const sizeLabel = element('label', 'news-page-size', '每页 '), size = element('select');
-  size.setAttribute('aria-label', '每页新闻条数');
-  [10,20,50].forEach(value => { const option = element('option', '', value + ' 条'); option.value = value; size.append(option); });
-  size.value = '20'; sizeLabel.append(size);
+  const PAGE_SIZE = 10;
   const totalDescription = element('span', 'news-result-count'); totalDescription.setAttribute('aria-live', 'polite');
-  resultBar.append(totalDescription, sizeLabel);
+  resultBar.append(totalDescription);
   const pagers = [];
   function makePager(position) {
     const nav = element('nav', 'news-pagination'); nav.setAttribute('aria-label', '新闻分页（' + position + '）');
@@ -49,14 +46,13 @@
   const resultMeta = element('div', 'news-result-meta'), resultActions = element('div', 'news-result-actions');
   const updateDetails = element('details','news-update-details');
   updateDetails.append(element('summary','','更新状态'),toolbar.lastElementChild);
-  const listSettings = element('details','news-list-settings'); listSettings.append(element('summary','','列表设置'),sizeLabel);
-  resultMeta.append(totalDescription,resultLabel,updateDetails); resultActions.append(listSettings); resultBar.append(resultMeta,resultActions);
+  resultMeta.append(totalDescription,resultLabel,updateDetails); resultBar.append(resultMeta,resultActions);
   const layout = element('div','news-layout'), results = element('section','news-results'); results.setAttribute('aria-label','新闻结果');
   results.append(resultBar,status,list,bottomPager); layout.append(panel,results); toolbar.replaceWith(layout);
   let displayedItems = new Map(), sourceSignature = '';
   const categories = [['', '全部'], ['domestic_agency', '国内机构'], ['commercial', '商业航天'], ['international_agency', '国际机构']], buttons = [];
   let source = '', category = '', regionChoice = '', generation = 0, busy = false, sources = [], displayedKey = null, geographicRegions = [];
-  let currentPage = 1, pageSize = 20, displayedSize = 20, totalPages = 1, totalCount = 0, snapshot = null;
+  let currentPage = 1, totalPages = 1, totalCount = 0, snapshot = null;
   const regionFilters = () => ['domestic', 'international'].includes(regionChoice) ? {region: regionChoice} : {geographic_region: regionChoice};
   const key = () => JSON.stringify([category, regionChoice, source]);
   function matches(item) {
@@ -82,8 +78,9 @@
     catch { /* Invalid source links are never inserted as executable URLs. */ }
     link.target = '_blank'; link.rel = 'noopener noreferrer'; return link;
   }
-  function renderItem(item) {
-    const row = element('article', 'news-article'); row.dataset.articleId = item.id;
+  function renderItem(item, existing=null) {
+    const row = existing || element('article', 'news-article');row.replaceChildren();row.classList.remove('has-thumbnail');row.dataset.articleId = item.id;
+    const text=element('div','news-text');
     const meta = element('div', 'news-meta', [item.source_name, publicationDate(item), language(item)].filter(Boolean).join(' · '));
     const canRead = item.reading_mode === 'full_text', heading = element('h2');
     if (canRead) {
@@ -97,9 +94,25 @@
     const information = element('details','news-item-info');
     information.append(element('summary','','来源详情'), element('p','', [kind(item),geography(item),item.source_enabled === 0 ? '采集已停用 · 历史内容' : ''].filter(Boolean).join(' · ')));
     bottom.append(information);
-    row.append(meta, heading);
-    if (canRead && item.summary?.trim()) row.append(element('p', '', item.summary));
-    row.append(bottom); return row;
+    text.append(meta, heading);
+    if (canRead && item.summary?.trim()) text.append(element('p', '', item.summary));
+    text.append(bottom);row.append(text);
+    const thumbnail=item.thumbnail;
+    if (thumbnail && ['nasa','esa'].includes(item.source_id) &&
+        new RegExp('^/api/news/'+Number(item.id)+'/thumbnail\\?v=[a-f0-9]{24}$').test(thumbnail.url) && thumbnail.credit) {
+      const figure=element('figure','news-thumbnail'), image=element('img'),caption=element('figcaption','',thumbnail.credit);
+      image.src=thumbnail.url;image.alt='';image.loading='lazy';image.decoding='async';
+      image.addEventListener('error',()=>{if(figure.parentNode!==row)return;figure.remove();row.classList.remove('has-thumbnail');},{once:true});
+      figure.append(image,caption);
+      const knownRights=new Set(['https://www.nasa.gov/nasa-brand-center/images-and-media/',
+        'https://www.esa.int/About_Us/Law_at_ESA/Intellectual_Property_Rights/ESA_copyright_notice',
+        'https://creativecommons.org/licenses/by-sa/3.0/igo/']);
+      if(knownRights.has(thumbnail.rights_url)){
+        const rights=element('a','',thumbnail.rights_kind==='cc_by_sa_3_igo'?'CC BY-SA 3.0 IGO':'使用说明');rights.href=thumbnail.rights_url;rights.target='_blank';rights.rel='noopener noreferrer';caption.append(document.createTextNode(' · '),rights);
+      }
+      row.classList.add('has-thumbnail');row.append(figure);
+    }
+    return row;
   }
   async function getJSON(path) {
     const response = await fetch(path, {signal: AbortSignal.timeout(15000)});
@@ -146,7 +159,6 @@
   }
   function renderPagination() {
     const blocked = busy || displayedKey !== key();
-    size.value = String(pageSize); size.disabled = busy;
     totalDescription.textContent = displayedKey === null ? '正在读取结果…' : totalCount ? '共 ' + totalCount + ' 条 · 当前第 ' + currentPage + ' 页' : '共 0 条';
     list.setAttribute('aria-busy', String(busy));
     refresh.disabled = busy;
@@ -170,11 +182,11 @@
   async function load(reset = false, targetPage = currentPage, scrollAfter = false) {
     if (busy && !reset) return;
     if (!reset && displayedKey !== key()) return;
-    const request = ++generation, requestKey = key(), requestedSize = pageSize;
+    const request = ++generation, requestKey = key();
     let succeeded = false;
     busy = true; renderPagination();
     status.textContent = displayedKey && displayedKey !== requestKey ? '正在切换筛选，下方暂为上一筛选结果…' : '正在读取已入库的新闻…';
-    const params = new URLSearchParams({page: String(reset ? 1 : targetPage), page_size: String(requestedSize)});
+    const params = new URLSearchParams({page: String(reset ? 1 : targetPage), page_size: String(PAGE_SIZE)});
     if (!reset && snapshot !== null) params.set('snapshot', snapshot);
     if (source) params.set('source', source); if (category) params.set('category', category);
     if (category === 'commercial' && regionChoice) { const filter = regionFilters(); Object.entries(filter).forEach(([name, value]) => params.set(name, value)); }
@@ -184,7 +196,7 @@
       sources = state.items; geographicRegions = state.geographic_regions || []; renderRegion(); renderSelect(); const fragment = document.createDocumentFragment(); data.items.forEach(item => fragment.append(renderItem(item)));
       list.replaceChildren(fragment);
       displayedItems = new Map(data.items.map(item=>[String(item.id),item]));
-      currentPage = data.page; pageSize = displayedSize = data.page_size; totalPages = data.total_pages; totalCount = data.total; snapshot = data.snapshot;
+      currentPage = data.page; totalPages = data.total_pages; totalCount = data.total; snapshot = data.snapshot;
       displayedKey = requestKey; renderSources(sources);updateDetails.classList.toggle('has-warning', sources.filter(matches).filter(item=>!source||item.id===source).some(item=>item.enabled&&item.last_error));
       resultLabel.textContent = '当前结果：' + categories.find(([id]) => id === category)[1] + (source ? ' / ' + (sources.find(item => item.id === source)?.name || '所选来源') : '');
       if (regionChoice) resultLabel.textContent += ' / ' + regionSelect.selectedOptions[0].textContent;
@@ -194,7 +206,6 @@
       if (scrollAfter) window.scrollTo({top: window.scrollY + resultBar.getBoundingClientRect().top - 24, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth'});
     } catch (error) {
       if (request !== generation) return;
-      if (displayedKey === requestKey) pageSize = displayedSize;
       status.textContent = error.message === 'pagination_unavailable' ? '当前服务器尚未支持页码分页，请更新服务器版本。' :
         list.children.length ? '分页读取失败，保留当前页内容。请重试。' : '当前筛选读取失败，请刷新重试。';
     } finally { if (request === generation) { busy = false; renderPagination(); if (scrollAfter && succeeded) resultBar.focus({preventScroll:true}); } }
@@ -208,7 +219,6 @@
   regionSelect.addEventListener('change', () => { regionChoice = regionSelect.value; source = ''; renderSelect(); load(true); });
   const refresh = element('button', 'refresh-news', '刷新列表 ↻'); refresh.addEventListener('click', () => load(true)); resultActions.append(refresh);
   reset.addEventListener('click',()=>{category='';source='';regionChoice='';buttons.forEach(item=>{item.node.classList.toggle('active',item.id==='');item.node.setAttribute('aria-pressed',String(item.id===''));});renderRegion();renderSelect();load(true);});
-  size.addEventListener('change', () => { pageSize = Number(size.value); load(displayedKey !== key(), 1, true); });
   renderRegion(); renderSelect(); renderPagination(); load(true);
   document.addEventListener('readingchange', event => {
     const patch = event.detail, previous = displayedItems.get(String(patch?.id));
@@ -218,8 +228,8 @@
     if (!row) return;
     displayedItems.set(String(item.id),item);
     const fields=['title','source_name','published_at','reading_mode','summary','original_url','availability'];
-    if (fields.every(name=>previous[name]===item[name])) return;
-    const updated = renderItem(item); row.replaceChildren(...updated.childNodes);
+    if (fields.every(name=>previous[name]===item[name])&&JSON.stringify(previous.thumbnail)===JSON.stringify(item.thumbnail)) return;
+    renderItem(item,row);
   });
   window.newsList = {item(id) { const item=displayedItems.get(String(id));return item?{...item}:null; }};
 })();

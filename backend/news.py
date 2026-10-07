@@ -14,6 +14,7 @@ from pathlib import Path
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 from .sources import SOURCES, CATEGORIES, GEOGRAPHIC_REGIONS
 from .locking import operation_lock
+from . import news_policy
 
 import feedparser
 import httpx
@@ -77,6 +78,7 @@ def canonical_url(value):
 def connect():
     conn = sqlite3.connect(DB_PATH, timeout=10)
     conn.row_factory = sqlite3.Row
+    conn.create_function('news_is_excluded', 3, news_policy.excluded, deterministic=True)
     conn.execute("PRAGMA foreign_keys=ON")
     try:
         with conn:
@@ -179,6 +181,8 @@ def _initialize():
         reading.migrate(conn)
         from . import review_store
         review_store.migrate(conn)
+        from . import news_thumbnails
+        news_thumbnails.migrate(conn)
         conn.execute('PRAGMA user_version=5')
 
 
@@ -188,11 +192,16 @@ def parse_feed(source_id, raw):
         raise ValueError("Response is not a recognized RSS/Atom feed")
     records = []
     rejected = 0
+    filtered = 0
     for entry in feed.entries:
         url = entry.get("link", "")
         title = text(entry.get("title"), 400)
         if not title or not allowed_url(url, SOURCES[source_id]["domain"]):
             rejected += 1
+            continue
+        if news_policy.excluded(source_id, title, url):
+            rejected += 1
+            filtered += 1
             continue
         published = entry.get("published_parsed")
         date_status = "provided" if published else "missing"
@@ -210,7 +219,7 @@ def parse_feed(source_id, raw):
                         'summary_kind': 'source_summary' if summary else 'none',
                         'published_precision': 'second' if date else 'missing',
                         'published_raw': entry.get('published'), 'published_origin': 'feed', 'content_source': None})
-    if feed.entries and not records:
+    if feed.entries and not records and not filtered:
         raise ValueError("Feed contained no acceptable entries")
     return records, rejected
 
@@ -219,6 +228,8 @@ def store_records(records):
     stamp = now()
     with connect() as conn:
         for record in records:
+            if news_policy.excluded_item(record):
+                continue
             conn.execute("""INSERT INTO articles(source_id,source_item_id,canonical_url,original_url,
               title,summary,published_at,date_status,first_seen_at,last_seen_at,content_hash,
               lang,summary_kind,content_source,published_precision,published_raw,published_origin,
@@ -361,7 +372,7 @@ def list_articles(source=None, cursor=None, limit=20, category=None, region=None
     elif snapshot is not None:
         raise ValueError('Snapshot requires page pagination')
     source, category, region, geographic_region = source or None, category or None, region or None, geographic_region or None
-    clauses, args = [], []
+    clauses, args = ['news_is_excluded(a.source_id,a.title,a.original_url)=0'], []
     if region:
         if region not in {'domestic', 'international'}:
             raise ValueError('Unknown publisher region')

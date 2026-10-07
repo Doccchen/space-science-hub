@@ -6,11 +6,13 @@ import http.client
 import ipaddress
 import socket
 import ssl
+import re
 import time
 from urllib.parse import urlsplit, urljoin
 from urllib.robotparser import RobotFileParser
 
-HOSTS = {'nasa': {'www.nasa.gov', 'science.nasa.gov'},
+HOSTS = {'nasa': {'www.nasa.gov', 'science.nasa.gov', 'images-assets.nasa.gov'},
+         'esa': {'www.esa.int', 'esa.int'},
          'cnsa': {'www.cnsa.gov.cn', 'cnsa.gov.cn'},
          'cmse': {'www.cmse.gov.cn', 'cmse.gov.cn'}}
 
@@ -24,9 +26,21 @@ def checked_url(source, url, *, image=False, robots=False):
     if len(url) > 2048 or '\\' in url or '%' in parsed.path or '..' in parsed.path:
         raise ValueError('Unreviewed publisher path')
     if source == 'nasa' and not robots:
+        if parsed.hostname == 'images-assets.nasa.gov':
+            if not image or parsed.scheme != 'https' or parsed.port not in {None,443} or not re.fullmatch(
+                    r'/image/[A-Za-z0-9_-]{1,120}/[A-Za-z0-9._~-]{1,200}\.(?:jpe?g|png|webp)', parsed.path,re.I):
+                raise ValueError('Unreviewed NASA image library path')
+            return parsed
         prefixes = ('/wp-content/uploads/', '/system/resources/', '/content/dam/') if image else ('/news-release/', '/image-article/', '/missions/', '/centers-and-facilities/', '/blog/', '/science-research/')
-        if not parsed.path.startswith(prefixes):
+        earth_article = not image and parsed.hostname == 'science.nasa.gov' and parsed.path.startswith('/earth/earth-observatory/')
+        if not parsed.path.startswith(prefixes) and not earth_article:
             raise ValueError('Unreviewed NASA path')
+    if source == 'esa' and not robots:
+        prefixes = ('/var/esa/storage/images/', '/var/esa/storage/cache/images/') if image else (
+            '/ESA_Multimedia/Images/', '/Science_Exploration/', '/Applications/', '/Enabling_Support/',
+            '/About_Us/', '/Newsroom/', '/Space_Safety/')
+        if not parsed.path.startswith(prefixes):
+            raise ValueError('Unreviewed ESA path')
     return parsed
 
 
@@ -88,7 +102,10 @@ class Publisher:
                 if response.status in {301, 302, 303, 307, 308}:
                     url = urljoin(url, response.getheader('Location', ''))
                     continue
-                if response.status == 404 and robots:
+                # RFC 9309 section 2.3.1.3: unavailable robots (4xx) may
+                # permit crawling. Keep rate limiting (429) fail-closed.
+                # This never changes handling of a denied article/image.
+                if robots and 400 <= response.status < 500 and response.status != 429:
                     return b'', 'text/plain'
                 if response.status != 200:
                     raise ValueError(f'Publisher HTTP {response.status}; no bypass attempted')
