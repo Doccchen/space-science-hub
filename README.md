@@ -10,12 +10,12 @@
 
 ## 功能概览
 
-| 模块 | 功能 |
-| --- | --- |
-| 航天新闻 | 采集已批准的官方来源；按类别、地区、来源筛选；分页浏览；展示来源与发布时间 |
-| 新闻阅读 | 按来源策略提供政府新闻全文弹窗或原文链接；支持受控新闻图片展示 |
-| AI 问答 | 调用百炼知识库服务；支持独立提问、有限追问、新对话、本次检索资料展示与额度限制 |
-| 资料下载 | 搜索、分类、分页和静态封面；PDF 由 OSS 直接下载，当前目录有 28 份资料 |
+| 模块     | 功能                                                                                       |
+| -------- | ------------------------------------------------------------------------------------------ |
+| 航天新闻 | 采集已批准的官方来源；按类别、地区、来源筛选；分页浏览；展示来源与发布时间                 |
+| 新闻阅读 | 按来源策略提供政府新闻全文弹窗或原文链接；支持受控新闻图片展示                             |
+| AI 问答  | 调用百炼知识库服务；支持独立提问、有限追问、新对话、本次检索资料展示与额度限制             |
+| 资料下载 | 搜索、分类、分页和静态封面；PDF 由 OSS 直接下载，当前目录有 28 份资料                      |
 | 私有管理 | 独立资料管理与 AI 设置；支持修订恢复、加密 Key、配置应用及受限测试；新闻审核管理入口已退役 |
 
 AI 问答基于独立知识库，不自动携带新闻内容。“本次检索资料”展示实际返回的资料信息，不表示回答的每一句都已经核实。资料页不提供在线 PDF 预览。
@@ -45,16 +45,16 @@ FastAPI 应用容器（单 worker）
 
 ### 软件依赖
 
-| 用途 | 依赖 |
-| --- | --- |
-| 容器部署 | Docker Engine、Docker Compose v2；宿主机无需安装 Python 或 Node.js |
-| 本地运行 | Python 3.12、pip、虚拟环境 |
-| 后端服务 | FastAPI、Uvicorn、Pydantic |
-| 新闻采集与解析 | httpx、feedparser、Beautiful Soup |
-| 图片处理 | Pillow |
-| 后台密钥加密 | cryptography / Fernet；主密钥不进入数据卷或 Git |
-| 前端运行 | 支持现代 JavaScript 的浏览器；无需 npm 构建 |
-| 开发检查 | Python unittest；前端状态回归测试另需 Node.js |
+| 用途           | 依赖                                                               |
+| -------------- | ------------------------------------------------------------------ |
+| 容器部署       | Docker Engine、Docker Compose v2；宿主机无需安装 Python 或 Node.js |
+| 本地运行       | Python 3.12、pip、虚拟环境                                         |
+| 后端服务       | FastAPI、Uvicorn、Pydantic                                         |
+| 新闻采集与解析 | httpx、feedparser、Beautiful Soup                                  |
+| 图片处理       | Pillow                                                             |
+| 后台密钥加密   | cryptography / Fernet；主密钥不进入数据卷或 Git                    |
+| 前端运行       | 支持现代 JavaScript 的浏览器；无需 npm 构建                        |
+| 开发检查       | Python unittest；前端状态回归测试另需 Node.js                      |
 
 完整运行依赖及固定版本见 [requirements.txt](requirements.txt)。Docker 构建会自动安装它们；测试工具不属于生产运行依赖。
 
@@ -109,7 +109,8 @@ AI_ENABLED=0
 docker compose config --quiet
 docker compose build app
 install -d -m 700 -o 10001 -g 10001 secrets
-docker run --rm --user 10001:10001 --mount type=bind,src="$PWD/secrets",dst=/secrets   space-news-app python tools/ai_manage.py generate-key --output /secrets/site-management.key
+docker run --rm --user 10001:10001 --mount type=bind,src="$PWD/secrets",dst=/secrets \
+  space-news-app python tools/ai_manage.py generate-key --output /secrets/site-management.key
 docker compose up -d --no-build app
 docker compose ps
 curl -fsS http://127.0.0.1:8080/api/health
@@ -161,32 +162,32 @@ curl -fsS http://127.0.0.1:8080/api/ai/status
 
 完整示例见 [.env.example](.env.example)，容器实际接收的变量见 [compose.yaml](compose.yaml)。
 
-| 变量 | 默认值 | 说明 |
-| --- | --- | --- |
-| `BIND_ADDRESS` | `127.0.0.1` | 宿主机监听地址；公网直连时设为 `0.0.0.0` |
-| `WEB_PORT` | `8080` | 宿主机网站端口 |
-| `PYTHON_IMAGE` | `python:3.12-slim` | 构建基础镜像 |
-| `PIP_INDEX_URL` | `https://pypi.org/simple` | 构建时依赖下载源 |
-| `COLLECT_ENABLED` | `1` | 是否启用定时采集；`0` 用于关闭采集的离线运行 |
-| `COLLECT_INTERVAL_SECONDS` | `3600` | 采集间隔秒数；代码将最小间隔限制为 300 秒 |
-| `GOVERNMENT_FULLTEXT_AUTO` | `1` | 政府来源自动全文处理 |
-| `RESOURCE_OSS_ORIGIN` | 现有 OSS 地址 | 资料下载存储来源；对象清单仍需匹配 |
-| `RESOURCES_PATH` | `/app/content/resources.json` | 首次迁移源目录；启用管理库后由数据库提供资料 |
-| `MANAGEMENT_DB_PATH` | `/data/site-management.sqlite3` | app/admin 共用的管理库 |
-| `AI_MASTER_KEY_FILE` | `/run/secrets/site-management.key` | 独立解密主密钥，只读挂载，不能提交 Git |
-| `AI_ENABLED` | `0` | 是否启用知识库问答 |
-| `DASHSCOPE_API_KEY` | 空 | 百炼密钥，仅服务器使用 |
-| `BAILIAN_WORKSPACE_ID` / `BAILIAN_AGENT_ID` | 现有服务示例值 | 业务空间与已发布服务标识 |
-| `AI_CONFIG_VERSION` | `1` | AI 服务配置版本标识 |
-| `AI_COOKIE_SECURE` | `0` | HTTPS 部署时设为 `1` |
-| `AI_TIMEOUT_SECONDS` | `60` | 上游回答超时秒数 |
-| `AI_CONCURRENCY` | `2` | AI 并发限制；代码最大允许 4 |
-| `AI_VISITOR_DAILY_LIMIT` | `20` | 单访客每日问答次数 |
-| `AI_IP_DAILY_LIMIT` | `30` | 单连接 IP 每日问答次数 |
-| `AI_SITE_DAILY_LIMIT` | `100` | 全站每日问答次数 |
-| `AI_DAILY_TOKEN_LIMIT` | `200000` | 网站每日 token 控制阈值 |
-| `AI_TOKEN_RESERVATION` | `20000` | 每次调用前预留的 token 额度 |
-| `ADMIN_ORIGIN` | `http://127.0.0.1:18080` | 私有管理页面预期访问来源 |
+| 变量                                        | 默认值                             | 说明                                         |
+| ------------------------------------------- | ---------------------------------- | -------------------------------------------- |
+| `BIND_ADDRESS`                              | `127.0.0.1`                        | 宿主机监听地址；公网直连时设为 `0.0.0.0`     |
+| `WEB_PORT`                                  | `8080`                             | 宿主机网站端口                               |
+| `PYTHON_IMAGE`                              | `python:3.12-slim`                 | 构建基础镜像                                 |
+| `PIP_INDEX_URL`                             | `https://pypi.org/simple`          | 构建时依赖下载源                             |
+| `COLLECT_ENABLED`                           | `1`                                | 是否启用定时采集；`0` 用于关闭采集的离线运行 |
+| `COLLECT_INTERVAL_SECONDS`                  | `3600`                             | 采集间隔秒数；代码将最小间隔限制为 300 秒    |
+| `GOVERNMENT_FULLTEXT_AUTO`                  | `1`                                | 政府来源自动全文处理                         |
+| `RESOURCE_OSS_ORIGIN`                       | 现有 OSS 地址                      | 资料下载存储来源；对象清单仍需匹配           |
+| `RESOURCES_PATH`                            | `/app/content/resources.json`      | 首次迁移源目录；启用管理库后由数据库提供资料 |
+| `MANAGEMENT_DB_PATH`                        | `/data/site-management.sqlite3`    | app/admin 共用的管理库                       |
+| `AI_MASTER_KEY_FILE`                        | `/run/secrets/site-management.key` | 独立解密主密钥，只读挂载，不能提交 Git       |
+| `AI_ENABLED`                                | `0`                                | 是否启用知识库问答                           |
+| `DASHSCOPE_API_KEY`                         | 空                                 | 百炼密钥，仅服务器使用                       |
+| `BAILIAN_WORKSPACE_ID` / `BAILIAN_AGENT_ID` | 现有服务示例值                     | 业务空间与已发布服务标识                     |
+| `AI_CONFIG_VERSION`                         | `1`                                | AI 服务配置版本标识                          |
+| `AI_COOKIE_SECURE`                          | `0`                                | HTTPS 部署时设为 `1`                         |
+| `AI_TIMEOUT_SECONDS`                        | `60`                               | 上游回答超时秒数                             |
+| `AI_CONCURRENCY`                            | `2`                                | AI 并发限制；代码最大允许 4                  |
+| `AI_VISITOR_DAILY_LIMIT`                    | `20`                               | 单访客每日问答次数                           |
+| `AI_IP_DAILY_LIMIT`                         | `30`                               | 单连接 IP 每日问答次数                       |
+| `AI_SITE_DAILY_LIMIT`                       | `100`                              | 全站每日问答次数                             |
+| `AI_DAILY_TOKEN_LIMIT`                      | `200000`                           | 网站每日 token 控制阈值                      |
+| `AI_TOKEN_RESERVATION`                      | `20000`                            | 每次调用前预留的 token 额度                  |
+| `ADMIN_ORIGIN`                              | `http://127.0.0.1:18080`           | 私有管理页面预期访问来源                     |
 
 Compose 固定将新闻库和 AI 库放在 `/data/news.sqlite3`、`/data/ai.sqlite3`，并挂载 `news-data` 命名卷。`.env` 由 Compose 读取并替换配置；本地直接运行 Python 时不会自动加载 `.env`。
 
@@ -282,15 +283,15 @@ ssh -L 18080:127.0.0.1:8090 <用户名>@<服务器地址>
 
 迁移需要 **程序、私有配置、持久数据** 三部分。Docker 镜像包含应用及静态资源，不包含 `.env`、数据卷、OSS PDF 或百炼知识库。
 
-| 内容 | 迁移方式 |
-| --- | --- |
-| 源码与部署配置 | 上传当前完整版本，在新服务器构建 |
-| `.env` | 通过私有通道传输，保持权限 600，按新入口调整配置 |
-| `/data` 持久卷 | 停止所有写入后完整备份和恢复，包含新闻、AI、管理三个 SQLite 库、启用标记及新闻图片 |
-| 独立主密钥 | 单独通过私有通道备份/恢复，容器只读挂载；不能重新生成代替原密钥 |
-| OSS PDF | 继续使用原 Bucket 时无需搬动；更换时同步对象并更新资料目录 |
-| 百炼服务与知识库 | 继续使用原服务时无需搬动；更换账户时重新发布服务并更新标识与密钥 |
-| 域名与证书 | 在新服务器重新配置代理、证书、DNS 和防火墙 |
+| 内容             | 迁移方式                                                                           |
+| ---------------- | ---------------------------------------------------------------------------------- |
+| 源码与部署配置   | 上传当前完整版本，在新服务器构建                                                   |
+| `.env`           | 通过私有通道传输，保持权限 600，按新入口调整配置                                   |
+| `/data` 持久卷   | 停止所有写入后完整备份和恢复，包含新闻、AI、管理三个 SQLite 库、启用标记及新闻图片 |
+| 独立主密钥       | 单独通过私有通道备份/恢复，容器只读挂载；不能重新生成代替原密钥                    |
+| OSS PDF          | 继续使用原 Bucket 时无需搬动；更换时同步对象并更新资料目录                         |
+| 百炼服务与知识库 | 继续使用原服务时无需搬动；更换账户时重新发布服务并更新标识与密钥                   |
+| 域名与证书       | 在新服务器重新配置代理、证书、DNS 和防火墙                                         |
 
 ### 停机备份与恢复示例
 
@@ -347,16 +348,16 @@ curl -fsS http://127.0.0.1:8080/api/ai/status
 
 ## 常见问题
 
-| 现象 | 检查方向 |
-| --- | --- |
-| 网站无法从外部打开 | 默认仅绑定 `127.0.0.1`；检查监听地址、端口、SSH 转发、防火墙和安全组 |
-| 首次新闻数量为 0 | 等待首轮采集，查看 app 日志及来源网络；上游失败不等于数据库损坏 |
-| AI 页面显示未开放 | `.env` 是否设置 `AI_ENABLED=1`，修改后是否更新容器配置 |
-| AI 提示服务配置不可用 | Key 权限、北京业务空间 ID、已发布服务 ID和关联知识库是否匹配 |
-| PDF 下载失败 | OSS 对象是否存在、可访问，资料目录与存储来源是否一致 |
-| 重建后出现空数据库 | Compose 项目名、实际挂载卷是否改变；不要先删除旧卷 |
-| 镜像构建失败 | 基础镜像及 Python 包索引可达性，固定依赖能否安装 |
-| 管理服务找不到镜像 | 是否构建了 Compose 引用的 `space-news-app` 镜像 |
+| 现象                  | 检查方向                                                             |
+| --------------------- | -------------------------------------------------------------------- |
+| 网站无法从外部打开    | 默认仅绑定 `127.0.0.1`；检查监听地址、端口、SSH 转发、防火墙和安全组 |
+| 首次新闻数量为 0      | 等待首轮采集，查看 app 日志及来源网络；上游失败不等于数据库损坏      |
+| AI 页面显示未开放     | 已初始化后台时检查已应用配置；未初始化时检查环境 AI_ENABLED               |
+| AI 提示服务配置不可用 | Key 权限、北京业务空间 ID、已发布服务 ID和关联知识库是否匹配         |
+| PDF 下载失败          | OSS 对象是否存在、可访问，资料目录与存储来源是否一致                 |
+| 重建后出现空数据库    | Compose 项目名、实际挂载卷是否改变；不要先删除旧卷                   |
+| 镜像构建失败          | 基础镜像及 Python 包索引可达性，固定依赖能否安装                     |
+| 管理服务找不到镜像    | 是否构建了 Compose 引用的 `space-news-app` 镜像                      |
 
 ## 项目目录
 
