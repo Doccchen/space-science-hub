@@ -7,6 +7,7 @@ import tarfile
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parent.parent
+DOCKER_EXCLUDED={'content/reading/nasa-model-wing-guide.json','tools/preview_admin.py','tools/preview_ai.py','tools/preview_frontend.py'}
 
 
 def main():
@@ -18,6 +19,7 @@ def main():
         for item in archive.getmembers():
             if item.isdir():continue
             if not item.isfile():raise ValueError('Unexpected non-file: '+item.name)
+            if item.name in DOCKER_EXCLUDED:continue
             files[item.name]=archive.extractfile(item).read()
     forbidden={'.env','secrets','data','artifacts','.venv','.git'}
     assert all(not forbidden.intersection(Path(name).parts) and not name.endswith(('.pem','.sqlite3','.db')) for name in files)
