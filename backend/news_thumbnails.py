@@ -26,6 +26,26 @@ RIGHTS = {
 # NASA source: https://www.nasa.gov/people/jessica-u-meir/
 NASA_REVIEWED_CREDITS = {'nasa', 'nasa/jessica meir'}
 
+# Individually checked NASA releases, not a general NASA/* contributor wildcard.
+# Source and supporting attribution evidence: docs/deployment/NASA历史配图署名修复-20261007.md
+NASA_REVIEWED_ARTICLE_CREDITS = {
+    '/news-release/la-nasa-abre-solicitudes-para-proxima-promocion-de-directores-de-vuelo':'nasa/robert markowitz',
+    '/image-article/nasas-davinci-probe-can-stand-the-heat':'nasa/mike guinto',
+    '/news-release/nasa-astronaut-christina-koch-to-join-nfl-fans-in-philadelphia':'nasa/john kraus',
+    '/image-article/nasa-testing-aims-at-supercooled-large-droplet-aviation-safety':'nasa/quentin schwinn',
+    '/image-article/nasa-astronaut-christina-koch-at-eagles-vs-rams':'nasa/thalia patrinos',
+    '/news-release/nasa-to-stream-spacex-crew-12-return-splashdown-live':'nasa/anil menon',
+}
+_CREDIT_LABEL=r'(?:image\s+credits?|credits?|cr[eé]ditos?|photo)'
+
+
+def reviewed_nasa_credit(url, credit):
+    if credit.casefold() in NASA_REVIEWED_CREDITS:
+        return True
+    parsed=urlsplit(url)
+    return (parsed.scheme=='https' and parsed.hostname=='www.nasa.gov'
+            and NASA_REVIEWED_ARTICLE_CREDITS.get(parsed.path.rstrip('/'))==credit.casefold())
+
 
 def migrate(db):
     db.execute('''CREATE TABLE IF NOT EXISTS news_thumbnails(article_id INTEGER PRIMARY KEY REFERENCES articles(id),
@@ -61,11 +81,14 @@ def parse_candidates(source, url, raw):
         credit_node=figure.select_one('.hds-credits, .credits, .credit, [data-credit]')
         if credit_node is None:
             caption_node=figure.find('figcaption')
-            if caption_node and re.fullmatch(r'(?:image\s+credits?|credits?|photo)\s*:\s*(?:NASA|ESA)',caption_node.get_text(' ',strip=True),re.I):
-                credit_node=caption_node
-        if credit_node is None:
-            continue
-        credit=credit_node.get_text(' ',strip=True).strip()
+            caption_credit=re.search(_CREDIT_LABEL+r'\s*:\s*(?:NASA(?:/[^:;\n]{1,100})?|ESA)\s*$',
+                                     caption_node.get_text(' ',strip=True),re.I) if caption_node else None
+            if caption_credit:
+                credit=caption_credit.group(0).strip()
+            else:
+                continue
+        else:
+            credit=credit_node.get_text(' ',strip=True).strip()
         if not credit or len(credit)>300:
             continue
         caption=figure.get_text(' ',strip=True)+' '+str(image.get('alt',''))
@@ -74,10 +97,10 @@ def parse_candidates(source, url, raw):
         if re.search(r'courtesy|all rights reserved|getty|shutterstock|\bcopyright\b|\blogo\b|\binsignia\b|\blogotype\b',caption,re.I):
             continue
         rights_kind=None
-        canonical_credit=re.sub(r'^(?:image\s+credits?|credits?|photo)\s*:\s*','',credit,flags=re.I).strip()
+        canonical_credit=re.sub(r'^'+_CREDIT_LABEL+r'\s*:\s*','',credit,flags=re.I).strip()
         canonical_credit=canonical_credit.removeprefix('©').strip()
         licenses={a.get('href','').rstrip('/') for a in figure.select('a[href]') if 'creativecommons.org/licenses/' in a.get('href','')}
-        if source=='nasa' and canonical_credit.casefold() in NASA_REVIEWED_CREDITS:
+        if source=='nasa' and reviewed_nasa_credit(url,canonical_credit):
             if licenses:
                 continue
             rights_kind='nasa_guidelines'

@@ -49,6 +49,24 @@ class Thumbnails(unittest.TestCase):
         logo=b'<figure><img alt="NASA logo" src="/wp-content/uploads/logo.png"><span class="hds-credits">NASA</span><figcaption>NASA logo</figcaption></figure>'
         self.assertEqual(thumbnails.parse_candidates('nasa','https://www.nasa.gov/news-release/test/',logo),[])
 
+    def test_reviewed_historical_credits_are_bound_to_the_specific_release(self):
+        for path,credit in thumbnails.NASA_REVIEWED_ARTICLE_CREDITS.items():
+            raw=f'<div class="hds-media"><figure><img src="/wp-content/uploads/test.png"></figure><figcaption><span class="hds-credits">Credit: {credit}</span></figcaption></div>'.encode()
+            parsed=thumbnails.parse_candidates('nasa','https://www.nasa.gov'+path+'/',raw)
+            self.assertEqual(len(parsed),1,path)
+            self.assertEqual(parsed[0]['credit'],'Credit: '+credit)
+            self.assertEqual(thumbnails.parse_candidates('nasa','https://www.nasa.gov/news-release/unreviewed/',raw),[])
+            self.assertEqual(thumbnails.parse_candidates('nasa','https://evil.test'+path+'/',raw),[])
+
+    def test_spanish_caption_credit_is_separated_from_description(self):
+        url='https://www.nasa.gov/news-release/la-nasa-abre-solicitudes-para-proxima-promocion-de-directores-de-vuelo/'
+        raw='<div class="hds-media"><figure><img src="/wp-content/uploads/flight-directors.jpg"></figure><figcaption><div class="hds-caption-text">El equipo de control de vuelo. Crédito: NASA/Robert Markowitz</div></figcaption></div>'.encode()
+        parsed=thumbnails.parse_candidates('nasa',url,raw)
+        self.assertEqual(len(parsed),1)
+        self.assertEqual(parsed[0]['credit'],'Crédito: NASA/Robert Markowitz')
+        for replacement in ('NASA/Unknown Person','NASA/Getty Images','NASA, ESA, Leah Hustak (STScI)'):
+            self.assertEqual(thumbnails.parse_candidates('nasa',url,raw.replace(b'NASA/Robert Markowitz',replacement.encode())),[])
+
     def test_esa_standard_and_explicit_figure_cc_licence_remain_distinct(self):
         root='<figure><img src="/var/esa/storage/images/test.png"><span class="credit">ESA</span>{}</figure>'
         for extra,expected in [('', 'esa_standard'),('<a href="https://creativecommons.org/licenses/by-sa/3.0/igo/">Licence</a>','cc_by_sa_3_igo')]:
