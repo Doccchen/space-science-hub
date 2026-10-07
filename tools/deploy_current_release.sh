@@ -36,6 +36,12 @@ printf '%s\n' "$old_image" > "$evidence/app-image.txt"
 printf '%s\n' "$old_admin_image" > "$evidence/admin-image.txt"
 docker inspect "$old_app" --format '{{range .Mounts}}{{if eq .Destination "/data"}}{{.Name}}{{end}}{{end}}' > "$evidence/data-volume.txt"
 docker compose config --quiet
+# Preserve the actual running filesystem even when its original image ID is gone.
+# Mounted data/keys are excluded by Docker; remove the API key from image metadata.
+rollback_tag="space-news-rollback:$stamp"
+docker commit --change 'ENV DASHSCOPE_API_KEY=' "$old_app" "$rollback_tag" > "$evidence/rollback-image-created.txt"
+old_image=$(docker image inspect "$rollback_tag" --format '{{.Id}}')
+printf '%s\n' "$old_image" > "$evidence/app-image.txt"
 python3 - "$archive" "$evidence/stage" "$revision" <<'PY'
 import hashlib,json,sys,tarfile
 from pathlib import Path,PurePosixPath
@@ -90,7 +96,7 @@ docker compose build app
 echo 'Stopping writers briefly for a consistent data snapshot.'
 stopped=1
 docker stop --time 75 "$old_app" ${old_admin:+$old_admin}
-docker run --rm --volumes-from "$old_app" -v "$evidence/data-before:/backup" --user 0 --entrypoint python "$old_image" -c '
+docker run --rm --volumes-from "$old_app" -v "$evidence/data-before:/backup" --user 0 --entrypoint python "$image_name" -c '
 import sqlite3,shutil
 from pathlib import Path
 from contextlib import closing

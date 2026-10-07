@@ -11,6 +11,9 @@ old_app=$(docker compose ps -q app)
 test -n "$old_app"
 old_image=$(docker inspect "$old_app" --format '{{.Image}}')
 old_admin=$(docker compose --profile review ps -q admin)
+rollback_tag="space-news-nasa-rollback:$stamp"
+docker commit --change 'ENV DASHSCOPE_API_KEY=' "$old_app" "$rollback_tag" > "$backup/rollback-image-created.txt"
+old_image=$(docker image inspect "$rollback_tag" --format '{{.Id}}')
 tar -czf "$backup/source-before.tar.gz" backend/news_thumbnails.py
 printf '%s\n' "$old_image" > "$backup/image-before.txt"
 python3 - "$backup/stage" <<'PY'
