@@ -109,6 +109,9 @@ async function newsSources(){
   withThumbnail=true;archived.checked=true;archived.trigger('change');await flush();
   let current=page.querySelectorAll('.news-article')[0];assert.equal(current.querySelectorAll('img').length,1);
   assert.equal(current.querySelectorAll('figcaption')[0].textContent,'NASA');
+  const creditLink=current.querySelectorAll('figcaption')[0].querySelectorAll('a')[0];
+  assert.equal(creditLink.textContent,'NASA');assert.equal(creditLink.href,'https://www.nasa.gov/nasa-brand-center/images-and-media/');
+  assert.equal(current.querySelectorAll('.news-item-info').length,0);
   current.querySelectorAll('img')[0].trigger('error');assert.equal(current.querySelectorAll('img').length,0);
   assert.equal(current.classList.contains('has-thumbnail'),false);
   archived.trigger('change');await flush();current=page.querySelectorAll('.news-article')[0];

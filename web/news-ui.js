@@ -66,10 +66,7 @@
     if (precision === 'day') return new Date(date).toLocaleDateString('zh-CN', {timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit'});
     return new Date(date).toLocaleString('zh-CN', {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false});
   }
-  const kind = item => item.publisher_kind === 'company' ? '企业动态' : '官方机构';
   const language = item => ({zh: '中文原文', en: '英文原文', es: '西班牙文原文', ja: '日文原文', fr: '法文原文', de: '德文原文'}[item.lang] || '原始语言');
-  const geography = item => (geographicRegions.find(region => region.id === item.geographic_region)?.name || '') +
-    (item.country_code ? '（' + ({CN: '中国', US: '美国', JP: '日本', FR: '法国', IN: '印度', AU: '澳大利亚'}[item.country_code] || item.country_code) + '发布主体）' : '');
   const publicationDate = item => item.published_time_status === 'timezone_missing' ? (item.published_raw || '未提供发布时间') + '（来源未标时区）' :
     item.published_precision === 'day' && item.published_calendar_date ? item.published_calendar_date.replaceAll('-', '/') : formatDate(item.published_at, item.published_precision);
   function originalLink(item, label) {
@@ -91,9 +88,6 @@
     const scope = ({full_text:'本站全文', link_only:'原文阅读', unavailable:'暂不可用'}[item.reading_mode] || '原文阅读');
     bottom.append(element('span', 'reading-badge', scope));
     if (canRead) bottom.append(originalLink(item, '查看原文 ↗'));
-    const information = element('details','news-item-info');
-    information.append(element('summary','','来源详情'), element('p','', [kind(item),geography(item),item.source_enabled === 0 ? '采集已停用 · 历史内容' : ''].filter(Boolean).join(' · ')));
-    bottom.append(information);
     text.append(meta, heading);
     if (canRead && item.summary?.trim()) text.append(element('p', '', item.summary));
     text.append(bottom);row.append(text);
@@ -108,7 +102,7 @@
         'https://www.esa.int/About_Us/Law_at_ESA/Intellectual_Property_Rights/ESA_copyright_notice',
         'https://creativecommons.org/licenses/by-sa/3.0/igo/']);
       if(knownRights.has(thumbnail.rights_url)){
-        const rights=element('a','',thumbnail.rights_kind==='cc_by_sa_3_igo'?'CC BY-SA 3.0 IGO':'使用说明');rights.href=thumbnail.rights_url;rights.target='_blank';rights.rel='noopener noreferrer';caption.append(document.createTextNode(' · '),rights);
+        const rights=element('a','',thumbnail.credit);rights.href=thumbnail.rights_url;rights.target='_blank';rights.rel='noopener noreferrer';rights.setAttribute('aria-label','图片署名：'+thumbnail.credit+'；查看许可');caption.replaceChildren(rights);
       }
       row.classList.add('has-thumbnail');row.append(figure);
     }

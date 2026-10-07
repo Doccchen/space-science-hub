@@ -81,7 +81,7 @@ body.editorial-ui{background:var(--bg);font-size:16px}
 .editorial-ui #news .news-article.has-thumbnail::before{margin-top:28px}
 .editorial-ui #news .news-article.has-thumbnail .news-text{padding:28px 0;align-self:center}
 .editorial-ui #news .news-thumbnail{grid-column:3;grid-row:1;align-self:stretch;position:relative;margin:0;min-width:0;min-height:260px;display:flex;flex-direction:column;justify-content:flex-end}
-.editorial-ui #news .news-thumbnail-media{position:absolute;inset:0;overflow:hidden;clip-path:polygon(27% 0,100% 0,100% 100%,0 100%);background:var(--tint)}
+.editorial-ui #news .news-thumbnail-media{position:absolute;inset:0;overflow:hidden;background:var(--tint);-webkit-mask-image:linear-gradient(112deg,transparent 0%,rgba(0,0,0,.15) 14%,#000 48%);mask-image:linear-gradient(112deg,transparent 0%,rgba(0,0,0,.15) 14%,#000 48%)}
 .editorial-ui #news .news-thumbnail img{display:block;width:100%;height:100%;object-fit:cover;object-position:60% 50%;background:var(--tint);border-radius:0}
 .editorial-ui #news .news-thumbnail figcaption{position:relative;z-index:1;align-self:flex-end;max-width:76%;margin:12px 14px 12px 0;padding:6px 9px;background:#070e18d9;color:#edf6f4;font:11px/1.65 var(--sans);text-align:right;overflow-wrap:anywhere}
 .editorial-ui #news .news-thumbnail figcaption a{color:inherit}
@@ -196,7 +196,7 @@ body.editorial-ui{background:var(--bg);font-size:16px}
  .editorial-ui #news .news-article.has-thumbnail::before{margin-top:0}
  .editorial-ui #news .news-article.has-thumbnail .news-text{padding:0;align-self:start}
  .editorial-ui #news .news-thumbnail{grid-column:2;grid-row:2;min-height:220px;margin-top:4px}
- .editorial-ui #news .news-thumbnail-media{clip-path:polygon(10% 0,100% 0,100% 100%,0 100%)}
+ .editorial-ui #news .news-thumbnail-media{-webkit-mask-image:linear-gradient(100deg,transparent 0%,#000 22%);mask-image:linear-gradient(100deg,transparent 0%,#000 22%)}
  .editorial-ui #news .news-thumbnail img{width:100%;height:100%}
  .editorial-ui #news .news-article h2{font-size:19px;line-height:1.6}
  .editorial-ui #news .news-thumbnail figcaption{font-size:11px}
