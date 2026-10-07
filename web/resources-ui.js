@@ -16,14 +16,15 @@
   function cover(item) {
     const box = node('div', undefined, 'resource-cover');
     const fallback = node('div', undefined, 'resource-cover-fallback');
-    fallback.append(node('span', '暂无封面'), node('strong', item.title));
+    const coverLabel=node('span', item.cover_url ? '正在载入封面' : 'PDF');fallback.append(coverLabel);
     box.append(fallback);
     if (item.cover_url) {
+      box.classList.add('is-loading');
       const image = document.createElement('img');
       image.alt = item.title + '封面'; image.width = 400; image.height = 600;
       image.loading = 'lazy'; image.decoding = 'async';
-      image.addEventListener('load', () => fallback.hidden = true);
-      image.addEventListener('error', () => image.remove(), {once: true});
+      image.addEventListener('load', () => {fallback.hidden = true;box.classList.remove('is-loading');});
+      image.addEventListener('error', () => {image.remove();box.classList.remove('is-loading');coverLabel.textContent='PDF';}, {once: true});
       image.src = item.cover_url; box.append(image);
     }
     return box;

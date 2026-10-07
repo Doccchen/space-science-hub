@@ -7,8 +7,19 @@
   const selectLabel = element('label', '', '来源 '), select = element('select'); select.id = 'news-source'; select.setAttribute('aria-label', '来源'); selectLabel.htmlFor = select.id; selectLabel.append(select);
   const regionLabel = element('label', '', '商业地区 '), regionSelect = element('select'); regionSelect.id = 'news-region'; regionSelect.setAttribute('aria-label', '商业地区'); regionLabel.htmlFor = regionSelect.id; regionLabel.append(regionSelect); regionLabel.hidden = true;
   const resultLabel = element('p', 'news-message'), status = element('p', 'news-message'), list = element('div', 'real-news'); status.setAttribute('role', 'status');
-  const panel = element('section', 'news-filter-panel'), controls = element('div', 'news-filter-controls');
+  const panel = element('details', 'news-filter-panel'), controls = element('div', 'news-filter-controls');
   panel.setAttribute('aria-label', '新闻筛选');
+  const panelSummary = element('summary', 'news-filter-toggle'), selectedSummary = element('span', 'news-filter-selection', '全部');
+  panelSummary.append(element('span', '', '筛选新闻'), selectedSummary);
+  const filterBody = element('div', 'news-filter-body'), filterHeading = element('div', 'news-filter-heading'), reset = element('button', 'news-filter-reset', '重置');
+  reset.type = 'button'; filterHeading.append(element('h2', '', '筛选新闻'), reset);
+  const sourceOptions = element('div', 'news-source-options'); sourceOptions.setAttribute('role','group'); sourceOptions.setAttribute('aria-label','按来源筛选');
+  const moreSources = element('details', 'news-more-sources'), moreSummary = element('summary', '', '更多来源');
+  const extraOptions = element('div','news-source-options'); moreSources.append(moreSummary,extraOptions);
+  selectLabel.hidden = true;
+  const sourceHeading = element('h3', 'news-filter-label', '来源'), categoryHeading = element('h3', 'news-filter-label', '新闻类别');
+  const desktopFilter = matchMedia('(min-width: 1024px)'); panel.open = desktopFilter.matches;
+  desktopFilter.addEventListener('change', event => { panel.open = event.matches; });
   const resultBar = element('div', 'news-results-bar'); resultBar.tabIndex = -1;
   const sizeLabel = element('label', 'news-page-size', '每页 '), size = element('select');
   size.setAttribute('aria-label', '每页新闻条数');
@@ -27,16 +38,22 @@
     jumpLabel.append(input, document.createTextNode(' 页')); const go = element('button', 'secondary', '跳转'); jump.append(jumpLabel, go);
     const capsule = element('div', 'news-page-capsule'), detail = element('details', 'news-jump-disclosure');
     const summary = element('summary', '', '跳转到指定页'); detail.append(summary, jump);
-    const desktop = matchMedia('(min-width: 601px)'); detail.open = desktop.matches;
-    desktop.addEventListener('change', event => { detail.open = event.matches; });
     capsule.append(previous, numbers, description, next); nav.append(capsule, detail);
     previous.addEventListener('click', () => load(false, currentPage-1, true)); next.addEventListener('click', () => load(false, currentPage+1, true));
     jump.addEventListener('submit', event => { event.preventDefault(); const target = Number(input.value); if (Number.isInteger(target) && target >= 1 && target <= totalPages) load(false, target, true); });
     pagers.push({nav,previous,next,numbers,description,input,go,detail}); return nav;
   }
   const bottomPager = makePager('底部');
-  controls.append(selectLabel, regionLabel); panel.append(filters, controls, toolbar.lastElementChild, resultLabel);
-  toolbar.replaceWith(panel, resultBar, status, list, bottomPager);
+  controls.append(regionLabel, sourceHeading, sourceOptions, moreSources, selectLabel);
+  filterBody.append(filterHeading, categoryHeading, filters, controls); panel.append(panelSummary, filterBody);
+  const resultMeta = element('div', 'news-result-meta'), resultActions = element('div', 'news-result-actions');
+  const updateDetails = element('details','news-update-details');
+  updateDetails.append(element('summary','','更新状态'),toolbar.lastElementChild);
+  const listSettings = element('details','news-list-settings'); listSettings.append(element('summary','','列表设置'),sizeLabel);
+  resultMeta.append(totalDescription,resultLabel,updateDetails); resultActions.append(listSettings); resultBar.append(resultMeta,resultActions);
+  const layout = element('div','news-layout'), results = element('section','news-results'); results.setAttribute('aria-label','新闻结果');
+  results.append(resultBar,status,list,bottomPager); layout.append(panel,results); toolbar.replaceWith(layout);
+  let displayedItems = new Map(), sourceSignature = '';
   const categories = [['', '全部'], ['domestic_agency', '国内机构'], ['commercial', '商业航天'], ['international_agency', '国际机构']], buttons = [];
   let source = '', category = '', regionChoice = '', generation = 0, busy = false, sources = [], displayedKey = null, geographicRegions = [];
   let currentPage = 1, pageSize = 20, displayedSize = 20, totalPages = 1, totalCount = 0, snapshot = null;
@@ -67,7 +84,7 @@
   }
   function renderItem(item) {
     const row = element('article', 'news-article'); row.dataset.articleId = item.id;
-    const meta = element('div', 'news-meta', [item.source_name, publicationDate(item), kind(item), geography(item), language(item), item.source_enabled === 0 ? '采集已停用 · 历史内容' : ''].filter(Boolean).join(' · '));
+    const meta = element('div', 'news-meta', [item.source_name, publicationDate(item), language(item)].filter(Boolean).join(' · '));
     const canRead = item.reading_mode === 'full_text', heading = element('h2');
     if (canRead) {
       const title = element('a', '', item.title); title.href = '#news/article/' + item.id;
@@ -75,13 +92,13 @@
     } else heading.append(originalLink(item, item.title));
     const bottom = element('div', 'news-row-bottom');
     const scope = ({full_text:'本站全文', link_only:'原文阅读', unavailable:'暂不可用'}[item.reading_mode] || '原文阅读');
-    bottom.append(element('span', 'reading-badge', scope), originalLink(item, '原文 ↗'));
+    bottom.append(element('span', 'reading-badge', scope));
+    if (canRead) bottom.append(originalLink(item, '查看原文 ↗'));
+    const information = element('details','news-item-info');
+    information.append(element('summary','','来源详情'), element('p','', [kind(item),geography(item),item.source_enabled === 0 ? '采集已停用 · 历史内容' : ''].filter(Boolean).join(' · ')));
+    bottom.append(information);
     row.append(meta, heading);
     if (canRead && item.summary?.trim()) row.append(element('p', '', item.summary));
-    if (canRead) {
-      const action = element('button', 'link-button', '阅读正文 →');
-      action.addEventListener('click', () => window.newsReader.open(item.id, action)); bottom.append(action);
-    }
     row.append(bottom); return row;
   }
   async function getJSON(path) {
@@ -91,6 +108,28 @@
   function renderSelect() {
     select.replaceChildren(); const all = element('option', '', '本组全部来源'); all.value = ''; select.append(all);
     sources.filter(matches).forEach(item => { const option = element('option', '', item.name + (!item.enabled ? '（采集未启用）' : '')); option.value = item.id; select.append(option); }); select.value = source;
+    const options = [...select.options].map(option=>[option.value,option.textContent]);
+    const common = new Set(['','cnsa','cmse','nasa','esa']);
+    const preferred = options.filter(([id])=>common.has(id));
+    const visible = new Set(preferred.length > 1 ? preferred.map(([id])=>id) : options.slice(0,5).map(([id])=>id));
+    if(source) visible.add(source);
+    const signature = JSON.stringify([options,[...visible]]);
+    if (signature !== sourceSignature) {
+      sourceSignature = signature; sourceOptions.replaceChildren();extraOptions.replaceChildren();
+      options.forEach(([id,name])=>{
+        const label = element('label','news-source-option'), radio = element('input'); radio.type='radio';radio.name='news-source-choice';radio.value=id;
+        label.append(radio,element('span','',name));(visible.has(id)?sourceOptions:extraOptions).append(label);
+        radio.addEventListener('change',()=>{if(radio.checked){select.value=id;select.dispatchEvent(new Event('change'));}});
+      });
+      moreSources.hidden=extraOptions.children.length===0;
+      moreSummary.textContent='更多来源（'+extraOptions.children.length+'）';
+    }
+    controls.querySelectorAll('.news-source-options input').forEach(radio=>{radio.checked=radio.value===source;});
+    updateSelectedSummary();
+  }
+  function updateSelectedSummary() {
+    selectedSummary.textContent = categories.find(([id])=>id===category)[1] + (regionChoice ? ' · '+(regionSelect.selectedOptions[0]?.textContent || regionChoice) : '') + (source ? ' · '+(sources.find(item=>item.id===source)?.name || '所选来源') : ' · 全部来源');
+    selectedSummary.title=selectedSummary.textContent;
   }
   function renderRegion() {
     regionLabel.hidden = category !== 'commercial'; regionSelect.replaceChildren();
@@ -144,10 +183,12 @@
       if (!Number.isInteger(data.page) || !Number.isInteger(data.total_pages)) throw new Error('pagination_unavailable');
       sources = state.items; geographicRegions = state.geographic_regions || []; renderRegion(); renderSelect(); const fragment = document.createDocumentFragment(); data.items.forEach(item => fragment.append(renderItem(item)));
       list.replaceChildren(fragment);
+      displayedItems = new Map(data.items.map(item=>[String(item.id),item]));
       currentPage = data.page; pageSize = displayedSize = data.page_size; totalPages = data.total_pages; totalCount = data.total; snapshot = data.snapshot;
-      displayedKey = requestKey; renderSources(sources);
-      resultLabel.textContent = '当前结果：' + categories.find(([id]) => id === category)[1] + (source ? ' / ' + sources.find(item => item.id === source).name : '');
+      displayedKey = requestKey; renderSources(sources);updateDetails.classList.toggle('has-warning', sources.filter(matches).filter(item=>!source||item.id===source).some(item=>item.enabled&&item.last_error));
+      resultLabel.textContent = '当前结果：' + categories.find(([id]) => id === category)[1] + (source ? ' / ' + (sources.find(item => item.id === source)?.name || '所选来源') : '');
       if (regionChoice) resultLabel.textContent += ' / ' + regionSelect.selectedOptions[0].textContent;
+      resultLabel.hidden=!category&&!source&&!regionChoice;
       status.textContent = list.children.length ? '' : '此筛选下暂无已入库新闻。未启用的来源不会自动采集。';
       succeeded = true;
       if (scrollAfter) window.scrollTo({top: window.scrollY + resultBar.getBoundingClientRect().top - 24, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth'});
@@ -165,12 +206,20 @@
   });
   select.addEventListener('change', () => { source = select.value; load(true); });
   regionSelect.addEventListener('change', () => { regionChoice = regionSelect.value; source = ''; renderSelect(); load(true); });
-  const refresh = element('button', 'refresh-news', '刷新列表 ↻'); refresh.addEventListener('click', () => load(true)); controls.append(refresh);
+  const refresh = element('button', 'refresh-news', '刷新列表 ↻'); refresh.addEventListener('click', () => load(true)); resultActions.append(refresh);
+  reset.addEventListener('click',()=>{category='';source='';regionChoice='';buttons.forEach(item=>{item.node.classList.toggle('active',item.id==='');item.node.setAttribute('aria-pressed',String(item.id===''));});renderRegion();renderSelect();load(true);});
   size.addEventListener('change', () => { pageSize = Number(size.value); load(displayedKey !== key(), 1, true); });
   renderRegion(); renderSelect(); renderPagination(); load(true);
   document.addEventListener('readingchange', event => {
-    const item = event.detail, row = list.querySelector('[data-article-id="' + item.id + '"]');
+    const patch = event.detail, previous = displayedItems.get(String(patch?.id));
+    const item = window.NewsPresentation.mergeItem(previous,patch);
+    if (!item) return;
+    const row = [...list.children].find(node=>node.dataset.articleId===String(item.id));
     if (!row) return;
-    row.replaceWith(renderItem(item));
+    displayedItems.set(String(item.id),item);
+    const fields=['title','source_name','published_at','reading_mode','summary','original_url','availability'];
+    if (fields.every(name=>previous[name]===item[name])) return;
+    const updated = renderItem(item); row.replaceChildren(...updated.childNodes);
   });
+  window.newsList = {item(id) { const item=displayedItems.get(String(id));return item?{...item}:null; }};
 })();

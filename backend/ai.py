@@ -8,7 +8,7 @@ import secrets
 import sqlite3
 import time
 from contextlib import contextmanager
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 from uuid import UUID
 
@@ -81,6 +81,8 @@ class AIService:
         self.problem = None
         self.client = client or BailianClient(settings.workspace,settings.agent,settings.key,settings.timeout)
         self.active = 0
+        self.initialized = False
+        self.last_upstream_error = None
         if not settings.enabled:
             self.problem = 'disabled'
         elif not settings.key or not re.fullmatch(r'[A-Za-z0-9-]+',settings.workspace) or not re.fullmatch(r'aid-[A-Za-z0-9-]+',settings.agent):
@@ -88,6 +90,7 @@ class AIService:
         else:
             try:
                 self.initialize()
+                self.initialized = True
             except OSError:
                 self.problem = 'storage'
             except sqlite3.Error:
@@ -124,6 +127,24 @@ class AIService:
         if self.problem:
             raise AIError(self.problem)
 
+    def ensure_storage(self):
+        if not self.initialized:
+            self.initialize()
+            self.initialized = True
+
+    def apply_settings(self, settings, client=None):
+        if settings.db != self.settings.db:
+            raise AIError('configuration')
+        if settings.enabled and (not settings.key or not re.fullmatch(r'[A-Za-z0-9-]+', settings.workspace)
+                                 or not re.fullmatch(r'aid-[A-Za-z0-9-]+', settings.agent)):
+            raise AIError('configuration')
+        self.ensure_storage()
+        # No await: readers capture this pair before starting the upstream request.
+        self.settings = settings
+        self.client = client or BailianClient(settings.workspace, settings.agent, settings.key, settings.timeout)
+        self.problem = None if settings.enabled else 'disabled'
+        self.last_upstream_error = None
+
     def cleanup(self, db, now):
         db.execute("UPDATE conversations SET history='[]',deleted=1 WHERE expires<?",(now,))
         db.execute("UPDATE requests SET result=NULL WHERE conversation IN (SELECT id FROM conversations WHERE deleted=1)")
@@ -146,9 +167,9 @@ class AIService:
                        (identity,owner,self.settings.version,now+self.settings.ttl))
         return identity
 
-    def conversation(self, db, identity, owner):
+    def conversation(self, db, identity, owner, version=None):
         row = db.execute('SELECT * FROM conversations WHERE id=? AND owner=?',(identity,owner)).fetchone()
-        if not row or row['deleted'] or row['expires'] < time.time() or row['version'] != self.settings.version:
+        if not row or row['deleted'] or row['expires'] < time.time() or row['version'] != (version or self.settings.version):
             raise AIError('session_expired',409)
         return row
 
@@ -159,13 +180,14 @@ class AIService:
             db.execute("UPDATE conversations SET deleted=1,history='[]' WHERE id=?",(identity,))
             db.execute('UPDATE requests SET result=NULL WHERE conversation=?',(identity,))
 
-    def reserve(self, identity, owner, ip, request_id, question):
+    def reserve(self, identity, owner, ip, request_id, question, settings=None):
+        settings = settings or self.settings
         now, fingerprint = time.time(), hashlib.sha256(question.encode()).hexdigest()
         identity_key = hashlib.sha256((owner+request_id).encode()).hexdigest()
         with self.connection() as db:
             db.execute('BEGIN IMMEDIATE')
             self.cleanup(db,now)
-            conversation = self.conversation(db,identity,owner)
+            conversation = self.conversation(db,identity,owner,settings.version)
             existing = db.execute('SELECT * FROM requests WHERE id=?',(identity_key,)).fetchone()
             if existing:
                 if existing['conversation'] != identity or existing['fingerprint'] != fingerprint:
@@ -175,55 +197,104 @@ class AIService:
                 raise AIError(existing['error'] or 'session_busy',409)
             if db.execute("SELECT 1 FROM requests WHERE conversation=? AND status='pending'",(identity,)).fetchone():
                 raise AIError('session_busy',409)
-            if self.active >= self.settings.concurrency:
+            if self.active >= settings.concurrency:
                 raise AIError('capacity',429)
             history = json.loads(conversation['history'])
-            if len(history)//2 >= self.settings.rounds or sum(len(item['content']) for item in history)+len(question)>16000:
+            if len(history)//2 >= settings.rounds or sum(len(item['content']) for item in history)+len(question)>16000:
                 raise AIError('history_limit',409)
             day = int((now+8*3600)//86400)*86400-8*3600
-            for column, value, limit in [('owner',owner,self.settings.visitor_daily),('ip',ip,self.settings.ip_daily)]:
+            for column, value, limit in [('owner',owner,settings.visitor_daily),('ip',ip,settings.ip_daily)]:
                 count = db.execute(f'SELECT COUNT(*) FROM requests WHERE {column}=? AND created>=?',(value,day)).fetchone()[0]
                 if count >= limit:
                     raise AIError('daily_limit',429)
-            if db.execute('SELECT COUNT(*) FROM requests WHERE owner=? AND created>=?',(owner,now-60)).fetchone()[0]>=self.settings.minute_limit:
+            if db.execute('SELECT COUNT(*) FROM requests WHERE owner=? AND created>=?',(owner,now-60)).fetchone()[0]>=settings.minute_limit:
                 raise AIError('rate_limit',429)
             count, tokens = db.execute('SELECT COUNT(*),COALESCE(SUM(COALESCE(tokens,reservation)),0) FROM requests WHERE created>=?',(day,)).fetchone()
-            if count>=self.settings.site_daily or tokens+self.settings.token_reservation>self.settings.token_daily:
+            if count>=settings.site_daily or tokens+settings.token_reservation>settings.token_daily:
                 raise AIError('daily_limit',429)
             db.execute('INSERT INTO requests(id,conversation,owner,ip,fingerprint,created,status,reservation) VALUES(?,?,?,?,?,?,?,?)',
-                       (identity_key,identity,owner,ip,fingerprint,now,'pending',self.settings.token_reservation))
+                       (identity_key,identity,owner,ip,fingerprint,now,'pending',settings.token_reservation))
         return identity_key, history+[{'role':'user','content':question}], None
 
     async def ask(self, identity, owner, ip, request_id, question):
         self.ready()
-        key, messages, cached = self.reserve(identity,owner,ip,request_id,question)
+        settings, client = replace(self.settings), self.client
+        key, messages, cached = self.reserve(identity,owner,ip,request_id,question,settings)
         if cached is not None:
             return cached
         self.active += 1
         try:
-            answer = await self.client.ask(messages, request_id)
+            answer = await client.ask(messages, request_id)
             result = {'request_id':request_id,'conversation_id':identity,
                       'status':'answered' if answer.grounded else 'insufficient', 'answer':answer.text,
                       'sources':answer.sources,'source_label':'本次检索资料',
                       'notice':'检索资料不代表逐条结论已核实；位置为接口原始定位，页码口径尚未核实。',
-                      'remaining_rounds':max(0,self.settings.rounds-len(messages)//2-1)}
+                      'remaining_rounds':max(0,settings.rounds-len(messages)//2-1)}
             with self.connection() as db:
                 db.execute('UPDATE requests SET tokens=?,usage=?,provider_id=? WHERE id=?',
                            ((answer.usage or {}).get('total_tokens'),json.dumps(answer.usage),answer.request_id,key))
             with self.connection() as db:
                 db.execute('BEGIN IMMEDIATE')
-                self.conversation(db,identity,owner)
+                self.conversation(db,identity,owner,settings.version)
                 history = messages+[{'role':'assistant','content':answer.text}]
                 db.execute('UPDATE conversations SET history=? WHERE id=?',(json.dumps(history,ensure_ascii=False),identity))
                 db.execute("UPDATE requests SET status='complete',result=? WHERE id=?",(json.dumps(result,ensure_ascii=False),key))
             return result
         except BaseException as error:
             code = error.code if isinstance(error,AIError) else 'incomplete_answer'
+            self.last_upstream_error = code
             with self.connection() as db:
                 db.execute("UPDATE requests SET status='error',error=?,result=NULL WHERE id=?",(code,key))
             raise
         finally:
             self.active -= 1
+
+    async def test_configuration(self, candidate, client=None):
+        """One short paid test, charged to the same ledger and process-wide capacity."""
+        import uuid
+        self.ensure_storage()
+        current = replace(self.settings)
+        settings = replace(candidate, timeout=min(20,candidate.timeout,current.timeout),
+                           concurrency=min(candidate.concurrency,current.concurrency),
+                           site_daily=min(candidate.site_daily,current.site_daily),
+                           token_daily=min(candidate.token_daily,current.token_daily),
+                           token_reservation=max(candidate.token_reservation,current.token_reservation))
+        if not settings.key:
+            raise AIError('configuration')
+        identity, now = 'admin-test-' + uuid.uuid4().hex, time.time()
+        with self.connection() as db:
+            db.execute('BEGIN IMMEDIATE')
+            if self.active >= settings.concurrency:
+                raise AIError('capacity',429)
+            day = int((now+8*3600)//86400)*86400-8*3600
+            count,tokens = db.execute('SELECT COUNT(*),COALESCE(SUM(COALESCE(tokens,reservation)),0) FROM requests WHERE created>=?',(day,)).fetchone()
+            if count >= settings.site_daily or tokens + settings.token_reservation > settings.token_daily:
+                raise AIError('daily_limit',429)
+            db.execute('INSERT INTO requests(id,conversation,owner,ip,fingerprint,created,status,reservation) VALUES(?,?,?,?,?,?,?,?)',
+                       (identity,'admin-test','admin-test','admin-test','fixed-test',now,'pending',settings.token_reservation))
+        self.active += 1
+        try:
+            client = client or BailianClient(settings.workspace,settings.agent,settings.key,settings.timeout)
+            answer = await client.ask([{'role':'user','content':'请简要介绍此知识库涵盖的主要主题。'}], identity)
+            tokens = (answer.usage or {}).get('total_tokens')
+            with self.connection() as db:
+                db.execute("UPDATE requests SET status='complete',tokens=?,usage=?,provider_id=? WHERE id=?",
+                           (tokens,json.dumps(answer.usage),answer.request_id,identity))
+            return {'grounded':answer.grounded, 'source_count':len(answer.sources), 'tokens':tokens}
+        except BaseException as error:
+            code = error.code if isinstance(error,AIError) else 'incomplete_answer'
+            with self.connection() as db:
+                db.execute("UPDATE requests SET status='error',error=? WHERE id=?", (code, identity))
+            raise
+        finally:
+            self.active -= 1
+
+    def daily_usage(self):
+        day = int((time.time()+8*3600)//86400)*86400-8*3600
+        with self.connection() as db:
+            row = db.execute('SELECT COUNT(*),COALESCE(SUM(COALESCE(tokens,reservation)),0),SUM(CASE WHEN status=\'pending\' THEN reservation ELSE 0 END) FROM requests WHERE created>=?', (day,)).fetchone()
+        return {'requests':row[0], 'tokens_accounted':row[1], 'pending_reservation':row[2] or 0,
+                'active':self.active, 'day_timezone':'Asia/Shanghai'}
 
 
 def service_from_env():

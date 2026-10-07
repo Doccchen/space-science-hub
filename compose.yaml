@@ -1,5 +1,6 @@
 services:
   app:
+    image: space-news-app
     build:
       context: .
       args:
@@ -14,6 +15,8 @@ services:
       GOVERNMENT_FULLTEXT_AUTO: ${GOVERNMENT_FULLTEXT_AUTO:-1}
       RESOURCE_OSS_ORIGIN: ${RESOURCE_OSS_ORIGIN:-https://space-hub-pub.oss-cn-chengdu.aliyuncs.com}
       RESOURCES_PATH: ${RESOURCES_PATH:-/app/content/resources.json}
+      MANAGEMENT_DB_PATH: /data/site-management.sqlite3
+      AI_MASTER_KEY_FILE: /run/secrets/site-management.key
       AI_ENABLED: ${AI_ENABLED:-0}
       DASHSCOPE_API_KEY: ${DASHSCOPE_API_KEY:-}
       BAILIAN_WORKSPACE_ID: ${BAILIAN_WORKSPACE_ID:-llm-ep9bqc9mnw50k8e0}
@@ -30,6 +33,7 @@ services:
       AI_TOKEN_RESERVATION: ${AI_TOKEN_RESERVATION:-20000}
     volumes:
       - news-data:/data
+      - ./secrets/site-management.key:/run/secrets/site-management.key:ro
     mem_limit: 640m
     cpus: 1.0
     restart: unless-stopped
@@ -53,9 +57,13 @@ services:
     environment:
       NEWS_DB_PATH: /data/news.sqlite3
       ADMIN_ORIGIN: ${ADMIN_ORIGIN:-http://127.0.0.1:18080}
+      MANAGEMENT_DB_PATH: /data/site-management.sqlite3
+      AI_MASTER_KEY_FILE: /run/secrets/site-management.key
+      AI_DB_PATH: /data/ai.sqlite3
       GOVERNMENT_FULLTEXT_AUTO: ${GOVERNMENT_FULLTEXT_AUTO:-1}
     volumes:
       - news-data:/data
+      - ./secrets/site-management.key:/run/secrets/site-management.key:ro
     mem_limit: 320m
     cpus: 0.5
     restart: unless-stopped

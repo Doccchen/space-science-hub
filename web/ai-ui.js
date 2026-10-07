@@ -4,11 +4,18 @@
   const form = byId('ai-form'), question = byId('ai-question'), send = byId('ai-send'), fresh = byId('ai-new');
   const thread = byId('ai-thread'), welcome = byId('ai-welcome'), feedback = byId('ai-feedback'), waiting = byId('ai-waiting');
   let enabled = false, busy = false, session = null, generation = 0, controller = null, initialized = false;
+  let availabilityText='正在读取问答服务状态…';
+  let statusRequest=0;
   const make = (tag, cls, value) => { const node = document.createElement(tag); if (cls) node.className = cls; if (value) node.textContent = value; return node; };
   function controls() {
     send.disabled = !enabled || busy || !question.value.trim(); question.disabled = !enabled || busy;
     byId('ai-counter').textContent = question.value.length + ' / 1500'; waiting.hidden = !busy;
     thread.setAttribute('aria-busy', String(busy));
+    const starters=byId('ai-starters');starters.hidden=!enabled;
+    starters.querySelectorAll('button').forEach(button=>{button.disabled=!enabled||busy;});
+    byId('ai-welcome-copy').textContent=enabled?'可以选择一个示例，或直接输入问题。':availabilityText;
+    question.placeholder=enabled?'例如：固体火箭发动机为什么能产生推力？':'服务恢复后即可在这里提问。';
+    byId('home').dataset.aiAvailable=String(enabled);
   }
   async function json(path, options = {}) {
     const response = await fetch(path, {...options, credentials:'same-origin', cache:'no-store'});
@@ -51,8 +58,9 @@
   }
   async function init() {
     if(initialized)return;initialized=true;
-    try{const status=await json('/api/ai/status');enabled=status.enabled;byId('ai-service-text').textContent=enabled?'专属知识库 · 可以提问':status.message;byId('ai-status-dot').dataset.ready=String(enabled);byId('ai-retention').textContent='对话历史保留约 '+Math.round(status.history_retention_seconds/60)+' 分钟，新对话会清除本站旧对话。';}
-    catch{byId('ai-service-text').textContent='服务状态暂不可用';feedback.textContent='无法读取问答服务状态，请重新打开此页面。';initialized=false;}
+    const check=++statusRequest;
+    try{const status=await json('/api/ai/status',{signal:AbortSignal.timeout(10000)});if(check!==statusRequest)return;enabled=status.enabled;availabilityText=status.message;byId('ai-service-text').textContent=enabled?'专属知识库 · 可以提问':status.message;byId('ai-status-dot').dataset.ready=String(enabled);byId('ai-retention').textContent='对话历史保留约 '+Math.round(status.history_retention_seconds/60)+' 分钟，新对话会清除本站旧对话。';if(feedback.textContent==='无法读取问答服务状态，请重新打开此页面。')feedback.textContent='';}
+    catch{if(check!==statusRequest)return;enabled=false;availabilityText='服务状态暂不可用，请稍后重新打开页面。';byId('ai-service-text').textContent='服务状态暂不可用';byId('ai-status-dot').dataset.ready='false';feedback.textContent='无法读取问答服务状态，请重新打开此页面。';initialized=false;}
     controls();
   }
   async function reset(){
@@ -76,12 +84,13 @@
       if(run!==generation)return;const answer=message('assistant',data.answer,data);byId('ai-complete').textContent='回答已完成，可查看本次检索资料。';
       if(data.remaining_rounds===0)feedback.textContent='本次对话已达到轮次上限，请开始新对话。';
       if(!byId('home').classList.contains('hidden'))window.scrollTo({top:window.scrollY+answer.getBoundingClientRect().top-24,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
-    }catch(error){if(run!==generation)return;feedback.textContent=error.name==='AbortError'?'等待已结束，没有收到完整回答；本次不会自动重试。':error.message;if(submitted)question.value=text;}
+    }catch(error){if(run!==generation)return;feedback.textContent=error.name==='AbortError'?'等待已结束，没有收到完整回答；本次不会自动重试。':error.message;if(error.code==='session_expired'){session=null;feedback.textContent='此对话已过期或服务配置已变更。点击“新对话”后重新提问。';}if(error.code==='disabled'||error.code==='configuration'){initialized=false;await init();}if(submitted)question.value=text;}
     finally{clearTimeout(timeout);if(run===generation){busy=false;controller=null;controls();}}
   });
   fresh.addEventListener('click',reset);question.addEventListener('input',controls);
   question.addEventListener('keydown',event=>{if(event.key==='Enter'&&(event.ctrlKey||event.metaKey)&&!event.isComposing){event.preventDefault();form.requestSubmit();}});
-  document.querySelectorAll('[data-ai-question]').forEach(button=>button.addEventListener('click',()=>{question.value=button.dataset.aiQuestion;controls();if(enabled)question.focus();}));
+  document.querySelectorAll('[data-ai-question]').forEach(button=>button.addEventListener('click',()=>{if(!enabled||busy)return;question.value=button.dataset.aiQuestion;controls();question.focus();}));
   document.addEventListener('pagechange',event=>{if(event.detail==='home')init();});
+  setInterval(()=>{if(!busy&&!byId('home').classList.contains('hidden')){initialized=false;init();}},10000);
   if(location.hash==='#home')init();controls();
 })();

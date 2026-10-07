@@ -12,6 +12,7 @@ from . import news
 from . import resources
 from . import reading
 from . import ai
+from . import ai_runtime
 
 ROOT = Path(__file__).resolve().parent.parent
 STATIC = ROOT / "web"
@@ -32,12 +33,20 @@ async def scheduled_collection():
 async def lifespan(app):
     news.initialize()
     resources.catalog.load()
-    app.state.ai = ai.service_from_env()
-    ai_cleanup = asyncio.create_task(ai.housekeeping(app.state.ai)) if not app.state.ai.problem else None
+    runtime = ai_runtime.startup()
+    app.state.ai = runtime.service
+    ai_cleanup = asyncio.create_task(ai.housekeeping(app.state.ai))
+    ai_sync = asyncio.create_task(runtime.loop())
     task = asyncio.create_task(scheduled_collection()) if os.environ.get("COLLECT_ENABLED", "1") == "1" else None
     from . import auto_fulltext
     auto_task = asyncio.create_task(auto_fulltext.loop()) if task and os.environ.get('GOVERNMENT_FULLTEXT_AUTO', '1') == '1' else None
     yield
+    ai_sync.cancel()
+    try:
+        await ai_sync
+    except asyncio.CancelledError:
+        pass
+    await runtime.close()
     if ai_cleanup:
         ai_cleanup.cancel()
         try:

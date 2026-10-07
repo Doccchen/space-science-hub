@@ -1,6 +1,9 @@
 .venv/
 data/
 .env
+secrets/
+/打开管理后台.lnk
+/关闭后台连接.lnk
 __pycache__/
 *.pyc
 *.pem

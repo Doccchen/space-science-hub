@@ -7,7 +7,7 @@ import unicodedata
 from pathlib import Path
 from urllib.parse import quote, urlsplit
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Response
 from fastapi.responses import RedirectResponse
 from pydantic import BaseModel, ConfigDict, Field, StrictBool
 
@@ -82,6 +82,12 @@ class Catalog:
             self.items = None
 
     def public_items(self):
+        from . import management_store
+        try:
+            if management_store.active():
+                return management_store.public_items()
+        except management_store.ManagementError:
+            raise HTTPException(503, "Resource catalog unavailable") from None
         if self.items is None:
             raise HTTPException(503, "Resource catalog unavailable")
         return [item for item in self.items if item.published]
@@ -116,8 +122,9 @@ def public_record(item, detail=False):
 
 
 @router.get("")
-def list_resources(q: str = Query("", max_length=120), category: str = Query("", max_length=80),
+def list_resources(response: Response, q: str = Query("", max_length=120), category: str = Query("", max_length=80),
                    page: int = Query(1, ge=1), page_size: int = Query(12, ge=1, le=48)):
+    response.headers['Cache-Control'] = 'no-store'
     public = catalog.public_items()
     categories = sorted({item.category for item in public if item.category})
     query = normalized(q)
@@ -141,5 +148,6 @@ def download_resource(resource_id: str):
 
 
 @router.get("/{resource_id}")
-def resource_detail(resource_id: str):
+def resource_detail(resource_id: str, response: Response):
+    response.headers['Cache-Control'] = 'no-store'
     return public_record(catalog.find(resource_id), detail=True)

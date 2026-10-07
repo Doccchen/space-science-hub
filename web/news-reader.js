@@ -2,10 +2,10 @@
 (() => {
   const make = (tag, text, cls) => { const node = document.createElement(tag); if (text) node.textContent = text; if (cls) node.className = cls; return node; };
   const dialog = make('dialog', '', 'news-reader'); dialog.setAttribute('aria-labelledby', 'reader-title');
-  const bar = make('div', '', 'reader-bar'), label = make('span', '新闻阅读'), close = make('button', '关闭 ×');
-  close.setAttribute('aria-label', '关闭阅读，返回列表'); bar.append(label, close);
+  const bar = make('div', '', 'reader-bar'), label = make('span', '新闻阅读'), close = make('button', '×');
+  close.className='reader-close';close.type='button';close.setAttribute('aria-label', '关闭阅读'); bar.append(label, close);
   const body = make('div', '', 'reader-body'); dialog.append(bar, body); document.body.append(dialog);
-  let activeId = null, trigger = null, generation = 0, controller = null, scroll = 0, previousOverflow = '', pushed = false;
+  let activeId = null, trigger = null, generation = 0, controller = null, scroll = 0, previousOverflow = '', pushed = false, closing = false, triggerWasButton = false;
   history.scrollRestoration = 'manual';
   function hide() {
     const closingId = activeId;
@@ -14,12 +14,15 @@
     document.body.style.overflow = previousOverflow;
     if (visiblePage === 'news') window.scrollTo({top: scroll, behavior: 'instant'});
     if (visiblePage === 'news') {
-      const origin = trigger?.isConnected ? trigger : document.querySelector('[data-article-id="' + closingId + '"] h2 a');
-      origin?.focus({preventScroll: true});
+      const origin = trigger?.isConnected ? trigger : document.querySelector('[data-article-id="' + closingId + '"] '+(triggerWasButton?'.link-button':'h2 a'));
+      (origin || document.querySelector('.news-results-bar'))?.focus({preventScroll: true});
     }
     trigger = null; body.replaceChildren();
+    closing = false;
   }
   function closeReader() {
+    if (!dialog.open || closing) return;
+    closing = true; generation++; controller?.abort();
     if (pushed && history.state?.newsReader) { pushed = false; history.back(); }
     else { history.replaceState(null, '', '#news'); route(); }
   }
@@ -29,9 +32,17 @@
     if (event.key !== 'Tab') return;
     const targets = [...dialog.querySelectorAll('button:not([disabled]),a[href]')].filter(node => node.getClientRects().length);
     const first = targets[0], last = targets.at(-1);
-    if (event.shiftKey && (document.activeElement === first || !dialog.contains(document.activeElement))) { event.preventDefault(); last?.focus(); }
+    if(document.activeElement?.id==='reader-title'){event.preventDefault();(event.shiftKey?last:first)?.focus();}
+    else if (event.shiftKey && (document.activeElement === first || !dialog.contains(document.activeElement))) { event.preventDefault(); last?.focus(); }
     else if (!event.shiftKey && (document.activeElement === last || !dialog.contains(document.activeElement))) { event.preventDefault(); first?.focus(); }
   });
+  function focusTitle() {
+    const title=body.querySelector('#reader-title');
+    if(title){title.tabIndex=-1;title.focus({preventScroll:true});}
+  }
+  function returnButton() {
+    const button=make('button','返回新闻列表','reader-return');button.type='button';button.addEventListener('click',closeReader);return button;
+  }
   function link(url) {
     const node = make('a', '查看发布方原文 ↗');
     try { const parsed = new URL(url); if (['https:', 'http:'].includes(parsed.protocol) && !parsed.username && !parsed.password) node.href = parsed.href; } catch { /* invalid metadata */ }
@@ -55,22 +66,28 @@
     controller?.abort(); controller = new AbortController(); const currentController = controller, request = ++generation;
     const timeout = setTimeout(() => currentController.abort(), 15000);
     body.replaceChildren(make('h1', '正在读取新闻…')); body.firstChild.id = 'reader-title';
+    body.scrollTop=0;focusTitle();
     delete body.dataset.contentVersion;
     try {
       const fetchJSON = async path => { const response = await fetch(path, {cache: 'no-store', signal: currentController.signal}); if (!response.ok) throw new Error(String(response.status)); return response.json(); };
-      const [item, content] = await Promise.all([fetchJSON('/api/news/' + id), fetchJSON('/api/news/' + id + '/content')]);
+      const [detail, content] = await Promise.all([fetchJSON('/api/news/' + id), fetchJSON('/api/news/' + id + '/content')]);
       if (request !== generation || !dialog.open) return;
+      const previous=window.newsList?.item(id) || {id:Number(id),title:'新闻正文'};
+      const item=window.NewsPresentation.mergeItem(previous,detail);
+      if(!item)throw new Error('invalid_article');
       const publicItem = {...item, reading_mode: content.reading_mode, read_scope: content.read_scope,
+        availability:content.availability,source_reading_policy:content.source_reading_policy,
         summary: content.reading_mode === 'full_text' ? (content.blocks.find(block => block.type === 'paragraph')?.text || '').slice(0, 600) : ''};
       document.dispatchEvent(new CustomEvent('readingchange', {detail: publicItem}));
       if (content.source_reading_policy === 'link_only') {
         history.replaceState(null, '', '#news'); hide(); pushed = false;
         let notice = document.getElementById('reader-route-notice');
-        if (!notice) { notice = make('p', '', 'news-message'); notice.id = 'reader-route-notice'; notice.setAttribute('role', 'status'); document.getElementById('news').querySelector('.library-toolbar').after(notice); }
+        if (!notice) { notice = make('p', '', 'news-message'); notice.id = 'reader-route-notice'; notice.setAttribute('role', 'status'); const anchor=document.getElementById('news').querySelector('.news-results-bar'); if(anchor)anchor.after(notice);else document.getElementById('news').append(notice); }
         notice.replaceChildren(make('span', '该来源采用原文阅读。 '), link(item.original_url));
         return;
       }
-      const title = make('h1', item.title); title.id = 'reader-title';
+      const shouldFocus=document.activeElement?.id==='reader-title';
+      const title = make('h1', item.title); title.id = 'reader-title';title.tabIndex=-1;
       const scope = {full_text: '本站全文 · 原始语言', link_only: '原文阅读 · 正文未开放', unavailable: '暂不可用'}[content.read_scope];
       const date = item.published_time_status === 'timezone_missing' ? (item.published_raw || '') + '（来源未标时区）' :
         (item.published_calendar_date || (item.published_at ? new Date(item.published_at).toLocaleString('zh-CN', {hour12: false}) : '日期未提供'));
@@ -87,19 +104,20 @@
       figures(0);
       content.blocks.forEach((block, index) => { if (block.type === 'paragraph') paragraphs++; const node = blockNode(block, id, content.content_version, paragraphs); if (node) body.append(node); figures(index+1); });
       const footer = make('div', '', 'reader-notice'); footer.append(make('p', content.notes), make('p', content.assets?.length ? '仅展示已审核图片；其他图片请到原文查看。' : '图片请到原文查看。'), link(item.original_url));
-      body.append(footer); body.dataset.contentVersion = content.content_version;
+      body.append(footer,returnButton()); body.dataset.contentVersion = content.content_version;
+      if(shouldFocus)focusTitle();
     } catch (error) {
       if (request !== generation || !dialog.open) return;
       const title = make('h1', error.message === '404' ? '这篇新闻不存在' : '新闻读取失败'); title.id = 'reader-title';
       const retry = make('button', '重试', 'secondary'); retry.addEventListener('click', () => load(id));
-      body.replaceChildren(title, make('p', '关闭后仍可继续浏览当前列表。'), retry);
+      title.tabIndex=-1;body.replaceChildren(title, make('p', '关闭后仍可继续浏览当前列表。'), retry,returnButton());focusTitle();
     } finally { clearTimeout(timeout); }
   }
   function route() {
     const match = /^#news\/article\/([1-9]\d*)$/.exec(location.hash);
     if (match) {
       showPage('news'); const id = match[1];
-      if (!dialog.open) { scroll = window.scrollY; previousOverflow = document.body.style.overflow; document.body.style.overflow = 'hidden'; dialog.showModal(); close.focus(); }
+      if (!dialog.open) { closing=false;scroll = window.scrollY; previousOverflow = document.body.style.overflow; document.body.style.overflow = 'hidden'; dialog.showModal(); }
       if (activeId !== id) { activeId = id; load(id); }
     } else {
       const page = location.hash.slice(1) || 'news'; showPage(page);
@@ -108,6 +126,7 @@
   }
   window.newsReader = {open(id, origin) {
     trigger = origin; pushed = true;
+    triggerWasButton=origin?.tagName==='BUTTON';
     history.pushState({newsReader: true}, '', '#news/article/' + id); route();
   }};
   window.addEventListener('hashchange', route); window.addEventListener('popstate', route);
@@ -124,7 +143,7 @@
       const content = await response.json();
       if (request === generation && dialog.open && content.content_version !== body.dataset.contentVersion) load(id);
     } catch {
-      if (request === generation && dialog.open) { const title = make('h1', '展示范围暂时无法确认'); title.id = 'reader-title'; body.replaceChildren(title, make('p', '请重试，或关闭后继续浏览列表。')); delete body.dataset.contentVersion; const retry = make('button', '重试', 'secondary'); retry.addEventListener('click', () => load(id)); body.append(retry); }
+      if (request === generation && dialog.open) { const title = make('h1', '展示范围暂时无法确认'); title.id = 'reader-title'; title.tabIndex=-1;body.replaceChildren(title, make('p', '请重试，或关闭后继续浏览列表。')); delete body.dataset.contentVersion; const retry = make('button', '重试', 'secondary'); retry.addEventListener('click', () => load(id)); body.append(retry,returnButton()); }
     }
   }, 30000);
   route();

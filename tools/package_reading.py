@@ -27,7 +27,7 @@ def main(archive_name='space-reading-release'):
     pagination_doc = ROOT/'docs/deployment/新闻页码分页部署.md'
     if pagination_doc.exists():
         paths.append(pagination_doc)
-    excluded = {'preview_ai.py', 'preview_admin.py', 'preview_reading.py', 'package_reading.py', 'preview_resources.py', 'prepare_resource_covers.py',
+    excluded = {'preview_frontend.py', 'preview_ai.py', 'preview_admin.py', 'preview_reading.py', 'package_reading.py', 'preview_resources.py', 'prepare_resource_covers.py',
                 'draft_resource_metadata.py', 'prepare_resource_release.py', 'prepare_resources.py', 'package_resources.py',
                 'nasa-model-wing-guide.json'}
     files = []

@@ -1,0 +1,3 @@
+# Offline preparation tools only; not production application dependencies.
+wikitextparser==2.0.0
+beautifulsoup4==4.14.3

@@ -17,3 +17,4 @@ content/reading/nasa-model-wing-guide.json
 backend/__pycache__/
 tools/preview_admin.py
 tools/preview_ai.py
+tools/preview_frontend.py
