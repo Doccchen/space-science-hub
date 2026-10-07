@@ -10,7 +10,6 @@
  const label=document.getElementById('cover-label'), description=document.getElementById('cover-description');
  const link=document.getElementById('cover-source'), credit=document.getElementById('cover-credit');
  const license=document.getElementById('cover-license');
- const count=document.getElementById('cover-count');
  const announce=document.getElementById('cover-announcement'), dots=document.getElementById('cover-dots');
  const motion=matchMedia('(prefers-reduced-motion: reduce)');
  let current=0, request=0, timer, hovering=false, focused=false, visible=true;
@@ -21,7 +20,6 @@
  function canPlay(){return !hovering&&!focused&&visible&&active&&!document.hidden&&!motion.matches&&!loading&&slides.length-failed.size>1;}
  function schedule(){clearTimeout(timer);if(canPlay())timer=setTimeout(()=>move(1,false),8000);}
  function controls(){
-  count.textContent=String(current+1).padStart(2,'0')+' / '+String(slides.length).padStart(2,'0');
   buttons.forEach((button,index)=>{button.setAttribute('aria-pressed',String(index===current));button.disabled=failed.has(index);});
   cover.setAttribute('aria-busy',String(loading));
  }
@@ -42,7 +40,7 @@
   image.src=slide.image;image.alt=slide.alt;image.style.objectPosition=slide.position;cover.dataset.framing=slide.framing;cover.dataset.slide=slide.id;
   if(visual){visual.dataset.framing=slide.framing;visual.dataset.slide=slide.id;}
   title.replaceChildren();slide.title.forEach((line,i)=>{if(i)title.append(document.createElement('br'));title.append(document.createTextNode(line));});
-  label.textContent=slide.label;label.previousElementSibling.textContent=String(index+1).padStart(2,'0');description.textContent=slide.description;
+  label.textContent=slide.label;description.textContent=slide.description;
   link.href=safeLink(slide.source_url)||'#';credit.textContent=slide.date+' / '+slide.credit;
   license.textContent=slide.license;license.href=safeLink(slide.license_url)||'#';
   if(manual)announce.textContent='第 '+(index+1)+' 张，共 '+slides.length+' 张：'+slide.label;

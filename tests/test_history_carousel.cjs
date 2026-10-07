@@ -12,8 +12,8 @@ class Element{
  animate(frames,options){const finished={then(fn){this.complete=fn;return this;},catch(){return this;}};this.animation={frames,options,finished,cancel(){}};return this.animation;}
 }
 const slides=JSON.parse(fs.readFileSync(path.join(__dirname,'../web/history-slides.json'),'utf8'));
-const ids=Object.fromEntries(['history-slides','space-cover-title','cover-label','cover-description','cover-source','cover-credit','cover-license','cover-count','cover-announcement','cover-dots','cover-controls','news'].map(id=>[id,new Element()]));
-ids['history-slides'].textContent=JSON.stringify(slides);ids['cover-label'].previousElementSibling=new Element();
+const ids=Object.fromEntries(['history-slides','space-cover-title','cover-label','cover-description','cover-source','cover-credit','cover-license','cover-announcement','cover-dots','cover-controls','news'].map(id=>[id,new Element()]));
+ids['history-slides'].textContent=JSON.stringify(slides);
 const cover=new Element(),image=new Element(),visual=new Element(),copy=new Element(),events={},timers=new Map(),pending=[];let timerId=0;
 visual.append(image);cover.querySelector=selector=>selector==='.cover-visual'?visual:selector==='.space-cover-copy'?copy:image;
 cover.insertBefore=node=>cover.append(node);
