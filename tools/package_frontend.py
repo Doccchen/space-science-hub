@@ -34,7 +34,7 @@ def main():
     old_allow="allowed = {'web/index.html', 'web/news-ui.js', 'web/glass-theme.css', 'web/glass-theme.js', 'manifest.json'}"
     assert old_allow in script
     script=script.replace(old_allow,'allowed = {'+', '.join(repr(name) for name in sorted(files))+'}')
-    script=script.replace("m.size < 500000", "m.size < (1500000 if m.name == 'web/history-tianhe.png' else 500000)")
+    script=script.replace("m.size < 500000", "m.size < (4000000 if m.name == 'web/history-apollo11.jpg' else 1500000 if m.name == 'web/history-tianhe.png' else 500000)")
     script=script.replace('space-glass-release.tar.gz','space-frontend-magazine-release.tar.gz').replace('glass-upgrade-','magazine-upgrade-')
     assert script.count('for name in glass-theme.css glass-theme.js news-ui.js index.html; do')==2
     script=script.replace('for name in glass-theme.css glass-theme.js news-ui.js index.html; do','for name in '+' '.join(NAMES)+'; do')

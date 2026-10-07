@@ -248,6 +248,7 @@ body.editorial-ui{background:var(--bg);font-size:16px}
 .cover-visual[data-framing=illustration] .space-cover-image{width:54%;left:44%;object-fit:contain;object-position:center!important;padding:36px 24px}
 .cover-visual[data-framing=illustration]::after{background:linear-gradient(90deg,#070e18 15%,#070e1880 50%,transparent)}
 .cover-visual[data-framing=launch] .space-cover-image{left:0;width:112%;height:100%;object-fit:cover}
+.cover-visual[data-slide=mengtian] .space-cover-image{width:100%}
 .space-cover[data-framing=launch] .space-cover-copy{max-width:44%}
 .space-cover[data-framing=launch] h2{font-size:clamp(36px,4vw,58px)}
 .space-cover[data-framing=launch] .space-cover-description{max-width:320px}

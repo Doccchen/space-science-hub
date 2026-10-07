@@ -1,7 +1,7 @@
 [
   {
     "id": "earthrise",
-    "image": "/assets/earthrise.jpg",
+    "image": "/assets/earthrise.jpg?v=20261008-hq",
     "title": [
       "换一个视角，",
       "重新看见地球。"
@@ -14,13 +14,14 @@
     "credit": "NASA",
     "license": "NASA 媒体使用规范",
     "license_url": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
-    "changes": "使用 NASA 提供的网页尺寸版本；画面按屏幕比例显示，未改变图中内容。",
-    "position": "50% 57%",
-    "framing": "photo"
+    "changes": "采用 NASA 图像库 3000×3000 原始扫描版，未生成或补绘画面细节。",
+    "position": "50% 65%",
+    "framing": "photo",
+    "original_image_url": "http://images-assets.nasa.gov/image/as08-14-2383/as08-14-2383~orig.jpg"
   },
   {
     "id": "mengtian",
-    "image": "/assets/history-mengtian.jpg",
+    "image": "/assets/history-mengtian.jpg?v=20261008-hq",
     "title": [
       "从文昌出发，",
       "奔向天宫。"
@@ -39,7 +40,7 @@
   },
   {
     "id": "apollo11",
-    "image": "/assets/history-apollo11.jpg",
+    "image": "/assets/history-apollo11.jpg?v=20261008-hq",
     "title": [
       "点燃引擎，",
       "向月球出发。"
@@ -52,13 +53,14 @@
     "credit": "NASA",
     "license": "NASA 媒体使用规范",
     "license_url": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
-    "changes": "使用 NASA 提供的网页尺寸版本；画面按屏幕比例显示，未改变图中内容。",
+    "changes": "采用 NASA 图像库原始扫描，保留1763×3000像素，高质量JPEG编码，未生成或补绘画面细节。",
     "position": "50% 40%",
-    "framing": "launch"
+    "framing": "launch",
+    "original_image_url": "http://images-assets.nasa.gov/image/6901001/6901001~orig.jpg"
   },
   {
     "id": "tianhe",
-    "image": "/assets/history-tianhe.png",
+    "image": "/assets/history-tianhe.png?v=20261008-hq",
     "title": [
       "在轨道之上，",
       "建起一个家。"
@@ -77,7 +79,7 @@
   },
   {
     "id": "rosetta",
-    "image": "/assets/history-rosetta.jpg",
+    "image": "/assets/history-rosetta.jpg?v=20261008-hq",
     "title": [
       "追上一颗彗星，",
       "走近远古世界。"
@@ -90,8 +92,9 @@
     "credit": "ESA/Rosetta/NAVCAM",
     "license": "CC BY-SA 3.0 IGO",
     "license_url": "https://creativecommons.org/licenses/by-sa/3.0/igo/",
-    "changes": "采用 ESA 网页版本，画面按屏幕比例显示；图像沿用 CC BY-SA 3.0 IGO。原图已由 ESA 插值放大。",
+    "changes": "采用 ESA 提供的2048×2048完整JPEG；原图由ESA插值放大，图像沿用CC BY-SA 3.0 IGO。",
     "position": "50% 90%",
-    "framing": "comet"
+    "framing": "comet",
+    "original_image_url": "https://www.esa.int/var/esa/storage/images/esa_multimedia/images/2014/08/comet_on_3_august_2014_-_navcam/14700233-1-eng-GB/Comet_on_3_August_2014_-_NavCam.jpg"
   }
 ]
