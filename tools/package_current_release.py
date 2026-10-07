@@ -31,8 +31,8 @@ def main():
         for name,data in sorted(files.items()):
             item=tarfile.TarInfo(name);item.size=len(data);item.mode=0o644;archive.addfile(item,io.BytesIO(data))
     sha=hashlib.sha256(package.read_bytes()).hexdigest()
-    (output/'space-unified-release-20261007.sha256').write_text(sha+'  '+package.name+'\n',encoding='ascii')
-    (output/'space-unified-release-20261007.revision').write_text(revision+'\n',encoding='ascii')
+    (output/'space-unified-release-20261007.sha256').write_bytes((sha+'  '+package.name+'\n').encode('ascii'))
+    (output/'space-unified-release-20261007.revision').write_bytes((revision+'\n').encode('ascii'))
     (output/'deploy_current_release.sh').write_bytes(files['tools/deploy_current_release.sh'])
     with tarfile.open(package) as archive:
         assert set(archive.getnames())==set(files)

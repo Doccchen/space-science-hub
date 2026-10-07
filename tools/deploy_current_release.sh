@@ -5,8 +5,18 @@ cd /opt/space-news
 archive=${1:?release archive required}
 checksum=${2:?SHA256 required}
 revision=${3:?Git revision required}
-[[ "$revision" =~ ^[0-9a-f]{40}$ ]]
-[[ "$checksum" =~ ^[0-9a-f]{64}$ ]]
+revision=${revision//$'\r'/}
+revision=${revision//$'\n'/}
+checksum=${checksum//$'\r'/}
+checksum=${checksum//$'\n'/}
+if [[ ! "$revision" =~ ^[0-9a-f]{40}$ ]]; then
+ echo 'Invalid Git revision; expected 40 lowercase hexadecimal characters.' >&2
+ exit 2
+fi
+if [[ ! "$checksum" =~ ^[0-9a-f]{64}$ ]]; then
+ echo 'Invalid SHA256; expected 64 lowercase hexadecimal characters.' >&2
+ exit 2
+fi
 test -f "$archive"
 printf '%s  %s\n' "$checksum" "$archive" | sha256sum -c -
 stamp=$(date -u +%Y%m%dT%H%M%SZ)
