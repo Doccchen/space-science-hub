@@ -31,6 +31,23 @@ def frame(text='', finish=None, **output):
 
 
 class Protocol(unittest.IsolatedAsyncioTestCase):
+    def test_real_application_sse_samples_replay(self):
+        evidence = json.loads((FIXTURES / 'news-agent/application-real-20261008.json').read_text(encoding='utf-8'))
+        self.assertEqual(evidence['provenance']['kind'], 'real_application_sse_redacted')
+        for index, sample in enumerate(evidence['samples']):
+            with self.subTest(round=index + 1):
+                state = ApplicationStream()
+                for frame_data in sample['frames']:
+                    data = frame_data['data']
+                    state.frame(frame_data['event'], data if isinstance(data, str) else json.dumps(data, ensure_ascii=False))
+                answer = state.result('')
+                self.assertEqual(answer.usage, sample['usage'])
+                self.assertEqual(len(answer.references), sample['reference_count'])
+                self.assertEqual(answer.session_id, 'sample-session')
+                self.assertEqual(len(answer.text), [587, 1191][index])
+                self.assertTrue(state.ended)
+                self.assertEqual(len(sample['frames']), [321, 426][index])
+
     async def call(self, payload, incremental=True, status=200):
         self.calls = []
         def handler(request):
