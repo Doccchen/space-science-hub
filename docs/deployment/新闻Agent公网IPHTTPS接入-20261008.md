@@ -1,6 +1,8 @@
 # 新闻 Agent 公网 IP HTTPS 接入准备
 
-2026-10-08。用户确认目前只有公网 IP、尚无 HTTPS。本轮只读连接现有服务器检查，**未安装软件、未申请证书、未开放云端端口、未部署 Agent，也未更改现有网站。** 此文件及 templates 是可审阅的接入准备，执行前确认下面的授权和条件。
+2026-10-08。最初用户确认只有公网 IP、尚无 HTTPS，本轮先进行只读检查并准备配置；随后获用户授权实施。本文前半部分保留接入设计与执行条件，实际部署结果见文末。新闻 Agent 后端仍未部署。
+
+**后续执行更新：用户已授权 IP HTTPS 配置并提供证书账户联系邮箱，Nginx/Certbot、正式 IP 证书、TLS 网关与续期定时器已落地。以下“尚未执行”的段落保留最初准备背景；实际状态以本文末尾执行记录为准。新闻 MCP 后端仍未部署。**
 
 ## 已查明与入口
 
@@ -45,7 +47,7 @@ Let’s Encrypt 已开放 IPv4/IPv6 IP 地址证书，不需要购买域名。IP
    ```
 
 5. 检查 `/etc/letsencrypt/live/8.137.164.100/` 实际证书路径、有效期和 SAN IP；将同一个 Nginx 站点文件换成 HTTPS 模板，`nginx -t` 后 reload。模板中的 cert-name 与命令一致，若续期账户已存在别名需按实际结果调整。
-6. 安装提供的 systemd service/timer，`systemctl daemon-reload`、启用 timer，执行 `certbot renew --dry-run --cert-name 8.137.164.100` 及 hook 检查；查看下一次运行时间和失败日志。部署完成后还需观察首次真实续期结果，不能仅以配置了 timer 宣称续期已验收。
+6. 安装提供的 systemd service/timer，`systemctl daemon-reload`、启用 timer，执行 `certbot renew --dry-run --cert-name 8.137.164.100 --no-random-sleep-on-renew --run-deploy-hooks --deploy-hook "nginx -t && systemctl reload nginx"` 及 hook 检查；人工验证跳过随机等待，正式 service 保留等待。查看下一次运行时间和失败日志。部署完成后还需观察首次真实续期结果，不能仅以配置了 timer 宣称首次真实续期已验收。
 7. 从外部使用正常 TLS 校验访问工具路径，不使用 curl `-k`。缺少 Agent 后端时可能是 404；默认关闭可能返回 503；开启且无鉴权应为 401。状态码必须结合后端版本/开关解释，不能仅看到连接成功就宣称 MCP 可用。
 8. 按开发方案单独打包、备份和部署新闻后端，初始开关关闭；配置 Key/主密钥、工具鉴权和可信上下文。证实百炼动态转发 X-News-Context，才允许打开 MCP 模式。现在尚不能将 NEWS_MCP_CONTEXT_VERIFIED 设为 1 来绕过验证。
 
@@ -54,3 +56,28 @@ Let’s Encrypt 已开放 IPv4/IPv6 IP 地址证书，不需要购买域名。IP
 上线前验证证书正常受信、准确 endpoint 的 SDK initialize/tools/list/tools/call、无令牌拒绝、跨新闻/过期令牌拒绝、每任务调用预算和正文完整读取证据。测试期间不要在 HTTP 链路发送工具密钥，不打印密钥或原文工具输出。
 
 如 HTTPS 配置失败，恢复本轮备份的站点配置，禁用本轮 timer 和新增站点，`nginx -t` 后 reload；保留诊断证据，现有 8080 网站与数据卷不变。不得卸载或覆盖不属于本轮的 Nginx 配置。此入口在撤回时关闭 MCP 开关并撤销工具密钥，证书和 ACME 账户按证书机构流程处理。
+
+## 实际执行记录
+
+2026-10-08，用户确认按公网 IP 路线继续，强调服务器位于中国大陆且用途为竞赛展示，提供证书联系邮箱。只将邮箱用于用户授权的 CA 账户，不写入 Git 中的脚本或公开 Nginx 配置。核对阿里云官方 [IP 访问网站备案说明](https://help.aliyun.com/zh/icp-filing/basic-icp-service/product-overview/icp-filing-requirements-for-a-regular-website)：直接通过 IP 对外提供网站服务也有备案要求，竞赛用途没有在此说明中列为豁免。本次技术配置不构成备案豁免判断；新 TLS 网关只代理指定 MCP 路径，其他 HTTPS 路径为 404，未把网站通过新 HTTPS 入口公开展示。实际对外使用要求仍需向接入商确认。
+
+- 安装前使用 runtime mask 避免 Nginx 软件包自动开启默认页面；随后安装 Ubuntu Nginx 1.24.0-2ubuntu7.18、python3.12-venv。没有执行系统整体升级或重建应用容器。
+- `/opt/space-news-certbot` 隔离环境安装 Certbot 5.8.0，`pip check` 无损坏依赖；没有把 Certbot 放进应用虚拟环境。
+- 使用 `tools/setup_news_mcp_gateway.sh` 先 bootstrap。移走本轮新安装生成的 package default 链接至备份，HTTP 80 仅提供 ACME challenge 文件，其余路径为 404。主机 UFW inactive；从本机直接访问 challenge 成功，因此当时云侧 80 已可达。本轮未修改云安全组。
+- Let’s Encrypt 测试环境 `certonly --dry-run` 成功，再用用户确认的邮箱与条款同意申请正式 shortlived IP 证书。证书 issuer `Let's Encrypt YE2`，SAN 为 `IP Address:8.137.164.100`。
+- 证书有效期：UTC `2026-10-08 05:55:34` 至 `2026-10-14 21:55:33`；北京时间到期为 **2026-10-15 05:55:33**。证书与私钥位于 `/etc/letsencrypt/live/8.137.164.100/`，私钥权限核验为 `600 root:root`，未读取私钥内容。
+- 换入正式 HTTPS 模板，Nginx syntax test 成功，reload 成功。外部 curl 使用正常 TLS 验证（未用 `-k`），`ssl_verify_result=0`，根路径和 MCP 路径当时均为 404。根路径 404 符合网关配置；MCP 路径 404 的原因是现有应用镜像中没有 `/app/backend/news_mcp.py`，不能宣称工具已联调成功。
+- 安装并启用 `news-mcp-certbot-renew.timer`，每日 00/06/12/18 点附近检查续期，允许随机延迟；查询时下一次检查为北京时间 10 月 8 日 18:13:56。初次人工 renew dry-run 因 Certbot 的随机等待超过 180 秒检查窗口而中止；增加 `--no-random-sleep-on-renew` 后模拟续期成功，deploy hook 的 `nginx -t` 和 reload 成功。正式 service 保留随机等待。首次实际续期仍待运行时验证。
+- 手动启动正式 `news-mcp-certbot-renew.service` 验证 systemd 执行，`Result=success`、`ExecMainStatus=0`；当前证书未到期，正常跳过重新签发。oneshot 完成后的 ActiveState=inactive 是预期状态，不表示定时器未启用。
+- 原有 `http://8.137.164.100:8080` 健康检查正常，363 篇新闻；app 与 admin 均 healthy、未重建。管理后台仍只绑定服务器回环地址。
+
+服务器备份与执行文件目录：
+
+```text
+/root/news-mcp-https-20261008/
+  evidence-bootstrap-20261008T065203Z/nginx-before/
+  evidence-https-20261008T065449Z/nginx-before/
+  latest-evidence-path
+```
+
+仍待完成：新闻 Agent 后端部署、独立模型/工具服务端凭据配置、可信动态上下文转发、百炼实际 MCP initialize/list/call 测试。HTTPS 入口可达不等于这些项目完成；现在不应直接把未部署的 404 路径当成可用工具。
