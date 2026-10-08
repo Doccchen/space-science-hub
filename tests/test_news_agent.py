@@ -31,6 +31,24 @@ def frame(text='', finish=None, **output):
 
 
 class Protocol(unittest.IsolatedAsyncioTestCase):
+    def test_cmse_div_layout_preserves_body_and_table_once(self):
+        from backend import review_capture
+        raw = (FIXTURES / 'cmse/detail-div-layout.html').read_bytes()
+        doc,images = review_capture.parse('cmse','https://www.cmse.gov.cn/xwzx/202510/example.html',raw,'test',strict=True)
+        text = json.dumps(doc['blocks'],ensure_ascii=False)
+        self.assertIn('计划近日择机实施发射',text)
+        self.assertNotIn('责任编辑',text)
+        self.assertEqual(sum(block['type']=='table' for block in doc['blocks']),1)
+        self.assertEqual(text.count('北京时间2025年10月24日'),1)
+        self.assertEqual(len(images),1)
+
+    def test_cmse_editor_missing_text_and_image_only_still_fail_closed(self):
+        from backend import review_capture
+        for body in ('未分段引言<div>已识别段落</div>', '<div><img src="./example.jpg"></div>'):
+            raw = ('<div id="dochtmlcon"><div class="TRS_Editor">'+body+'</div></div>').encode()
+            with self.subTest(body=body),self.assertRaises(ValueError):
+                review_capture.parse('cmse','https://www.cmse.gov.cn/xwzx/example.html',raw,'test',strict=True)
+
     def test_probe_observation_metadata_redacts_all_known_secrets(self):
         from tools.probe_news_agent_inline import sanitize_receipts
         value = [{'document_metadata':[{'doc_name':'资料 api-private session-private mcp-private'}]}]

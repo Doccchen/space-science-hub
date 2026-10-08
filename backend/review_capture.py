@@ -17,11 +17,22 @@ def parse(source, url, raw, actor, *, strict=False):
     root = tree.select_one('article .entry-content' if source == 'nasa' else SELECTORS[source]['body'])
     if root is None:
         raise ValueError('Reviewed article structure missing')
+    if source == 'cmse':
+        editor = root.select_one('.TRS_Editor')
+        if editor is not None:
+            # The current publisher wraps each text paragraph in a leaf div.
+            # Keep editorial credits outside this content boundary out of the body.
+            root = editor
     for node in root.select('script,style,nav,footer,noscript,form'):
         node.decompose()
     if source != 'nasa' and SELECTORS[source].get('remove'):
         for node in root.select(SELECTORS[source]['remove']):
             node.decompose()
+    if source == 'cmse' and root.get('class') and 'TRS_Editor' in root['class']:
+        for node in root.find_all('div'):
+            if node.find(['div','p','h1','h2','h3','h4','h5','h6','ul','ol','table',
+                          'section','article','blockquote','iframe','svg','math','canvas']) is None:
+                node.name = 'p'
     warnings = bool(root.select('iframe,svg,math,canvas'))
     blocks, candidates = [], []
     for node in root.find_all(['p', 'h2', 'h3', 'h4', 'ul', 'ol', 'table', 'img']):

@@ -83,7 +83,8 @@ def main():
     run('docker','build','--pull=false','-t',image,str(stage))
     run('docker','run','--rm','--tmpfs','/data:rw,uid=10001,gid=10001,mode=0700',
         '-e','COLLECT_ENABLED=0',image,'python','-m','pytest',
-        'tests/test_news_agent.py','tests/test_ai.py','tests/test_reading.py','tests/test_publisher_fetch.py','-q')
+        'tests/test_news_agent.py','tests/test_ai.py','tests/test_reading.py','tests/test_publisher_fetch.py',
+        'tests/test_admin.py','tests/test_auto_fulltext.py','tests/test_apod_policy.py','-q')
     run('docker','run','--rm','--volumes-from','space-news-app-1',image,
         'python','-m','tools.news_agent_operator','bootstrap')
     backup = ("import sqlite3; from pathlib import Path; from contextlib import closing; "

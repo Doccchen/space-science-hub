@@ -19,6 +19,7 @@ SOURCE_REGISTRY = {
              'parser': 'review_capture.strict' if source in SUPPORTED else None}
     for source in news.SOURCES
 }
+SOURCE_REGISTRY['cmse']['parser_version'] = 'cmse-div-layout-20261008-v2'
 
 
 def snapshot(article_id):

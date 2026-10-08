@@ -9,6 +9,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 BASELINE = 'ef80d98c1c573aa8da85a2ec5c25a5c8d4745636'
 FILES = ['backend/app.py','backend/ai.py','backend/publisher_fetch.py',
+         'backend/review_capture.py',
          'backend/news_agent.py','backend/news_agent_client.py','backend/news_context.py',
          'backend/news_context_store.py','backend/news_mcp.py','requirements.txt',
          'web/news-reader.js','web/news-ui.js','web/news-agent.js','web/news-agent.css',
@@ -25,10 +26,12 @@ def main():
             files[name] = path.read_bytes()
     baselines = {}
     for name in FILES:
-        result = subprocess.run(['git','show',BASELINE + ':' + name],cwd=ROOT,capture_output=True)
+        reference = 'a7aa551' if name == 'backend/review_capture.py' else BASELINE
+        result = subprocess.run(['git','show',reference + ':' + name],cwd=ROOT,capture_output=True)
         if result.returncode == 0:
             baselines[name] = hashlib.sha256(result.stdout.replace(b'\r\n',b'\n')).hexdigest()
-    manifest = {'baseline':BASELINE,'files':[{'path':name,'sha256':hashlib.sha256(data).hexdigest(),
+    manifest = {'baseline':BASELINE,'baseline_overrides':{'backend/review_capture.py':'a7aa551'},
+                'files':[{'path':name,'sha256':hashlib.sha256(data).hexdigest(),
                                              'bytes':len(data)} for name,data in sorted(files.items())],
                 'existing_baselines':baselines, 'public_generation_enabled':False}
     files['news-agent-manifest.json'] = (json.dumps(manifest,indent=2)+'\n').encode()
