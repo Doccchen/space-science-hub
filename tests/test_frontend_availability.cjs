@@ -51,6 +51,12 @@ async function aiAvailability(){
   assert.match(ids['ai-welcome-copy'].textContent,/状态暂不可用/);
   assert.equal(ids['ai-question'].value,'示例问题');assert.ok(requests.every(url=>url==='/api/ai/status'));
   fail=false;ticks[0]();await flush();assert.equal(ids['ai-feedback'].textContent,'');assert.equal(ids['ai-question'].disabled,false);
+  // Approved layout omits starter buttons, visible counter and retention notice.
+  delete ids['ai-starters'];delete ids['ai-counter'];delete ids['ai-retention'];
+  status={...status,enabled:false};ticks[0]();await flush();assert.equal(ids['ai-question'].disabled,true);
+  status={...status,enabled:true};ticks[0]();await flush();assert.equal(ids['ai-question'].disabled,false);
+  assert.equal(ids['ai-welcome-copy'].textContent,'基于本站专属知识库，把专业概念讲清楚。');
+  assert.equal(ids['home'].dataset.aiConversation,'false');
   console.log('AI disabled/enabled/offline transitions preserve drafts and never submit questions');
 }
 async function resourceCovers(){

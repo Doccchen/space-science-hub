@@ -132,7 +132,10 @@ def validate(document):
                 if not isinstance(row, list) or len(row) != width:
                     raise ValueError('Ragged table')
                 for cell in row:
-                    plain(cell, 2000)
+                    if cell != '':  # A literal empty cell is valid; do not invent placeholder text.
+                        plain(cell, 2000)
+            if not any(cell for row in rows for cell in row):
+                raise ValueError('Empty table')
             if 'caption' in block:
                 plain(block['caption'], 2000)
         else:

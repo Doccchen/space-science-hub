@@ -31,6 +31,32 @@ def frame(text='', finish=None, **output):
 
 
 class Protocol(unittest.IsolatedAsyncioTestCase):
+    def test_nasa_decorative_download_icons_are_not_article_diagrams(self):
+        from backend import review_capture, reading
+        raw = b'<html lang="en"><article><div class="entry-content"><p>Reported event.</p><div class="hds-media"><button class="image-details-toggle-button">Image Details<svg aria-hidden="true"><path/></svg></button></div><div class="hds-file-list-download"><a download=""><svg aria-hidden="true"><path/></svg></a></div></div></article></html>'
+        doc,_ = review_capture.parse('nasa','https://www.nasa.gov/news-release/sample/',raw,'test',strict=True)
+        reading.validate(doc)
+        self.assertEqual(doc['blocks'],[{'type':'paragraph','text':'Reported event.'}])
+
+    def test_unknown_or_semantic_svg_remains_unsupported(self):
+        from backend import review_capture
+        for markup in ('<svg aria-hidden="true"><path/></svg>', '<div class="hds-file-list-download"><a download=""><svg aria-hidden="true"><text>Measured value</text></svg></a></div>'):
+            raw = ('<article><div class="entry-content"><p>Body.</p>'+markup+'</div></article>').encode()
+            with self.subTest(markup=markup),self.assertRaises(ValueError):
+                review_capture.parse('nasa','https://www.nasa.gov/news-release/sample/',raw,'test',strict=True)
+
+    def test_blank_table_cells_preserve_literal_text_coverage(self):
+        from backend import review_capture, reading
+        raw = '<html lang="zh"><div class="wz_conten"><table><tr><td><img src="example.jpg"></td></tr><tr><td>图片说明</td></tr></table><p>报道正文。</p></div></html>'.encode()
+        doc,_ = review_capture.parse('cnsa','https://www.cnsa.gov.cn/n6758823/n6758838/example/content.html',raw,'test',strict=True)
+        reading.validate(doc)
+        self.assertEqual(doc['blocks'][0]['rows'],[[''],['图片说明']])
+        empty_document = {**doc,'blocks':[{'type':'table','rows':[['']]}]}
+        with self.assertRaises(ValueError):
+            reading.validate(empty_document)
+        with self.assertRaises(ValueError):
+            review_capture.parse('cnsa','https://www.cnsa.gov.cn/n6758823/n6758838/example/content.html',b'<div class="wz_conten"><table><tr><td><img src="example.jpg"></td></tr></table></div>','test',strict=True)
+
     def test_cmse_div_layout_preserves_body_and_table_once(self):
         from backend import review_capture
         raw = (FIXTURES / 'cmse/detail-div-layout.html').read_bytes()

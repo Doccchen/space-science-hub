@@ -33,6 +33,11 @@ def parse(source, url, raw, actor, *, strict=False):
             if node.find(['div','p','h1','h2','h3','h4','h5','h6','ul','ol','table',
                           'section','article','blockquote','iframe','svg','math','canvas']) is None:
                 node.name = 'p'
+    if source == 'nasa':
+        for node in root.select('.image-details-toggle-button svg[aria-hidden="true"], .hds-file-list-download a[download] svg[aria-hidden="true"]'):
+            # Only the publisher's observed decorative control icons, never a diagram.
+            if node.find(['text','title','desc','foreignobject']) is None:
+                node.decompose()
     warnings = bool(root.select('iframe,svg,math,canvas'))
     blocks, candidates = [], []
     for node in root.find_all(['p', 'h2', 'h3', 'h4', 'ul', 'ol', 'table', 'img']):
@@ -57,10 +62,10 @@ def parse(source, url, raw, actor, *, strict=False):
             if items:
                 blocks.append({'type': 'list', 'items': items, 'ordered': node.name == 'ol'})
         elif node.name == 'table':
-            rows = [[cell.get_text(' ', strip=True) or '—' for cell in tr.find_all(['th', 'td'], recursive=False)] for tr in node.find_all('tr')]
+            rows = [[cell.get_text(' ', strip=True) for cell in tr.find_all(['th', 'td'], recursive=False)] for tr in node.find_all('tr')]
             if any(node.select('[rowspan],[colspan]')):
                 warnings = True
-            if rows:
+            if rows and any(cell for row in rows for cell in row):
                 blocks.append({'type': 'table', 'rows': rows})
         else:
             value = node.get_text('', strip=False).strip()

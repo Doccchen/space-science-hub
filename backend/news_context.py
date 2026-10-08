@@ -20,6 +20,8 @@ SOURCE_REGISTRY = {
     for source in news.SOURCES
 }
 SOURCE_REGISTRY['cmse']['parser_version'] = 'cmse-div-layout-20261008-v2'
+SOURCE_REGISTRY['nasa']['parser_version'] = 'nasa-decorative-controls-20261008-v2'
+SOURCE_REGISTRY['cnsa']['parser_version'] = 'cnsa-literal-table-cells-20261008-v2'
 
 
 def snapshot(article_id):

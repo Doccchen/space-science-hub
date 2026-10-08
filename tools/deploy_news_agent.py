@@ -108,7 +108,7 @@ def main():
                      '      NEWS_AGENT_APP_ID: ${NEWS_AGENT_APP_ID:-e366df4514cb4606b95821b9d03c387e}\n'
                      '      NEWS_AGENT_WORKSPACE_ID: ${NEWS_AGENT_WORKSPACE_ID:-llm-ep9bqc9mnw50k8e0}\n'
                      '      NEWS_AGENT_REGION: ${NEWS_AGENT_REGION:-beijing}\n'
-                     '      NEWS_AGENT_CONFIG_VERSION: ${NEWS_AGENT_CONFIG_VERSION:-news-agent-v1}\n'
+                     '      NEWS_AGENT_CONFIG_VERSION: ${NEWS_AGENT_CONFIG_VERSION:-news-agent-v2}\n'
                      '      NEWS_MCP_ENABLED: ${NEWS_MCP_ENABLED:-1}\n'
                      '      NEWS_MCP_CONTEXT_VERIFIED: ${NEWS_MCP_CONTEXT_VERIFIED:-0}\n'
                      '      NEWS_MCP_PLUGIN_CODE: ${NEWS_MCP_PLUGIN_CODE:-}\n')
@@ -116,7 +116,7 @@ def main():
             compose = compose.replace(anchor,anchor + additions,1)
         (PROJECT / 'compose.yaml').write_text(compose)
         overrides = {'NEWS_AGENT_ENABLED':'0','NEWS_CONTEXT_ENABLED':'1','NEWS_MCP_ENABLED':'1',
-                     'NEWS_MCP_CONTEXT_VERIFIED':'0'}
+                     'NEWS_MCP_CONTEXT_VERIFIED':'0','NEWS_AGENT_CONFIG_VERSION':'news-agent-v2'}
         env = (PROJECT / '.env').read_text().splitlines()
         env = [line for line in env if line.partition('=')[0].strip() not in overrides]
         (PROJECT / '.env').write_text('\n'.join(env + [f'{key}={value}' for key,value in overrides.items()]) + '\n')

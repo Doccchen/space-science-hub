@@ -9,13 +9,14 @@
   const make = (tag, cls, value) => { const node = document.createElement(tag); if (cls) node.className = cls; if (value) node.textContent = value; return node; };
   function controls() {
     send.disabled = !enabled || busy || !question.value.trim(); question.disabled = !enabled || busy;
-    byId('ai-counter').textContent = question.value.length + ' / 1500'; waiting.hidden = !busy;
+    const counter=byId('ai-counter');if(counter)counter.textContent = question.value.length + ' / 1500'; waiting.hidden = !busy;
     thread.setAttribute('aria-busy', String(busy));
-    const starters=byId('ai-starters');starters.hidden=!enabled;
-    starters.querySelectorAll('button').forEach(button=>{button.disabled=!enabled||busy;});
-    byId('ai-welcome-copy').textContent=enabled?'可以选择一个示例，或直接输入问题。':availabilityText;
+    const starters=byId('ai-starters');if(starters){starters.hidden=!enabled;
+    starters.querySelectorAll('button').forEach(button=>{button.disabled=!enabled||busy;});}
+    byId('ai-welcome-copy').textContent=enabled?'基于本站专属知识库，把专业概念讲清楚。':availabilityText;
     question.placeholder=enabled?'例如：固体火箭发动机为什么能产生推力？':'服务恢复后即可在这里提问。';
     byId('home').dataset.aiAvailable=String(enabled);
+    byId('home').dataset.aiConversation=String(thread.children.length>0);
   }
   async function json(path, options = {}) {
     const response = await fetch(path, {...options, credentials:'same-origin', cache:'no-store'});
@@ -59,7 +60,7 @@
   async function init() {
     if(initialized)return;initialized=true;
     const check=++statusRequest;
-    try{const status=await json('/api/ai/status',{signal:AbortSignal.timeout(10000)});if(check!==statusRequest)return;enabled=status.enabled;availabilityText=status.message;byId('ai-service-text').textContent=enabled?'专属知识库 · 可以提问':status.message;byId('ai-status-dot').dataset.ready=String(enabled);byId('ai-retention').textContent='对话历史保留约 '+Math.round(status.history_retention_seconds/60)+' 分钟，新对话会清除本站旧对话。';if(feedback.textContent==='无法读取问答服务状态，请重新打开此页面。')feedback.textContent='';}
+    try{const status=await json('/api/ai/status',{signal:AbortSignal.timeout(10000)});if(check!==statusRequest)return;enabled=status.enabled;availabilityText=status.message;byId('ai-service-text').textContent=enabled?'专属知识库 · 可以提问':status.message;byId('ai-status-dot').dataset.ready=String(enabled);const retention=byId('ai-retention');if(retention)retention.textContent='对话历史保留约 '+Math.round(status.history_retention_seconds/60)+' 分钟，新对话会清除本站旧对话。';if(feedback.textContent==='无法读取问答服务状态，请重新打开此页面。')feedback.textContent='';}
     catch{if(check!==statusRequest)return;enabled=false;availabilityText='服务状态暂不可用，请稍后重新打开页面。';byId('ai-service-text').textContent='服务状态暂不可用';byId('ai-status-dot').dataset.ready='false';feedback.textContent='无法读取问答服务状态，请重新打开此页面。';initialized=false;}
     controls();
   }
