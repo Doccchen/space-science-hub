@@ -6,6 +6,12 @@ stage=/root/news-mcp-https-20261008
 test "$(id -u)" = 0
 test -d "$stage"
 case "$phase" in bootstrap|https) ;; *) exit 2 ;; esac
+site=/etc/nginx/sites-available/space-news-mcp
+enabled=/etc/nginx/sites-enabled/space-news-mcp
+if [[ -f "$site" ]] && grep -Eq 'listen[[:space:]]+8080[[:space:]]+ssl' "$site"; then
+    echo 'Website HTTPS on 8080 is already configured; do not replace it with the older MCP-only template.' >&2
+    exit 2
+fi
 stamp=$(date -u +%Y%m%dT%H%M%SZ)
 evidence="$stage/evidence-$phase-$stamp"
 install -d -m 700 "$evidence"
@@ -13,8 +19,6 @@ cp -a /etc/nginx "$evidence/nginx-before"
 printf '%s\n' "$evidence" > "$stage/latest-evidence-path"
 
 install -d -m 755 /var/www/space-news-acme/.well-known/acme-challenge
-site=/etc/nginx/sites-available/space-news-mcp
-enabled=/etc/nginx/sites-enabled/space-news-mcp
 if [[ "$phase" == bootstrap ]]; then
     # This package default was created during this authorized fresh installation.
     if [[ -L /etc/nginx/sites-enabled/default ]]; then
