@@ -46,6 +46,10 @@ export function mount(parent, item) {
       } catch { /* invalid metadata */ }
       source.target = '_blank'; source.rel = 'noopener noreferrer'; card.append(source);
       if (job.result.news_citations?.length) card.append(make('p', '正文引用：' + job.result.news_citations.join('、'), 'news-agent-notice'));
+      if (job.result.knowledge_evidence === 'tool_observation' && Array.isArray(job.result.knowledge_sources)) {
+        const names = [...new Set(job.result.knowledge_sources.map(source => source.doc_name).filter(name => typeof name === 'string' && name.length <= 300))];
+        if (names.length) card.append(make('p', '本次知识检索：' + names.map(name => '《' + name + '》').join('、'), 'news-agent-notice'));
+      }
     } else card.append(make('p', job.error.message, 'news-agent-status'));
     transcript.append(card);
   }

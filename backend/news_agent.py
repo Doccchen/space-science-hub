@@ -111,7 +111,7 @@ class NewsAgentService:
             if settings.use_mcp and (len(settings.mcp_key) < 32 or not re.fullmatch(r'[A-Za-z0-9_-]{1,100}', settings.plugin_code)):
                 raise ValueError('MCP forwarding must be verified')
             self.client = client or NewsAgentClient(settings.app_id, settings.key, settings.workspace,
-                                                   settings.region, settings.timeout)
+                                                   settings.region, settings.timeout, has_thoughts=True)
             self.problem = None
         except Exception as error:
             # Fail closed without disrupting the existing site or disclosing configuration values.
@@ -287,9 +287,13 @@ class NewsAgentService:
                         if evidence != conversation['fingerprint']:
                             raise AIError('mcp_unverified')
                     text = public_text(answer.text, self.settings.key, 16000)
+                    knowledge_sources = [{**source,'doc_name':public_text(source['doc_name'],self.settings.key,300)}
+                                         for source in answer.knowledge_sources]
                     for private in (answer.session_id, self.settings.mcp_key, self.settings.workspace):
                         if private:
                             text = text.replace(private, '[已隐藏]')
+                            for source in knowledge_sources:
+                                source['doc_name'] = source['doc_name'].replace(private,'[已隐藏]')
                     if token_mapping:
                         for token in token_mapping[self.settings.plugin_code].values():
                             text = text.replace(token, '[已隐藏]')
@@ -297,8 +301,10 @@ class NewsAgentService:
                               'content_version': context['content_version'], 'read_status': 'full',
                               'news_source': {'title': context['title'], 'url': context['original_url'],
                                               'block_ids': [block['block_id'] for block in context['blocks']]},
-                              'knowledge_sources': [], 'knowledge_evidence': 'unverified',
-                              'notice': '已读取新闻原文；知识库结构化引用尚未完成核验，背景说明需区分模型补充。'}
+                              'knowledge_sources': knowledge_sources,
+                              'knowledge_evidence': 'tool_observation' if knowledge_sources else 'unverified',
+                              'notice': ('已读取新闻原文；知识来源来自本次检索工具，检索记录不代表结论已逐条核实。'
+                                         if answer.knowledge_sources else '已读取新闻原文；未取得可核验的知识检索来源，背景说明需区分模型补充。')}
                     valid_blocks = set(result['news_source']['block_ids'])
                     # Real Agent 2.0 answers also use grouped parentheses: （b0001、b0003）.
                     # Validate identifier boundaries, regardless of surrounding citation punctuation.

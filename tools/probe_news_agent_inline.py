@@ -10,9 +10,23 @@ import httpx
 from fastapi import FastAPI
 
 from backend import ai, ai_config, management_store, news_agent
-from backend.bailian import AIError
+from backend.bailian import AIError, public_text
 from backend.news_agent_client import NewsAgentClient
 from backend.news_context_store import Store
+
+
+def sanitize_receipts(value, key, private_values):
+    if isinstance(value,str):
+        value = public_text(value,key,300)
+        for private in private_values:
+            if private:
+                value = value.replace(private,'[已隐藏]')
+        return value
+    if isinstance(value,list):
+        return [sanitize_receipts(item,key,private_values) for item in value]
+    if isinstance(value,dict):
+        return {name:sanitize_receipts(item,key,private_values) for name,item in value.items()}
+    return value
 
 
 async def run(args):
@@ -35,11 +49,58 @@ async def run(args):
         if db.execute("SELECT 1 FROM requests WHERE status='pending'").fetchone():
             raise AIError('capacity')
     budget.initialized = True
-    provider = NewsAgentClient(settings.app_id, settings.key, settings.workspace, settings.region, timeout=120)
+    schemas = set()
+    receipts = []
+    private_values = {settings.mcp_key,settings.workspace}
+    def observe(event, payload):
+        if not args.inspect_trace:
+            return
+        try:
+            output = json.loads(payload).get('output') or {}
+            if isinstance(output.get('session_id'),str):
+                private_values.add(output['session_id'])
+            thoughts = output.get('thoughts') or []
+            for thought in thoughts:
+                if isinstance(thought, dict):
+                    # Shape only: never log planning text, tool payloads, or signed URLs.
+                    schemas.add(json.dumps({name:type(value).__name__ for name,value in thought.items()},sort_keys=True))
+                    receipt = {name:thought[name][:120] for name in ('action_name','action_type')
+                               if isinstance(thought.get(name),str)}
+                    observation = thought.get('observation')
+                    if isinstance(observation,str) and observation:
+                        try:
+                            value = json.loads(observation)
+                            receipt['observation_format'] = 'json'
+                            def walk(node,depth=0):
+                                if depth > 8:
+                                    return []
+                                found = []
+                                if isinstance(node,dict):
+                                    fields = {name:node[name] for name in ('doc_id','doc_name','document_id','document_name')
+                                              if isinstance(node.get(name),str) and len(node[name]) <= 300
+                                              and '://' not in node[name]}
+                                    if fields:
+                                        found.append(fields)
+                                    for child in node.values():
+                                        found.extend(walk(child,depth+1))
+                                elif isinstance(node,list):
+                                    for child in node[:100]:
+                                        found.extend(walk(child,depth+1))
+                                return found[:100]
+                            receipt['document_metadata'] = walk(value)
+                            receipt['observation_fields'] = list(value)[:40] if isinstance(value,dict) else type(value).__name__
+                        except (ValueError,TypeError):
+                            receipt['observation_format'] = 'non_json'
+                        if receipt not in receipts:
+                            receipts.append(receipt)
+        except (ValueError,AttributeError,TypeError):
+            pass
+    provider = NewsAgentClient(settings.app_id, settings.key, settings.workspace, settings.region, timeout=120,
+                               frame_observer=observe,has_thoughts=args.inspect_trace)
     class ObservedClient:
         async def ask(self, prompt, session=None, tool_context=None):
             report['paid_calls'] += 1
-            report['samples'].append({'session_supplied':bool(session), 'tool_mapping_supplied':bool(tool_context)})
+            report['samples'][-1].update(session_supplied=bool(session), tool_mapping_supplied=bool(tool_context))
             answer = await provider.ask(prompt, session, tool_context)
             report['samples'][-1]['usage'] = answer.usage
             return answer
@@ -54,10 +115,11 @@ async def run(args):
         async with httpx.AsyncClient(transport=transport,base_url=base,headers={'Origin':base}) as client:
             reply = await client.post(f'/api/news/{args.article_id}/conversations'); reply.raise_for_status()
             conversation = reply.json()['conversation_id']
-            questions = ['请用两句话说明这篇新闻报道的事件和计划时间，并引用正文块编号。']
+            questions = [args.prompt or '请用两句话说明这篇新闻报道的事件和计划时间，并引用正文块编号。']
             if args.follow_up:
                 questions.append('上文提到的飞船叫什么？请依据当前新闻回答，并引用正文块编号。')
             for question in questions:
+                report['samples'].append({'session_supplied':False,'tool_mapping_supplied':False})
                 body = {'conversation_id':conversation,'request_id':str(uuid.uuid4()),'question':question}
                 reply = await client.post('/api/news-agent/messages',json=body); reply.raise_for_status()
                 job = reply.json()['job_id']
@@ -76,6 +138,9 @@ async def run(args):
             # A second anonymous visitor must not read this private answer.
             async with httpx.AsyncClient(transport=transport,base_url=base) as stranger:
                 report['other_visitor_blocked'] = (await stranger.get('/api/news-agent/jobs/' + job)).status_code == 404
+        if args.inspect_trace:
+            report['thought_field_schemas'] = [json.loads(value) for value in sorted(schemas)]
+            report['tool_observation_receipts'] = sanitize_receipts(receipts,settings.key,private_values)
         path = Path(args.output); path.parent.mkdir(parents=True,exist_ok=True)
         path.write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
         summary = {key:value for key,value in report.items() if key != 'samples'}
@@ -90,8 +155,12 @@ def main():
     parser.add_argument('--call',action='store_true')
     parser.add_argument('--follow-up',action='store_true')
     parser.add_argument('--article-id',type=int,default=362)
+    parser.add_argument('--prompt')
+    parser.add_argument('--inspect-trace',action='store_true')
     parser.add_argument('--output',default='/data/news-agent-inline-probe.json')
     args = parser.parse_args()
+    if args.prompt is not None and not 1 <= len(args.prompt.strip()) <= 1500:
+        parser.error('Prompt must contain 1-1500 characters')
     try:
         asyncio.run(run(args))
     except Exception:

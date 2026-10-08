@@ -28,7 +28,8 @@ class PreviewClient:
                           '新闻记载：2026年9月20日，力箭一号遥十八成功发射9颗卫星。[b0001]\n\n'
                           '模型补充背景（本预览未检索知识库）：一箭多星需要在入轨后按预定顺序释放卫星。'
                           '这类任务通常涉及载荷适配和分离控制；原文未逐项说明本次任务的技术难点。',
-                          'preview-session', [], {'total_tokens': 0}, 'offline-preview')
+                          'preview-session', [], {'total_tokens': 0}, 'offline-preview',
+                          [{'doc_id':'file_'+'a'*32+'_1','doc_name':'演示知识文档（模拟，非真实检索）'}])
 
 
 @asynccontextmanager

@@ -2,7 +2,7 @@
 import asyncio
 import json
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import httpx
 
@@ -19,6 +19,39 @@ class NewsAnswer:
     references: list
     usage: dict | None
     request_id: str | None
+    knowledge_sources: list = field(default_factory=list)
+
+
+def knowledge_receipts(thoughts):
+    """Only structured document metadata from the verified knowledge tool observation."""
+    found = []
+    def walk(node, depth=0):
+        if depth > 8 or len(found) >= 100:
+            return
+        if isinstance(node, dict):
+            identity, name = node.get('doc_id'), node.get('doc_name')
+            if isinstance(identity, str) and re.fullmatch(r'file_[a-f0-9]{32}_\d{1,30}',identity) and isinstance(name,str) and 1 <= len(name) <= 300:
+                source = {'doc_id':identity,'doc_name':name}
+                if source not in found:
+                    found.append(source)
+            for value in node.values():
+                walk(value,depth+1)
+        elif isinstance(node,list):
+            for value in node[:100]:
+                walk(value,depth+1)
+    for thought in thoughts[:100] if isinstance(thoughts,list) else []:
+        if not isinstance(thought,dict) or thought.get('action_name') != 'search_knowledgebases' or thought.get('action_type') != 'api':
+            continue
+        observation = thought.get('observation')
+        if not isinstance(observation,str) or len(observation) > 200000:
+            continue
+        try:
+            value = json.loads(observation)
+            if isinstance(value,dict) and isinstance(value.get('nodes'),list):
+                walk(value['nodes'])
+        except (ValueError,TypeError):
+            continue
+    return found
 
 
 class ApplicationStream:
@@ -26,6 +59,7 @@ class ApplicationStream:
         self.incremental = incremental
         self.text, self.session, self.request_id = '', '', None
         self.ended, self.frames, self.usage, self.references = False, 0, None, []
+        self.knowledge_sources = []
 
     def frame(self, event, payload):
         self.frames += 1
@@ -43,7 +77,10 @@ class ApplicationStream:
             output = data.get('output', {})
             if not isinstance(output, dict):
                 raise ValueError()
-            # Never consume thoughts, planning, tool payloads, or unknown choices formats.
+            # Planning/tool text never becomes an answer. Only known observation doc metadata is retained.
+            for source in knowledge_receipts(output.get('thoughts')):
+                if source not in self.knowledge_sources and len(self.knowledge_sources) < 100:
+                    self.knowledge_sources.append(source)
             text = output.get('text', '')
             if not isinstance(text, str):
                 raise ValueError()
@@ -96,11 +133,12 @@ class ApplicationStream:
         if not self.ended or not self.text.strip() or not self.session:
             raise AIError('incomplete_answer')
         return NewsAnswer(public_text(self.text, key, maximum=16000), self.session,
-                          self.references, self.usage, self.request_id)
+                          self.references, self.usage, self.request_id,
+                          [{**source,'doc_name':public_text(source['doc_name'],key,maximum=300)} for source in self.knowledge_sources])
 
 
 class NewsAgentClient:
-    def __init__(self, app_id, key, workspace='', region='beijing', timeout=90, incremental=True, transport=None, frame_observer=None):
+    def __init__(self, app_id, key, workspace='', region='beijing', timeout=90, incremental=True, transport=None, frame_observer=None, has_thoughts=False):
         if region not in BASES or not re.fullmatch(r'[a-f0-9]{32}', app_id):
             raise ValueError('Invalid application configuration')
         if workspace and not re.fullmatch(r'[A-Za-z0-9-]{1,100}', workspace):
@@ -109,9 +147,12 @@ class NewsAgentClient:
         self.key, self.workspace, self.timeout = key, workspace, timeout
         self.incremental, self.transport = incremental, transport
         self.frame_observer = frame_observer
+        self.has_thoughts = has_thoughts
 
     async def ask(self, prompt, session_id=None, tool_context=None):
         payload = {'input': {'prompt': prompt}, 'parameters': {'incremental_output': self.incremental}}
+        if self.has_thoughts:
+            payload['parameters']['has_thoughts'] = True
         if session_id:
             payload['input']['session_id'] = session_id
         if tool_context:

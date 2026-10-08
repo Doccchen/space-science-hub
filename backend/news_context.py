@@ -131,7 +131,12 @@ class ContextService:
             # Bound context without silently truncating its version or blocks.
             if len(json.dumps(result, ensure_ascii=False).encode()) > 80000 or len(result['blocks']) > 250:
                 result = response(item, fingerprint, 'unsupported', warning='正文超过首期上下文上限，需分段适配。')
-        except (ValueError, OSError, UnicodeError, KeyError):
+        except ValueError as error:
+            if str(error) == 'Unreviewed NASA path':
+                result = response(item, fingerprint, 'unsupported', warning='该 NASA 栏目路径暂未适配。')
+            else:
+                result = response(item, fingerprint, 'unavailable', warning='来源正文暂不可读取；不绕过访问限制。')
+        except (OSError, UnicodeError, KeyError):
             result = response(item, fingerprint, 'unavailable', warning='来源正文暂不可读取；不绕过访问限制。')
         _, _, current, status = snapshot(item['id'])
         if current != fingerprint or status != 'pending':

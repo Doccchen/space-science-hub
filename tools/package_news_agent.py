@@ -14,7 +14,7 @@ FILES = ['backend/app.py','backend/ai.py','backend/publisher_fetch.py',
          'web/news-reader.js','web/news-ui.js','web/news-agent.js','web/news-agent.css',
          'tools/news_agent_operator.py','tools/news_agent_server_info.py','tools/probe_news_agent.py',
          'tools/probe_news_agent_mcp.py','tools/probe_news_agent_inline.py',
-         'tools/probe_news_mcp.py','tools/news_mcp_scope_status.py']
+         'tools/probe_news_mcp.py','tools/news_mcp_scope_status.py','tools/accept_news_sources.py']
 
 
 def main():

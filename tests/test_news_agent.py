@@ -31,6 +31,13 @@ def frame(text='', finish=None, **output):
 
 
 class Protocol(unittest.IsolatedAsyncioTestCase):
+    def test_probe_observation_metadata_redacts_all_known_secrets(self):
+        from tools.probe_news_agent_inline import sanitize_receipts
+        value = [{'document_metadata':[{'doc_name':'资料 api-private session-private mcp-private'}]}]
+        result = sanitize_receipts(value,'api-private',{'session-private','mcp-private'})
+        for private in ('api-private','session-private','mcp-private'):
+            self.assertNotIn(private,json.dumps(result))
+
     def test_real_application_sse_samples_replay(self):
         evidence = json.loads((FIXTURES / 'news-agent/application-real-20261008.json').read_text(encoding='utf-8'))
         self.assertEqual(evidence['provenance']['kind'], 'real_application_sse_redacted')
@@ -70,6 +77,24 @@ class Protocol(unittest.IsolatedAsyncioTestCase):
 
     async def test_cumulative(self):
         self.assertEqual((await self.call(frame('a') + frame('ab', 'stop'), False)).text, 'ab')
+
+    async def test_actual_knowledge_observation_metadata_only(self):
+        source = {'doc_id':'file_' + 'a'*32 + '_11798149','doc_name':'航天知识库_2'}
+        observation = {'query':{'doc_id':'file_'+'b'*32+'_1','doc_name':'not evidence'},
+                       'nodes':[{'metadata':source,'text':'private retrieved content'}]}
+        thought = {'action_name':'search_knowledgebases','action_type':'api',
+                   'arguments':'private arguments','observation':json.dumps(observation)}
+        answer = await self.call(frame('正文','stop',thoughts=[thought,thought]))
+        self.assertEqual(answer.knowledge_sources,[source])
+        self.assertNotIn('private',json.dumps(answer.knowledge_sources))
+        self.assertNotIn('not evidence',json.dumps(answer.knowledge_sources))
+
+    async def test_untrusted_text_and_other_tool_cannot_create_knowledge_sources(self):
+        fake = {'doc_id':'file_'+'a'*32+'_1','doc_name':'invented'}
+        thoughts = [{'action_name':'other_tool','action_type':'api','observation':json.dumps({'nodes':[fake]})},
+                    {'action_name':'search_knowledgebases','action_type':'api','observation':'malformed'}]
+        answer = await self.call(frame(json.dumps(fake),'stop',thoughts=thoughts,doc_references=[fake]))
+        self.assertEqual(answer.knowledge_sources,[])
 
     async def test_incomplete_business_error_and_no_retry(self):
         for payload in (frame('partial'), frame('partial') + 'data: [DONE]\n\n',
@@ -162,7 +187,7 @@ class FakeClient:
             scope = json.loads(self.service.cipher.decrypt(token.encode()))
             await self.service.read_tool(token, scope['article_id'])
         return NewsAnswer(getattr(self, 'text', '说明 [b0001] [b9999] <script>alert(1)</script>'), 'private-upstream-session',
-                          [{'doc_id': 'invented'}], {'total_tokens': 30}, 'provider-1')
+                          [{'doc_id': 'invented'}], {'total_tokens': 30}, 'provider-1',getattr(self,'sources',[]))
 
 
 class NewsWork(unittest.IsolatedAsyncioTestCase):
@@ -229,6 +254,23 @@ class NewsWork(unittest.IsolatedAsyncioTestCase):
         with self.store.connection() as db:
             self.assertEqual(db.execute('SELECT status FROM news_explanations').fetchone()[0], 'draft')
             self.assertNotIn('private-upstream-session', db.execute('SELECT session FROM news_agent_conversations').fetchone()[0])
+
+    async def test_knowledge_sources_are_saved_without_private_session(self):
+        self.provider.sources = [{'doc_id':'file_'+'a'*32+'_1','doc_name':'资料 private-upstream-session'}]
+        first = await self.submit(); await self.finish_jobs()
+        job = (await self.http.get('/api/news-agent/jobs/' + first.json()['job_id'])).json()
+        self.assertEqual(job['result']['knowledge_evidence'],'tool_observation')
+        self.assertNotIn('private-upstream-session',json.dumps(job))
+        self.assertEqual(len(job['result']['knowledge_sources']),1)
+
+    async def test_nasa_unadapted_path_is_unsupported_without_fetch(self):
+        with news.connect() as db:
+            db.execute("UPDATE articles SET source_id='nasa',original_url='https://science.nasa.gov/photojournal/example/' WHERE id=1")
+            db.execute("UPDATE sources SET enabled=1 WHERE id='nasa'")
+        result = await self.service.context.read(1)
+        self.assertEqual(result['read_status'],'unsupported')
+        self.assertEqual(self.mock_fetch.call_count,0)
+        self.assertEqual(len(self.provider.calls),0)
 
     async def test_real_parenthetical_block_ids_are_validated(self):
         self.provider.text = '报道的计划（b9999、b0001）；embedded_b0001_suffix。'
