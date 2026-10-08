@@ -115,8 +115,9 @@ class NewsAgentClient:
         if session_id:
             payload['input']['session_id'] = session_id
         if tool_context:
-            # Exact server-configured plugin token mapping; not part of the model prompt.
-            payload['input']['biz_params'] = {'user_defined_tokens': tool_context}
+            # MCP header pass-through uses user_defined_params keyed by service ID.
+            # This trusted mapping is separate from the model's prompt/tool arguments.
+            payload['input']['biz_params'] = {'user_defined_params': tool_context}
         headers = {'Authorization': 'Bearer ' + self.key, 'X-DashScope-SSE': 'enable',
                    'Accept': 'text/event-stream'}
         if self.workspace:

@@ -64,7 +64,9 @@ class Protocol(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(answer.usage['total_tokens'], 30)
         self.assertNotIn('hidden', answer.text)
         self.assertEqual(self.calls[0]['input']['session_id'], 'previous')
-        self.assertIn('biz_params', self.calls[0]['input'])
+        self.assertEqual(self.calls[0]['input']['biz_params'],
+                         {'user_defined_params': {'tool': {'X-News-Context': 'opaque'}}})
+        self.assertNotIn('opaque', self.calls[0]['input']['prompt'])
 
     async def test_cumulative(self):
         self.assertEqual((await self.call(frame('a') + frame('ab', 'stop'), False)).text, 'ab')
@@ -159,7 +161,7 @@ class FakeClient:
             token = next(iter(token_mapping.values()))['X-News-Context']
             scope = json.loads(self.service.cipher.decrypt(token.encode()))
             await self.service.read_tool(token, scope['article_id'])
-        return NewsAnswer('说明 [b0001] [b9999] <script>alert(1)</script>', 'private-upstream-session',
+        return NewsAnswer(getattr(self, 'text', '说明 [b0001] [b9999] <script>alert(1)</script>'), 'private-upstream-session',
                           [{'doc_id': 'invented'}], {'total_tokens': 30}, 'provider-1')
 
 
@@ -227,6 +229,14 @@ class NewsWork(unittest.IsolatedAsyncioTestCase):
         with self.store.connection() as db:
             self.assertEqual(db.execute('SELECT status FROM news_explanations').fetchone()[0], 'draft')
             self.assertNotIn('private-upstream-session', db.execute('SELECT session FROM news_agent_conversations').fetchone()[0])
+
+    async def test_real_parenthetical_block_ids_are_validated(self):
+        self.provider.text = '报道的计划（b9999、b0001）；embedded_b0001_suffix。'
+        first = await self.submit(); await self.finish_jobs()
+        job = (await self.http.get('/api/news-agent/jobs/' + first.json()['job_id'])).json()
+        self.assertEqual(job['result']['news_citations'], ['b0001'])
+        self.assertNotIn('b9999', job['result']['answer'])
+        self.assertIn('embedded_b0001_suffix', job['result']['answer'])
 
     async def test_owner_origin_payload_and_cross_article_isolation(self):
         first = await self.submit(); await self.finish_jobs()
@@ -349,6 +359,46 @@ class NewsWork(unittest.IsolatedAsyncioTestCase):
             request.update(method='tools/call', params={'name': 'read_news', 'arguments': {'article_id': 1}})
             reply = await client.post('/tool/mcp', json=request, headers=headers)
             self.assertEqual(reply.json()['result']['structuredContent']['read_status'], 'blocked')
+
+    async def test_bootstrap_tools_work_while_public_generation_stays_disabled(self):
+        settings = news_agent.Settings(context_enabled=True, mcp_enabled=True, mcp_key='s' * 40)
+        service = news_agent.NewsAgentService(settings, self.budget, self.store, cipher=self.service.cipher)
+        self.assertEqual(service.problem, 'disabled')
+        self.assertIsNone(service.tool_problem)
+        self.assertFalse(settings.use_mcp)
+        with self.assertRaises(AIError): service.create(1, 'owner')
+        with self.store.connection() as db:
+            conversation = dict(db.execute('SELECT * FROM news_agent_conversations WHERE id=?', (self.identity,)).fetchone())
+            job_id = str(uuid.uuid4())
+            db.execute('INSERT INTO news_agent_jobs(id,owner,conversation,request_id,question,kind,stage,created) VALUES(?,?,?,?,?,?,?,?)',
+                       (job_id, conversation['owner'], self.identity, str(uuid.uuid4()), '', 'preflight', 'generating', time.time()))
+        token = service.tool_token(job_id, conversation)
+        self.assertEqual((await service.read_tool(token, 1))['read_status'], 'full')
+        with self.assertRaises(AIError): await service.read_tool(token, 2)
+        with self.assertRaises(AIError): await service.read_tool('', 1)
+        self.assertEqual(len(self.provider.calls), 0)
+        sdk, transport = news_mcp.build(lambda: service)
+        app = FastAPI(); app.mount('/mcp', transport)
+        async with sdk.session_manager.run(), httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url='http://test') as client:
+            reply = await client.post('/mcp/mcp', headers={'Authorization':'Bearer ' + settings.mcp_key,
+                                       'Accept':'application/json, text/event-stream'},
+                                      json={'jsonrpc':'2.0','id':1,'method':'tools/list','params':{}})
+            self.assertEqual(reply.status_code, 200)
+            self.assertEqual(reply.json()['result']['tools'][0]['name'], 'read_news')
+        await service.close()
+
+    def test_server_credentials_are_encrypted_and_corruption_fails_closed(self):
+        encrypted = {'api_key':self.service.cipher.encrypt(b'private-api-key').decode(),
+                     'mcp_key':self.service.cipher.encrypt(b'private-mcp-key').decode()}
+        path = self.root / 'credentials.json'; path.write_text(json.dumps(encrypted))
+        self.assertNotIn('private-api-key', path.read_text())
+        with patch.dict('os.environ', {'NEWS_AGENT_CREDENTIALS_FILE':str(path),'NEWS_AGENT_API_KEY':'','NEWS_MCP_SERVICE_KEY':''}), \
+             patch('backend.ai_config.cipher', return_value=self.service.cipher):
+            settings = news_agent.Settings.environment()
+            self.assertEqual(settings.key, 'private-api-key'); self.assertEqual(settings.mcp_key, 'private-mcp-key')
+            path.write_text('{"api_key":"corrupt"}')
+            settings = news_agent.Settings.environment()
+            self.assertFalse(settings.key); self.assertFalse(settings.mcp_key)
 
     async def test_all_registered_sources_have_explicit_support(self):
         self.assertEqual(set(news.SOURCES), set(news_context.SOURCE_REGISTRY))

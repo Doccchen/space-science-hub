@@ -22,7 +22,7 @@ class AuthenticatedMCP:
         service = self.get_service()
         headers = dict(scope.get('headers', []))
         expected = ('Bearer ' + service.settings.mcp_key).encode() if service else b''
-        if (not service or not service.settings.mcp_enabled or service.problem
+        if (not service or not service.settings.mcp_enabled or service.tool_problem
                 or len(service.settings.mcp_key) < 32):
             return await JSONResponse({'error': 'disabled'}, status_code=503)(scope, receive, send)
         if not secrets.compare_digest(headers.get(b'authorization', b''), expected):
