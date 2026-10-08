@@ -2,6 +2,15 @@
 (() => {
   const $ = id => document.getElementById(id);
   let csrf = '';
+  const updatePageLabel = () => {
+    $('admin-page-label').textContent = $('workspace').hidden ? '私有管理后台' :
+      ($('nav-ai').getAttribute('aria-pressed') === 'true' ? 'AI 设置' : '资料管理');
+  };
+  const navigationObserver = new MutationObserver(updatePageLabel);
+  navigationObserver.observe($('workspace'), {attributes:true,attributeFilter:['hidden']});
+  for (const id of ['nav-ai','nav-resources']) {
+    navigationObserver.observe($(id), {attributes:true,attributeFilter:['aria-pressed']});
+  }
   const message = text => { $('message').textContent = text; };
   function loggedOut() {
     csrf = ''; document.dispatchEvent(new Event('admin-logout'));

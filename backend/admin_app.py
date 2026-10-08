@@ -82,6 +82,11 @@ def css():
     return FileResponse(STATIC/'admin.css', media_type='text/css')
 
 
+@app.get('/brand.svg')
+def brand():
+    return FileResponse(STATIC/'brand.svg', media_type='image/svg+xml')
+
+
 @app.get('/resources.js')
 def resource_javascript():
     return FileResponse(STATIC/'resources.js', media_type='application/javascript')
