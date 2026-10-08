@@ -32,6 +32,8 @@ def redact_frame(event, payload, key, private_values=()):
         references = output.get('doc_references') or []
         result['doc_references'] = [{name: clean(ref[name], 300) for name in ('doc_id', 'doc_name', 'index') if name in ref}
                                     for ref in references[:100] if isinstance(ref, dict)]
+        sample['reference_fields'] = [{name: type(value).__name__ for name, value in ref.items()}
+                                      for ref in references[:100] if isinstance(ref, dict)]
         sample['has_thoughts'] = bool(output.get('thoughts'))
         sample['output_fields'] = {name: type(value).__name__ for name, value in output.items()}
         usage = data.get('usage') or {}
@@ -43,6 +45,8 @@ def redact_frame(event, payload, key, private_values=()):
 
 
 async def run(args):
+    if args.prompt is not None and (not args.prompt.strip() or len(args.prompt) > 1500):
+        raise AIError('invalid_prompt', 422)
     settings = Settings.environment()
     report = {'application_id': settings.app_id, 'workspace': settings.workspace, 'region': settings.region,
               'key_configured': bool(settings.key), 'paid_calls': 0, 'scope': 'application_api_probe_only', 'samples': []}
@@ -62,7 +66,9 @@ async def run(args):
         client = NewsAgentClient(settings.app_id, settings.key, settings.workspace, settings.region,
                                  frame_observer=observe)
         session = None
-        for question in ['请简要介绍航天任务中“一箭多星”的基本含义。'] + (['上述概念中，卫星分离通常需要考虑什么？'] if args.follow_up else []):
+        first_question = args.prompt.strip() if args.prompt else '请简要介绍航天任务中“一箭多星”的基本含义。'
+        follow_up = '请继续解释上文涉及的关键原理，并区分检索依据与补充背景。' if args.prompt else '上述概念中，卫星分离通常需要考虑什么？'
+        for question in [first_question] + ([follow_up] if args.follow_up else []):
             report['paid_calls'] += 1
             error = None
             try:
@@ -87,6 +93,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--call', action='store_true', help='Explicitly make one potentially paid model call')
     parser.add_argument('--follow-up', action='store_true', help='Make one additional call using the returned session')
+    parser.add_argument('--prompt', help='Use a specific non-sensitive test question, up to 1500 characters')
     parser.add_argument('--output', help='Save local redacted protocol evidence')
     args = parser.parse_args()
     try:

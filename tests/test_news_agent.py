@@ -110,6 +110,25 @@ class Protocol(unittest.IsolatedAsyncioTestCase):
             self.assertNotIn(private, serialized)
         self.assertTrue(sample['has_thoughts'])
         self.assertEqual(sample['data']['output']['session_id'], 'sample-session')
+        self.assertEqual(sample['reference_fields'][0]['doc_url'], 'str')
+
+    async def test_probe_custom_prompt_uses_one_call_and_retains_reference_shape(self):
+        import argparse
+        import contextlib
+        import io
+        from unittest.mock import AsyncMock
+        from tools import probe_news_agent as probe
+        provider = AsyncMock()
+        provider.ask.return_value = NewsAnswer('Test', 'private-session', [], {'total_tokens': 3}, 'test')
+        question = '固体火箭发动机是什么？请检索知识库并标注来源。'
+        args = argparse.Namespace(call=True, follow_up=False, prompt=question, output=None)
+        with patch.object(probe.Settings, 'environment', return_value=news_agent.Settings(key='private-key')), \
+             patch.object(probe, 'NewsAgentClient', return_value=provider), contextlib.redirect_stdout(io.StringIO()) as output:
+            self.assertEqual(await probe.run(args), 0)
+        provider.ask.assert_awaited_once_with(question, None)
+        self.assertEqual(json.loads(output.getvalue())['paid_calls'], 1)
+        args.prompt = ' '
+        with self.assertRaises(AIError): await probe.run(args)
 
 
 class FakeClient:
