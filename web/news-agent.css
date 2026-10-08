@@ -1,0 +1,14 @@
+.news-agent{margin-top:32px;padding-top:28px;border-top:1px solid var(--line);color:var(--ink)}
+.news-agent h2{font:600 22px/1.5 var(--sans);margin:0 0 8px}
+.news-agent-article,.news-agent-status,.news-agent-notice{font:14px/1.8 var(--sans);color:var(--muted);margin:8px 0}
+.news-agent-actions{display:flex;flex-wrap:wrap;gap:12px;margin:20px 0}
+.news-agent button{min-height:44px;font:14px var(--sans)}
+.news-agent form{display:grid;gap:12px;margin:20px 0}
+.news-agent label{font:500 14px var(--sans)}
+.news-agent textarea{width:100%;box-sizing:border-box;resize:vertical;min-height:100px;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--paper);color:var(--ink);font:16px/1.7 var(--sans)}
+.news-agent textarea:focus-visible,.news-agent button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.news-agent form button{justify-self:start}.news-agent button:disabled{opacity:.55;cursor:not-allowed}
+.news-agent-thread{display:grid;gap:20px}.news-agent-message{padding:20px;border:1px solid var(--line);border-radius:16px;background:var(--paper);overflow-wrap:anywhere}
+.news-agent-question{font:500 14px/1.7 var(--sans);color:var(--accent);margin:0 0 16px}
+.news-agent-answer{font:16px/1.95 var(--sans);white-space:pre-wrap}.news-agent-message a{display:inline-block;min-height:44px;line-height:44px;font-size:14px}
+@media(max-width:600px){.news-agent-message{padding:16px}.news-agent-actions button{flex:1}}

@@ -88,6 +88,8 @@
     const scope = ({full_text:'本站全文', link_only:'原文阅读', unavailable:'暂不可用'}[item.reading_mode] || '原文阅读');
     bottom.append(element('span', 'reading-badge', scope));
     if (canRead) bottom.append(originalLink(item, '查看原文 ↗'));
+    const explain = element('button', 'link-button', '科普解读与提问'); explain.type = 'button';
+    explain.addEventListener('click', () => window.newsReader.open(item.id, explain)); bottom.append(explain);
     text.append(meta, heading);
     if (canRead && item.summary?.trim()) text.append(element('p', '', item.summary));
     text.append(bottom);row.append(text);

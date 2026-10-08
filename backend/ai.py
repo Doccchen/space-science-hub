@@ -202,16 +202,7 @@ class AIService:
             history = json.loads(conversation['history'])
             if len(history)//2 >= settings.rounds or sum(len(item['content']) for item in history)+len(question)>16000:
                 raise AIError('history_limit',409)
-            day = int((now+8*3600)//86400)*86400-8*3600
-            for column, value, limit in [('owner',owner,settings.visitor_daily),('ip',ip,settings.ip_daily)]:
-                count = db.execute(f'SELECT COUNT(*) FROM requests WHERE {column}=? AND created>=?',(value,day)).fetchone()[0]
-                if count >= limit:
-                    raise AIError('daily_limit',429)
-            if db.execute('SELECT COUNT(*) FROM requests WHERE owner=? AND created>=?',(owner,now-60)).fetchone()[0]>=settings.minute_limit:
-                raise AIError('rate_limit',429)
-            count, tokens = db.execute('SELECT COUNT(*),COALESCE(SUM(COALESCE(tokens,reservation)),0) FROM requests WHERE created>=?',(day,)).fetchone()
-            if count>=settings.site_daily or tokens+settings.token_reservation>settings.token_daily:
-                raise AIError('daily_limit',429)
+            self.check_budget(db, owner, ip, settings, now)
             db.execute('INSERT INTO requests(id,conversation,owner,ip,fingerprint,created,status,reservation) VALUES(?,?,?,?,?,?,?,?)',
                        (identity_key,identity,owner,ip,fingerprint,now,'pending',settings.token_reservation))
         return identity_key, history+[{'role':'user','content':question}], None
@@ -296,6 +287,41 @@ class AIService:
         return {'requests':row[0], 'tokens_accounted':row[1], 'pending_reservation':row[2] or 0,
                 'active':self.active, 'day_timezone':'Asia/Shanghai'}
 
+    def reserve_news(self, job_id, owner, ip, question):
+        """News calls share the existing global/visitor/IP ledger even if general chat is off."""
+        self.ensure_storage()
+        settings, now = self.settings, time.time()
+        with self.connection() as db:
+            db.execute('BEGIN IMMEDIATE')
+            ledger_id = 'news-' + job_id
+            if db.execute('SELECT 1 FROM requests WHERE id=?', (ledger_id,)).fetchone():
+                raise AIError('interrupted', 409)
+            self.check_budget(db, owner, ip, settings, now)
+            db.execute('INSERT INTO requests(id,conversation,owner,ip,fingerprint,created,status,reservation) VALUES(?,?,?,?,?,?,?,?)',
+                       (ledger_id, ledger_id, owner, ip, hashlib.sha256(question.encode()).hexdigest(), now, 'pending', settings.token_reservation))
+        return ledger_id
+
+    def check_budget(self, db, owner, ip, settings, now):
+        """Called inside the caller's ledger write transaction."""
+        if self.active >= settings.concurrency:
+            raise AIError('capacity', 429)
+        day = int((now + 8 * 3600) // 86400) * 86400 - 8 * 3600
+        for column, value, limit in [('owner', owner, settings.visitor_daily), ('ip', ip, settings.ip_daily)]:
+            if db.execute(f'SELECT COUNT(*) FROM requests WHERE {column}=? AND created>=?', (value, day)).fetchone()[0] >= limit:
+                raise AIError('daily_limit', 429)
+        if db.execute('SELECT COUNT(*) FROM requests WHERE owner=? AND created>=?', (owner, now - 60)).fetchone()[0] >= settings.minute_limit:
+            raise AIError('rate_limit', 429)
+        count, tokens = db.execute('SELECT COUNT(*),COALESCE(SUM(COALESCE(tokens,reservation)),0) FROM requests WHERE created>=?', (day,)).fetchone()
+        if count >= settings.site_daily or tokens + settings.token_reservation > settings.token_daily:
+            raise AIError('daily_limit', 429)
+
+    def finish_news(self, ledger_id, answer=None, error=None):
+        with self.connection() as db:
+            db.execute('UPDATE requests SET status=?,tokens=?,usage=?,provider_id=?,error=? WHERE id=?',
+                       ('error' if error else 'complete', (answer.usage or {}).get('total_tokens') if answer else None,
+                        json.dumps(answer.usage) if answer else None, answer.request_id if answer else None,
+                        error, ledger_id))
+
 
 def service_from_env():
     try:
@@ -324,7 +350,7 @@ def service(request):
 
 
 def identity(request):
-    value = request.cookies.get(COOKIE,'')
+    value = request.cookies.get(COOKIE) or request.cookies.get('space_news_visitor','')
     if not re.fullmatch(r'[a-f0-9]{64}',value):
         value = secrets.token_hex(32)
     return value, hashlib.sha256(value.encode()).hexdigest()
@@ -366,7 +392,7 @@ def create_conversation(request: Request):
         instance = service(request)
         cookie, owner = identity(request)
         response = JSONResponse({'conversation_id':instance.create(owner)},headers={'Cache-Control':'no-store'})
-        response.set_cookie(COOKIE,cookie,max_age=86400,httponly=True,samesite='strict',secure=instance.settings.secure_cookie,path='/api/ai')
+        response.set_cookie(COOKIE,cookie,max_age=86400,httponly=True,samesite='strict',secure=instance.settings.secure_cookie,path='/api')
         return response
     except AIError as error:
         return error_response(error)
@@ -374,6 +400,22 @@ def create_conversation(request: Request):
         return error_response(AIError('storage'))
     except Exception:
         return error_response(AIError('upstream_error'))
+
+
+@router.post('/visitor')
+async def migrate_visitor(request: Request):
+    """Inherit the old /api/ai cookie before starting news; no new owner or paid call."""
+    try:
+        origin_check(request)
+        cookie, _ = identity(request)
+        instance = service(request)
+        response = Response(status_code=204, headers={'Cache-Control': 'no-store'})
+        for name in (COOKIE, 'space_news_visitor'):
+            response.set_cookie(name, cookie, max_age=86400, httponly=True, samesite='strict',
+                                secure=instance.settings.secure_cookie, path='/api')
+        return response
+    except AIError as error:
+        return error_response(error)
 
 
 @router.delete('/conversations/{conversation_id}')

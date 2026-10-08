@@ -14,6 +14,7 @@ from . import reading
 from . import ai
 from . import ai_runtime
 from . import news_policy
+from . import news_agent, news_mcp
 
 ROOT = Path(__file__).resolve().parent.parent
 STATIC = ROOT / "web"
@@ -36,6 +37,13 @@ async def lifespan(app):
     resources.catalog.load()
     runtime = ai_runtime.startup()
     app.state.ai = runtime.service
+    app.state.news_agent = news_agent.NewsAgentService(news_agent.Settings.environment(), app.state.ai)
+    news_cleanup = asyncio.create_task(app.state.news_agent.housekeeping())
+    # SDK managers are single-lifespan objects. Recreate for tests/restarts.
+    app.state.news_mcp_sdk, fresh_mcp = news_mcp.build(lambda: getattr(app.state, 'news_agent', None))
+    mcp_app.app = fresh_mcp.app
+    mcp_manager = app.state.news_mcp_sdk.session_manager.run()
+    await mcp_manager.__aenter__()
     ai_cleanup = asyncio.create_task(ai.housekeeping(app.state.ai))
     ai_sync = asyncio.create_task(runtime.loop())
     task = asyncio.create_task(scheduled_collection()) if os.environ.get("COLLECT_ENABLED", "1") == "1" else None
@@ -44,6 +52,10 @@ async def lifespan(app):
     from . import news_thumbnails
     thumbnail_task = asyncio.create_task(news_thumbnails.loop()) if task and os.environ.get('NEWS_THUMBNAILS_ENABLED','0')=='1' else None
     yield
+    news_cleanup.cancel()
+    await asyncio.gather(news_cleanup, return_exceptions=True)
+    await app.state.news_agent.close()
+    await mcp_manager.__aexit__(None, None, None)
     ai_sync.cancel()
     try:
         await ai_sync
@@ -77,6 +89,9 @@ async def lifespan(app):
 app = FastAPI(title="Space News", lifespan=lifespan, docs_url=None, redoc_url=None)
 app.include_router(resources.router)
 app.include_router(ai.router)
+app.include_router(news_agent.router)
+app.state.news_mcp_sdk, mcp_app = news_mcp.build(lambda: getattr(app.state, 'news_agent', None))
+app.mount('/api/news-mcp', mcp_app)
 
 
 @app.get("/api/health")

@@ -1,5 +1,6 @@
 'use strict';
 (() => {
+  const agentStyle = document.createElement('link'); agentStyle.rel = 'stylesheet'; agentStyle.href = '/assets/news-agent.css'; document.head.append(agentStyle);
   const make = (tag, text, cls) => { const node = document.createElement(tag); if (text) node.textContent = text; if (cls) node.className = cls; return node; };
   const dialog = make('dialog', '', 'news-reader'); dialog.setAttribute('aria-labelledby', 'reader-title');
   const bar = make('div', '', 'reader-bar'), label = make('span', '新闻阅读'), close = make('button', '×');
@@ -30,7 +31,7 @@
   dialog.addEventListener('cancel', event => { event.preventDefault(); closeReader(); });
   dialog.addEventListener('keydown', event => {
     if (event.key !== 'Tab') return;
-    const targets = [...dialog.querySelectorAll('button:not([disabled]),a[href]')].filter(node => node.getClientRects().length);
+    const targets = [...dialog.querySelectorAll('button:not([disabled]),a[href],textarea:not([disabled]),input:not([disabled]),summary')].filter(node => node.getClientRects().length);
     const first = targets[0], last = targets.at(-1);
     if(document.activeElement?.id==='reader-title'){event.preventDefault();(event.shiftKey?last:first)?.focus();}
     else if (event.shiftKey && (document.activeElement === first || !dialog.contains(document.activeElement))) { event.preventDefault(); last?.focus(); }
@@ -79,13 +80,6 @@
         availability:content.availability,source_reading_policy:content.source_reading_policy,
         summary: content.reading_mode === 'full_text' ? (content.blocks.find(block => block.type === 'paragraph')?.text || '').slice(0, 600) : ''};
       document.dispatchEvent(new CustomEvent('readingchange', {detail: publicItem}));
-      if (content.source_reading_policy === 'link_only') {
-        history.replaceState(null, '', '#news'); hide(); pushed = false;
-        let notice = document.getElementById('reader-route-notice');
-        if (!notice) { notice = make('p', '', 'news-message'); notice.id = 'reader-route-notice'; notice.setAttribute('role', 'status'); const anchor=document.getElementById('news').querySelector('.news-results-bar'); if(anchor)anchor.after(notice);else document.getElementById('news').append(notice); }
-        notice.replaceChildren(make('span', '该来源采用原文阅读。 '), link(item.original_url));
-        return;
-      }
       const shouldFocus=document.activeElement?.id==='reader-title';
       const title = make('h1', item.title); title.id = 'reader-title';title.tabIndex=-1;
       const scope = {full_text: '本站全文 · 原始语言', link_only: '原文阅读 · 正文未开放', unavailable: '暂不可用'}[content.read_scope];
@@ -105,6 +99,10 @@
       content.blocks.forEach((block, index) => { if (block.type === 'paragraph') paragraphs++; const node = blockNode(block, id, content.content_version, paragraphs); if (node) body.append(node); figures(index+1); });
       const footer = make('div', '', 'reader-notice'); footer.append(make('p', content.notes), make('p', content.assets?.length ? '仅展示已审核图片；其他图片请到原文查看。' : '图片请到原文查看。'), link(item.original_url));
       body.append(footer,returnButton()); body.dataset.contentVersion = content.content_version;
+      try {
+        const agent = await import('/assets/news-agent.js');
+        if (request === generation && dialog.open) agent.mount(body, item);
+      } catch { if (request === generation && dialog.open) body.append(make('p', '新闻科普入口暂不可用。')); }
       if(shouldFocus)focusTitle();
     } catch (error) {
       if (request !== generation || !dialog.open) return;

@@ -14,7 +14,9 @@ from urllib.robotparser import RobotFileParser
 HOSTS = {'nasa': {'www.nasa.gov', 'science.nasa.gov', 'images-assets.nasa.gov'},
          'esa': {'www.esa.int', 'esa.int'},
          'cnsa': {'www.cnsa.gov.cn', 'cnsa.gov.cn'},
-         'cmse': {'www.cmse.gov.cn', 'cmse.gov.cn'}}
+         'cmse': {'www.cmse.gov.cn', 'cmse.gov.cn'},
+         'cas_space': {'www.cas-space.com'},
+         'landspace': {'www.landspace.com'}}
 
 
 def checked_url(source, url, *, image=False, robots=False):
@@ -25,6 +27,10 @@ def checked_url(source, url, *, image=False, robots=False):
         raise ValueError('Invalid publisher URL')
     if len(url) > 2048 or '\\' in url or '%' in parsed.path or '..' in parsed.path:
         raise ValueError('Unreviewed publisher path')
+    if source in {'cas_space', 'landspace'} and not robots:
+        from .html_sources import detail_allowed
+        if image or not detail_allowed(source, url):
+            raise ValueError('Unreviewed company article path')
     if source == 'nasa' and not robots:
         if parsed.hostname == 'images-assets.nasa.gov':
             if not image or parsed.scheme != 'https' or parsed.port not in {None,443} or not re.fullmatch(
@@ -92,9 +98,12 @@ class Publisher:
             if self.requests >= 12 or time.monotonic() > self.deadline:
                 raise ValueError('Publisher request budget reached')
             address = public_addresses(parsed.hostname, parsed.port or (443 if parsed.scheme == 'https' else 80))[0]
+            if time.monotonic() > self.deadline:
+                raise ValueError('Publisher DNS budget reached')
             if self.requests:
                 time.sleep(1)
             conn = (PinnedHTTPS if parsed.scheme == 'https' else PinnedHTTP)(parsed.hostname, address, parsed.port or (443 if parsed.scheme == 'https' else 80))
+            conn.timeout = min(15, max(1, self.deadline - time.monotonic()))
             self.requests += 1
             try:
                 conn.request('GET', parsed.path + ('?'+parsed.query if parsed.query else ''), headers={'User-Agent': 'SpaceNewsReview/1.0', 'Accept-Encoding': 'identity'})
