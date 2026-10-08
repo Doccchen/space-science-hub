@@ -1,0 +1,8 @@
+[Unit]
+Description=Renew short-lived Space News MCP IP certificate
+After=network-online.target nginx.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/space-news-certbot/bin/certbot renew --quiet --cert-name 8.137.164.100 --deploy-hook "/usr/sbin/nginx -t && /usr/bin/systemctl reload nginx"
