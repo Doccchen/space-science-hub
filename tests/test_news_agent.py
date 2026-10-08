@@ -130,6 +130,18 @@ class Protocol(unittest.IsolatedAsyncioTestCase):
         args.prompt = ' '
         with self.assertRaises(AIError): await probe.run(args)
 
+    def test_probe_redacts_links_and_credentials_across_stream_chunks(self):
+        from tools.probe_news_agent import redact_frame, redact_stream_text
+        chunks = ['See https://private.', 'invalid/image?OSSAccessKeyId=access', '&Signature=signature)\n',
+                  'secret-', 'key and private-', 'session.']
+        frames = [redact_frame('result', json.dumps({'output':{'text':chunk}}), 'secret-key') for chunk in chunks]
+        redact_stream_text(frames, 'secret-key', ['private-session'])
+        answer = ''.join(frame['data']['output']['text'] for frame in frames)
+        for private in ('private.invalid', 'OSSAccessKeyId', 'Signature', 'signature', 'secret-key', 'private-session'):
+            self.assertNotIn(private, answer)
+        self.assertIn('See [链接未公开])', answer)
+        self.assertEqual(len(frames), len(chunks))
+
 
 class FakeClient:
     def __init__(self):

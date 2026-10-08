@@ -78,7 +78,9 @@ class ApplicationStream:
             references = output.get('doc_references') or []
             if not isinstance(references, list):
                 raise ValueError()
-            # Preserve server-side structured IDs for later verification; never publish URLs/content.
+            # Agent 2.0 documents this legacy field as null. Empty is expected and
+            # does not prove retrieval failure; textual citations need separate validation.
+            # Preserve unexpected structured IDs for diagnosis; never publish URLs/content.
             for ref in references[:100]:
                 if isinstance(ref, dict) and ref not in self.references:
                     self.references.append(ref)

@@ -2,11 +2,40 @@
 import argparse
 import asyncio
 import json
+import re
 from pathlib import Path
 
 from backend.bailian import AIError, public_text
 from backend.news_agent import Settings
 from backend.news_agent_client import NewsAgentClient
+
+
+def redact_stream_text(frames, key, private_values=()):
+    """Strip links/credentials across SSE text chunks while preserving frame order."""
+    outputs = [frame.get('data', {}).get('output', {}) for frame in frames if isinstance(frame.get('data'), dict)]
+    outputs = [output for output in outputs if isinstance(output.get('text'), str)]
+    text = ''.join(output['text'] for output in outputs)
+    # The marker handles links whose prefix was already removed by per-frame sanitization.
+    patterns = [r'https?://[^\s<>"\)\]]+', r'\[链接未公开\][^\s<>"\)\]]*',
+                r'(?:OSSAccessKeyId|Signature|Expires)=[^\s&\)\]]+']
+    secrets = [value for value in (key, *private_values) if isinstance(value, str) and value]
+    patterns.extend(re.escape(value) for value in secrets)
+    spans = list(re.finditer('|'.join(patterns), text))
+    offset = 0
+    for output in outputs:
+        end = offset + len(output['text'])
+        parts, cursor = [], offset
+        for span in spans:
+            if span.end() <= offset or span.start() >= end:
+                continue
+            if span.start() > cursor:
+                parts.append(text[cursor:span.start()])
+            if offset <= span.start() < end:
+                parts.append('[已隐藏]' if span.group() in secrets else '[链接未公开]')
+            cursor = min(end, span.end())
+        parts.append(text[cursor:end])
+        output['text'] = ''.join(parts)
+        offset = end
 
 
 def redact_frame(event, payload, key, private_values=()):
@@ -49,7 +78,8 @@ async def run(args):
         raise AIError('invalid_prompt', 422)
     settings = Settings.environment()
     report = {'application_id': settings.app_id, 'workspace': settings.workspace, 'region': settings.region,
-              'key_configured': bool(settings.key), 'paid_calls': 0, 'scope': 'application_api_probe_only', 'samples': []}
+              'key_configured': bool(settings.key), 'paid_calls': 0, 'scope': 'application_api_probe_only',
+              'reference_semantics': 'agent2_doc_references_expected_empty_text_citations_need_validation', 'samples': []}
     if args.call:
         if not settings.key:
             raise AIError('configuration')
@@ -78,7 +108,8 @@ async def run(args):
             except AIError as failure:
                 error = failure.code
                 outcome = {'complete': False, 'error': error}
-            report['samples'].append({**outcome, 'frames': frames.copy()}); frames.clear()
+            redact_stream_text(frames, settings.key, private_sessions)
+            report['samples'].append({**outcome, 'text_redaction': 'stream_spans', 'frames': frames.copy()}); frames.clear()
             if error:
                 break  # No automatic retry of a potentially charged call.
     if args.output:
