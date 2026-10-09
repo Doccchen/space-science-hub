@@ -106,7 +106,7 @@
     return changes;
   }
   document.addEventListener('admin-session', event => { csrf = event.detail.csrf; });
-  document.addEventListener('admin-tab-request',event=>{if(event.detail==='ai'){if(busy||!leave())event.preventDefault();else{dirty=false;generation++;}}});
+  document.addEventListener('admin-tab-request',event=>{if(['ai','news'].includes(event.detail)){if(busy||!leave())event.preventDefault();else{dirty=false;generation++;}}});
   document.addEventListener('admin-logout', () => { csrf = ''; current = null; dirty = false; generation++; $('resource-rows').replaceChildren(); $('resource-history').replaceChildren(); });
   $('nav-resources').addEventListener('click', () => act($('nav-resources'), async () => {
     if (!leave()) return;

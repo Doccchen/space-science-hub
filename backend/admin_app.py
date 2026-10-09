@@ -7,7 +7,7 @@ from pathlib import Path
 from fastapi import FastAPI, Depends, HTTPException, Request
 from fastapi.responses import FileResponse, JSONResponse
 from . import news, admin_auth
-from . import resource_admin, management_store, ai_admin
+from . import resource_admin, management_store, ai_admin, news_limits_admin
 
 STATIC = Path(__file__).resolve().parent.parent/'admin_web'
 
@@ -22,6 +22,7 @@ async def lifespan(app):
 app = FastAPI(lifespan=lifespan, docs_url=None, redoc_url=None, openapi_url=None)
 app.include_router(resource_admin.router)
 app.include_router(ai_admin.router)
+app.include_router(news_limits_admin.router)
 app.add_exception_handler(management_store.ManagementError, resource_admin.management_error)
 
 
@@ -90,6 +91,11 @@ def resource_javascript():
 @app.get('/ai-settings.js')
 def ai_javascript():
     return FileResponse(STATIC/'ai-settings.js', media_type='application/javascript')
+
+
+@app.get('/news-limits.js')
+def news_limits_script():
+    return FileResponse(STATIC/'news-limits.js',media_type='application/javascript')
 
 
 @app.get('/covers/{filename}')

@@ -6,7 +6,7 @@ import time
 from dataclasses import replace
 from pathlib import Path
 
-from backend import ai, ai_config, management_store, news_agent
+from backend import ai_config, news_agent, news_limits
 from backend.bailian import AIError, public_text
 from backend.news_agent_client import NewsAgentClient
 from backend.news_context_store import Store
@@ -19,15 +19,10 @@ async def run(args):
         raise AIError('configuration')
     cipher = ai_config.cipher()
     token = cipher.decrypt(scope['context'].encode()).decode()
-    limits = ai.Settings.environment()
-    if ai_config.tables_exist():
-        with management_store.connection() as db:
-            state = ai_config.state(db)
-            limits = ai_config.load(ai_config.version(db, state['desired_version']), limits, state['desired_compat'])
     # Public generation must be off during this isolated operator acceptance call.
-    if settings.enabled or limits.enabled:
+    if settings.enabled:
         raise AIError('configuration')
-    budget = ai.AIService(replace(limits, enabled=False, token_reservation=max(60000, limits.token_reservation)))
+    budget = news_limits.budget()
     with budget.connection() as db:
         if not db.execute("SELECT 1 FROM sqlite_master WHERE name='requests'").fetchone():
             raise AIError('storage')

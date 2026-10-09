@@ -42,6 +42,7 @@ class ConfigurationTests(unittest.TestCase):
         self.env = patch.dict(os.environ, {'MANAGEMENT_DB_PATH':str(self.root/'management.sqlite3'),
             'AI_MASTER_KEY_FILE':str(self.keyfile), 'AI_DB_PATH':str(self.root/'ai.sqlite3'),
             'ADMIN_ORIGIN':ORIGIN, 'AI_ENABLED':'1', 'DASHSCOPE_API_KEY':SECRET,
+            'AI_COOKIE_SECURE':'0',
             'BAILIAN_WORKSPACE_ID':'llm-test', 'BAILIAN_AGENT_ID':'aid-test', 'AI_CONFIG_VERSION':'1',
             'COLLECT_ENABLED':'0', 'REVIEW_WORKER_ENABLED':'0'})
         self.env.start()

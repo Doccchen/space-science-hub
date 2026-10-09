@@ -8,15 +8,17 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 BASELINE = 'ef80d98c1c573aa8da85a2ec5c25a5c8d4745636'
-BASELINE_OVERRIDES = {'backend/review_capture.py':'565d2a6','backend/reading.py':'565d2a6'}
+BASELINE_OVERRIDES = {'backend/review_capture.py':'565d2a6','backend/reading.py':'565d2a6','backend/app.py':'742f131','backend/ai.py':'742f131'}
 FILES = ['backend/app.py','backend/ai.py','backend/publisher_fetch.py',
          'backend/review_capture.py','backend/reading.py',
          'backend/news_agent.py','backend/news_agent_client.py','backend/news_context.py',
          'backend/news_context_store.py','backend/news_mcp.py','requirements.txt',
+         'backend/news_limits.py','backend/news_limits_admin.py',
          'web/news-reader.js','web/news-ui.js','web/news-agent.js','web/news-agent.css',
          'tools/news_agent_operator.py','tools/news_agent_server_info.py','tools/probe_news_agent.py',
          'tools/probe_news_agent_mcp.py','tools/probe_news_agent_inline.py',
-         'tools/probe_news_mcp.py','tools/news_mcp_scope_status.py','tools/accept_news_sources.py']
+         'tools/probe_news_mcp.py','tools/news_mcp_scope_status.py','tools/accept_news_sources.py',
+         'tools/migrate_news_usage.py','tools/news_limits_admin_overlay.py']
 
 
 def main():

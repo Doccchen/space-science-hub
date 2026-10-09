@@ -250,6 +250,7 @@ class NewsAgentService:
 
     async def run(self, job_id, conversation, owner, question, kind, ledger_id):
         answer = None
+        provider_started = False
         try:
             async with asyncio.timeout(self.settings.timeout + 30):
                 self.stage(job_id, 'reading')
@@ -277,6 +278,7 @@ class NewsAgentService:
                     prompt += '新闻资料 JSON：\n' + json.dumps(context, ensure_ascii=False)
                 prompt += '\n用户问题：' + question
                 session = self.cipher.decrypt(conversation['session'].encode()).decode() if conversation['session'] else None
+                provider_started = True
                 answer = await self.client.ask(prompt, session, token_mapping)
                 # Usage is recorded even if deletion, withdrawal or validation rejects a late response.
                 self.budget.finish_news(ledger_id, answer)
@@ -325,7 +327,7 @@ class NewsAgentService:
         except BaseException as error:
             code = error.code if isinstance(error, AIError) else 'interrupted' if isinstance(error, asyncio.CancelledError) else 'upstream_error'
             try:
-                self.budget.finish_news(ledger_id, answer, code)
+                self.budget.finish_news(ledger_id, answer, code, no_call=not provider_started)
                 with self.store.connection() as db:
                     db.execute('UPDATE news_agent_jobs SET stage=?,error=?,result=NULL WHERE id=?',
                                ('interrupted' if code == 'interrupted' else 'error', code, job_id))

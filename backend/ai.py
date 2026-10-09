@@ -288,7 +288,7 @@ class AIService:
                 'active':self.active, 'day_timezone':'Asia/Shanghai'}
 
     def reserve_news(self, job_id, owner, ip, question):
-        """News calls share the existing global/visitor/IP ledger even if general chat is off."""
+        """Reserve a news request in this budget instance's dedicated ledger."""
         self.ensure_storage()
         settings, now = self.settings, time.time()
         with self.connection() as db:
@@ -315,11 +315,11 @@ class AIService:
         if count >= settings.site_daily or tokens + settings.token_reservation > settings.token_daily:
             raise AIError('daily_limit', 429)
 
-    def finish_news(self, ledger_id, answer=None, error=None):
+    def finish_news(self, ledger_id, answer=None, error=None, no_call=False):
         with self.connection() as db:
             db.execute('UPDATE requests SET status=?,tokens=?,usage=?,provider_id=?,error=? WHERE id=?',
-                       ('error' if error else 'complete', (answer.usage or {}).get('total_tokens') if answer else None,
-                        json.dumps(answer.usage) if answer else None, answer.request_id if answer else None,
+                       ('error' if error else 'complete', (answer.usage or {}).get('total_tokens') if answer else 0 if no_call else None,
+                        json.dumps(answer.usage) if answer else json.dumps({'total_tokens':0,'model_call_started':False}) if no_call else None, answer.request_id if answer else None,
                         error, ledger_id))
 
 

@@ -4,6 +4,7 @@ import sqlite3
 from pathlib import Path
 
 import httpx
+from backend import news_limits
 
 
 def main():
@@ -11,7 +12,7 @@ def main():
         db.row_factory = sqlite3.Row
         rows = db.execute('SELECT id,conversation,question,stage,result,error,ledger_id FROM news_agent_jobs ORDER BY created').fetchall()
     report = {'scope':'ssh_loopback_real_browser','samples':[]}
-    with sqlite3.connect('/data/ai.sqlite3') as ledger, httpx.Client(trust_env=False,timeout=5) as stranger:
+    with sqlite3.connect(news_limits.usage_path()) as ledger, httpx.Client(trust_env=False,timeout=5) as stranger:
         for row in rows:
             usage = ledger.execute('SELECT status,tokens FROM requests WHERE id=?',(row['ledger_id'],)).fetchone()
             result = json.loads(row['result']) if row['result'] else None

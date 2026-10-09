@@ -85,6 +85,7 @@ def main():
                   'RUN python -m pip install --no-cache-dir --disable-pip-version-check '
                   '--index-url https://mirrors.aliyun.com/pypi/simple -r /tmp/news-agent-requirements.txt pytest\n'
                   'COPY backend /app/backend\nCOPY web /app/web\nCOPY tools /app/tools\nCOPY tests /app/tests\n'
+                  'RUN python /app/tools/news_limits_admin_overlay.py --root /app --backend-only\n'
                   'COPY requirements.txt /app/requirements.txt\nUSER 10001:10001\n')
     (stage / 'Dockerfile').write_text(dockerfile)
     image = 'space-news-agent-release:' + stamp
@@ -92,9 +93,13 @@ def main():
     run('docker','run','--rm','--tmpfs','/data:rw,uid=10001,gid=10001,mode=0700',
         '-e','COLLECT_ENABLED=0',image,'python','-m','pytest',
         'tests/test_news_agent.py','tests/test_ai.py','tests/test_reading.py','tests/test_publisher_fetch.py',
-        'tests/test_admin.py','tests/test_auto_fulltext.py','tests/test_apod_policy.py','-q')
+        'tests/test_admin.py','tests/test_auto_fulltext.py','tests/test_apod_policy.py',
+        'tests/test_news_limits.py','tests/test_ai_management.py','-q')
     run('docker','run','--rm','--volumes-from','space-news-app-1',image,
         'python','-m','tools.news_agent_operator','bootstrap')
+    run('docker','run','--rm','--volumes-from','space-news-app-1',
+        '-e','NEWS_AGENT_USAGE_DB_PATH=/data/news-agent-usage.sqlite3',image,
+        'python','-m','tools.migrate_news_usage')
     backup = ("import sqlite3; from pathlib import Path; from contextlib import closing; "
               f"target=Path('/data/news-agent-before-{stamp}'); target.mkdir(mode=0o700)\n"
               "for p in Path('/data').glob('*.sqlite3'):\n"
@@ -122,6 +127,8 @@ def main():
                      '      NEWS_MCP_PLUGIN_CODE: ${NEWS_MCP_PLUGIN_CODE:-}\n')
         if '      NEWS_AGENT_ENABLED:' not in compose:
             compose = compose.replace(anchor,anchor + additions,1)
+        if '      NEWS_AGENT_USAGE_DB_PATH:' not in compose:
+            compose = compose.replace(anchor,anchor+'      NEWS_AGENT_USAGE_DB_PATH: /data/news-agent-usage.sqlite3\n',1)
         (PROJECT / 'compose.yaml').write_text(compose)
         overrides = {'NEWS_AGENT_ENABLED':'0','NEWS_CONTEXT_ENABLED':'1','NEWS_MCP_ENABLED':'0',
                      'NEWS_MCP_CONTEXT_VERIFIED':'0','NEWS_AGENT_CONFIG_VERSION':'news-agent-v2'}

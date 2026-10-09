@@ -430,6 +430,16 @@ class NewsWork(unittest.IsolatedAsyncioTestCase):
         with self.budget.connection() as db:
             self.assertEqual(db.execute('SELECT tokens FROM requests').fetchone()[0], 30)
 
+    async def test_unreadable_context_records_zero_model_tokens(self):
+        self.mock_fetch.return_value=(b'<div class="wz_conten"><p>Partial text</p><iframe></iframe></div>','text/html')
+        result=await self.submit();await self.finish_jobs()
+        self.assertEqual(len(self.provider.calls),0)
+        with self.budget.connection() as db:
+            row=db.execute('SELECT tokens,usage FROM requests').fetchone()
+        self.assertEqual(row['tokens'],0)
+        self.assertFalse(json.loads(row['usage'])['model_call_started'])
+        self.assertEqual((await self.http.get('/api/news-agent/jobs/'+result.json()['job_id'])).json()['stage'],'error')
+
     async def test_context_dedup_partial_table_and_pending_cooldown(self):
         self.mock_fetch.return_value = (b'<div class="wz_conten"><p>Original</p><ul><li>One</li><li>Two</li></ul>'
                                         b'<table><tr><td>27</td><td>km</td></tr></table></div>', 'text/html')

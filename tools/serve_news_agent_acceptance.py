@@ -7,7 +7,7 @@ import os
 
 import uvicorn
 
-from backend import ai, ai_config, management_store, news_agent, resources
+from backend import news_agent, news_limits, resources
 from backend.app import app
 from backend.bailian import AIError
 from backend.news_context_store import Store
@@ -16,14 +16,11 @@ from tools.probe_news_agent import redact_frame, redact_stream_text
 
 @asynccontextmanager
 async def lifespan(application):
-    settings, limits = news_agent.Settings.environment(), ai.Settings.environment()
-    if ai_config.tables_exist():
-        with management_store.connection() as db:
-            state = ai_config.state(db)
-            limits = ai_config.load(ai_config.version(db,state['desired_version']),limits,state['desired_compat'])
-    if settings.enabled or limits.enabled or not settings.key:
+    settings = news_agent.Settings.environment()
+    if settings.enabled or not settings.key:
         raise RuntimeError('Public generation must be off for private acceptance')
-    budget = ai.AIService(replace(limits,enabled=False,concurrency=1,secure_cookie=False,token_reservation=max(60000,limits.token_reservation)))
+    budget = news_limits.budget()
+    budget.settings = replace(budget.settings,concurrency=1,secure_cookie=False)
     with budget.connection() as db:
         if not db.execute("SELECT 1 FROM sqlite_master WHERE name='requests'").fetchone() or db.execute("SELECT 1 FROM requests WHERE status='pending'").fetchone():
             raise RuntimeError('Existing idle ledger required')

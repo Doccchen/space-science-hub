@@ -74,7 +74,7 @@
   }
   document.addEventListener('admin-session', event => { csrf = event.detail.csrf; });
   document.addEventListener('admin-logout', () => { csrf = ''; current = null; dirty = false; generation++; $('config-new-key').value = ''; $('config-tests').replaceChildren(); $('config-history').replaceChildren(); });
-  document.addEventListener('admin-tab-request', event => { if (event.detail === 'resources'){if(busy||!leave())event.preventDefault();else{dirty=false;generation++;$('config-new-key').value='';}} });
+  document.addEventListener('admin-tab-request', event => { if (['resources','news'].includes(event.detail)){if(busy||!leave())event.preventDefault();else{dirty=false;generation++;$('config-new-key').value='';}} });
   $('nav-ai').addEventListener('click', () => act($('nav-ai'), async () => {
     if (!leave() || !document.dispatchEvent(new CustomEvent('admin-tab-request',{cancelable:true,detail:'ai'}))) return;
     $('resource-workspace').hidden = true; $('ai-workspace').hidden = false;

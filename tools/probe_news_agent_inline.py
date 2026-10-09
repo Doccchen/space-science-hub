@@ -9,7 +9,7 @@ from pathlib import Path
 import httpx
 from fastapi import FastAPI
 
-from backend import ai, ai_config, management_store, news_agent
+from backend import news_agent, news_limits
 from backend.bailian import AIError, public_text
 from backend.news_agent_client import NewsAgentClient
 from backend.news_context_store import Store
@@ -31,18 +31,13 @@ def sanitize_receipts(value, key, private_values):
 
 async def run(args):
     settings = news_agent.Settings.environment()
-    limits = ai.Settings.environment()
-    if ai_config.tables_exist():
-        with management_store.connection() as db:
-            state = ai_config.state(db)
-            limits = ai_config.load(ai_config.version(db, state['desired_version']), limits, state['desired_compat'])
-    if settings.enabled or limits.enabled or not settings.key:
+    if settings.enabled or not settings.key:
         raise AIError('configuration')
     report = {'mode':'backend_inline_context', 'mcp_verified':False, 'public_generation_enabled':False,
               'article_id':args.article_id, 'paid_calls':0, 'samples':[]}
     if not args.call:
         print(json.dumps(report)); return
-    budget = ai.AIService(replace(limits, enabled=False, token_reservation=max(60000, limits.token_reservation)))
+    budget = news_limits.budget()
     with budget.connection() as db:
         if not db.execute("SELECT 1 FROM sqlite_master WHERE name='requests'").fetchone():
             raise AIError('storage')
