@@ -55,6 +55,14 @@ def main():
         if hashlib.sha256((stage / item['path']).read_bytes()).hexdigest() != item['sha256']:
             raise RuntimeError('File checksum mismatch')
     container = json.loads(run('docker','inspect','space-news-app-1',capture=True))[0]
+    labels = container['Config'].get('Labels') or {}
+    project, service = labels.get('com.docker.compose.project'), labels.get('com.docker.compose.service')
+    if not project or service != 'app':
+        raise RuntimeError('Unreviewed Compose service identity')
+    matching = run('docker','ps','-aq','--filter','label=com.docker.compose.project='+project,
+                   '--filter','label=com.docker.compose.service='+service,capture=True).splitlines()
+    if len(matching) != 1 or not container['Id'].startswith(matching[0]):
+        raise RuntimeError('Ambiguous Compose app labels; isolate operator containers before deployment')
     volume = next(mount['Name'] for mount in container['Mounts'] if mount['Destination'] == '/data')
     health_before, ai_before = get('/api/health'), get('/api/ai/status')
     for name, digest in manifest['existing_baselines'].items():

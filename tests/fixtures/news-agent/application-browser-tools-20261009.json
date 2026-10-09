@@ -1,0 +1,4105 @@
+{
+  "provenance": {
+    "kind": "real_public_text_with_normalized_tool_marker",
+    "raw_sha256": "0634cee98e258fd7ad5af3916a171839d90867fbe4bea7050cff797eeb9e6bbe",
+    "note": "Public text/frame order are real; tool observation bodies are reduced to a normalized boundary marker. No planning or retrieved content retained."
+  },
+  "frames": [
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "##",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": " 关于",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "累计",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "卫星",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "数量\n\n",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "不是。",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "新闻",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "明确说明",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "\"截至目前",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "，力",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "箭一号",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "运载",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "火箭已",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "成功将",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "105颗",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "卫星送入",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "太空\"",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "（b",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "0002",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "），这是",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "力",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "箭一号",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "截至该",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "报道",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "时累计",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "发射的",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "卫星总数",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "，并非",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "本次发射",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "数量。",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "本次\"",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "一箭",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "8星",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "\"发射",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "的数量",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "是8",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "颗（",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "b000",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "1），",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "这8",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "颗星",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "已包含",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "在累计",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "的105",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "颗之内",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "。\n\n##",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": " 比",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "冲含义",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "（知识",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "库检索",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": false,
+      "output_fields": {
+        "session_id": "str",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": [],
+          "thoughts": [
+            {
+              "action_name": "search_knowledgebases",
+              "action_type": "api",
+              "observation": "{\"knowledge_search_request_id\": \"normalized-call-1\", \"call_index\": 1, \"nodes\": []}"
+            }
+          ]
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": [
+        {
+          "action_name": "search_knowledgebases",
+          "call_index": 1,
+          "has_nodes": true
+        }
+      ]
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "##",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": " 关于",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "累计卫星",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "数量\n\n",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "不是",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "。新闻",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "明确写明",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "\"截至目前",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "，力",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "箭一号",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "运载",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "火箭已",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "成功将",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "105颗",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "卫星送入",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "太空\"",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "（b",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "0002",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "），这是",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "力",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "箭一号",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "截至该",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "报道时的",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "累计发射",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "总数",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "，并非",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "本次发射",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "数量。",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "本次发射",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "是\"",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "一箭",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "8",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "星\"",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "共8",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "颗（",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "b",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "0001",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "），这",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "8颗",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "已计入",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "累计的",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "105颗",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "之内。\n\n",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "## ",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "比冲",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "含义（",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "知识库",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "资料",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "）\n\n比",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "冲（",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "Isp",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "）定义为",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "火箭发动机",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "消耗单位",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "质量推进",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "剂所产生的",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "推力冲",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "量，",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "单位是",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "牛·",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "秒每",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "千克（",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "N·",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "s/kg",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "），其",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "数值等于",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "有效排气",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "速度，",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "是全面",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "衡量发动机",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "性能的重要",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "指标。",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "比冲",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "越大，",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "说明单位",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "质量推进",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "剂能",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "产生越多",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "冲量",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "，",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "发动机设计",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "质量越高",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "，火箭",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "能达到的最大",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "速度越大",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "、射",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "程越",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "远",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "。\n\n以上",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "两句为",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "航天",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "知识库",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "资料内容",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "，非",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "本次新闻",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "原文",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "。新闻",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "正文并未",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "提及\"",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "比冲",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "\"这一",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "参数，",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "仅涉及",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "卫星",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "载荷（",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "高分辨",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "光学遥感",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "卫星）",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "与火箭",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "控制系统软件",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "平台等内容",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "（",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "b000",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "3–",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "b000",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "5），",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "两者无",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "直接关联",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "。",
+          "finish_reason": "null",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": []
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    },
+    {
+      "event": "result",
+      "data": {
+        "code": null,
+        "output": {
+          "text": "",
+          "finish_reason": "stop",
+          "session_id": "sample-session",
+          "doc_references": []
+        },
+        "usage": {
+          "models": [
+            {
+              "input_tokens": 32926,
+              "output_tokens": 374
+            }
+          ]
+        }
+      },
+      "reference_fields": [],
+      "has_thoughts": true,
+      "output_fields": {
+        "session_id": "str",
+        "thoughts": "list",
+        "finish_reason": "str",
+        "text": "str"
+      },
+      "tool_observations": []
+    }
+  ],
+  "expected_text": "## 关于累计卫星数量\n\n不是。新闻明确写明\"截至目前，力箭一号运载火箭已成功将105颗卫星送入太空\"（b0002），这是力箭一号截至该报道时的累计发射总数，并非本次发射数量。本次发射是\"一箭8星\"共8颗（b0001），这8颗已计入累计的105颗之内。\n\n## 比冲含义（知识库资料）\n\n比冲（Isp）定义为火箭发动机消耗单位质量推进剂所产生的推力冲量，单位是牛·秒每千克（N·s/kg），其数值等于有效排气速度，是全面衡量发动机性能的重要指标。比冲越大，说明单位质量推进剂能产生越多冲量，发动机设计质量越高，火箭能达到的最大速度越大、射程越远。\n\n以上两句为航天知识库资料内容，非本次新闻原文。新闻正文并未提及\"比冲\"这一参数，仅涉及卫星载荷（高分辨光学遥感卫星）与火箭控制系统软件平台等内容（b0003–b0005），两者无直接关联。"
+}

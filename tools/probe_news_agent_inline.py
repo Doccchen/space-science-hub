@@ -96,7 +96,7 @@ async def run(args):
         except (ValueError,AttributeError,TypeError):
             pass
     provider = NewsAgentClient(settings.app_id, settings.key, settings.workspace, settings.region, timeout=120,
-                               frame_observer=observe,has_thoughts=args.inspect_trace)
+                               frame_observer=observe,has_thoughts=True)
     class ObservedClient:
         async def ask(self, prompt, session=None, tool_context=None):
             report['paid_calls'] += 1

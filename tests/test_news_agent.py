@@ -31,6 +31,27 @@ def frame(text='', finish=None, **output):
 
 
 class Protocol(unittest.IsolatedAsyncioTestCase):
+    def test_real_browser_stream_keeps_only_post_tool_answer(self):
+        evidence = json.loads((FIXTURES / 'news-agent/application-browser-tools-20261009.json').read_text(encoding='utf-8'))
+        state = ApplicationStream()
+        for sample in evidence['frames']:
+            state.frame(sample['event'],json.dumps(sample['data'],ensure_ascii=False))
+        self.assertEqual(state.result('').text,evidence['expected_text'])
+        self.assertEqual(state.text.count('关于累计卫星数量'),1)
+
+    async def test_repeated_tool_receipt_does_not_erase_final_text(self):
+        source = {'doc_id':'file_'+'a'*32+'_1','doc_name':'实际来源'}
+        receipt = {'action_name':'search_knowledgebases','action_type':'api','observation':json.dumps({
+            'knowledge_search_request_id':'call-1','call_index':1,'nodes':[{'metadata':source}]})}
+        answer = await self.call(frame('临时回答')+frame(thoughts=[receipt])+frame('最终回答')+frame(thoughts=[receipt])+frame('完成','stop'))
+        self.assertEqual(answer.text,'最终回答完成')
+        self.assertEqual(answer.knowledge_sources,[source])
+
+    async def test_pre_tool_draft_without_final_text_is_incomplete(self):
+        receipt = {'action_name':'search_knowledgebases','action_type':'api','observation':json.dumps({'nodes':[]})}
+        with self.assertRaises(AIError):
+            await self.call(frame('临时草稿')+frame(thoughts=[receipt])+frame('', 'stop'))
+
     def test_nasa_decorative_download_icons_are_not_article_diagrams(self):
         from backend import review_capture, reading
         raw = b'<html lang="en"><article><div class="entry-content"><p>Reported event.</p><div class="hds-media"><button class="image-details-toggle-button">Image Details<svg aria-hidden="true"><path/></svg></button></div><div class="hds-file-list-download"><a download=""><svg aria-hidden="true"><path/></svg></a></div></div></article></html>'

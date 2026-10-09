@@ -1,5 +1,6 @@
 """DashScope application completion SSE, separate from knowledge/chat."""
 import asyncio
+import hashlib
 import json
 import re
 from dataclasses import dataclass, field
@@ -54,12 +55,35 @@ def knowledge_receipts(thoughts):
     return found
 
 
+def completed_knowledge_calls(thoughts):
+    calls = []
+    for thought in thoughts[:100] if isinstance(thoughts,list) else []:
+        if not isinstance(thought,dict) or thought.get('action_name') != 'search_knowledgebases' or thought.get('action_type') != 'api':
+            continue
+        observation = thought.get('observation')
+        if not isinstance(observation,str) or len(observation) > 200000:
+            continue
+        try:
+            value = json.loads(observation)
+            if isinstance(value,dict) and isinstance(value.get('nodes'),list):
+                request_id = value.get('knowledge_search_request_id')
+                call_index = value.get('call_index')
+                if type(call_index) is not int:
+                    call_index = None
+                identity = ('request',request_id,call_index) if isinstance(request_id,str) and 0 < len(request_id) <= 256 else ('content',hashlib.sha256(observation.encode()).hexdigest())
+                calls.append(identity)
+        except (ValueError,TypeError):
+            continue
+    return calls
+
+
 class ApplicationStream:
     def __init__(self, incremental=True):
         self.incremental = incremental
         self.text, self.session, self.request_id = '', '', None
         self.ended, self.frames, self.usage, self.references = False, 0, None, []
         self.knowledge_sources = []
+        self.completed_tools = set()
 
     def frame(self, event, payload):
         self.frames += 1
@@ -78,6 +102,14 @@ class ApplicationStream:
             if not isinstance(output, dict):
                 raise ValueError()
             # Planning/tool text never becomes an answer. Only known observation doc metadata is retained.
+            for identity in completed_knowledge_calls(output.get('thoughts')):
+                if identity not in self.completed_tools:
+                    if self.ended:
+                        raise AIError('upstream_format')
+                    self.completed_tools.add(identity)
+                    # The provider restarts output.text after a tool result. Pre-tool
+                    # drafts are not the final answer and must not be concatenated.
+                    self.text = ''
             for source in knowledge_receipts(output.get('thoughts')):
                 if source not in self.knowledge_sources and len(self.knowledge_sources) < 100:
                     self.knowledge_sources.append(source)
@@ -138,7 +170,7 @@ class ApplicationStream:
 
 
 class NewsAgentClient:
-    def __init__(self, app_id, key, workspace='', region='beijing', timeout=90, incremental=True, transport=None, frame_observer=None, has_thoughts=False):
+    def __init__(self, app_id, key, workspace='', region='beijing', timeout=90, incremental=True, transport=None, frame_observer=None, has_thoughts=True):
         if region not in BASES or not re.fullmatch(r'[a-f0-9]{32}', app_id):
             raise ValueError('Invalid application configuration')
         if workspace and not re.fullmatch(r'[A-Za-z0-9-]{1,100}', workspace):
