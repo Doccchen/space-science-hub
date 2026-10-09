@@ -8,7 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 FILES = ('backend/ai.py','backend/ai_config.py','backend/ai_runtime.py','backend/ai_admin.py',
          'backend/app.py','backend/admin_app.py','backend/management_store.py','backend/resource_admin.py','backend/resources.py',
-         'admin_web/index.html','admin_web/admin.js','admin_web/admin.css','admin_web/resources.js','admin_web/ai-settings.js',
+         'admin_web/index.html','admin_web/admin.js','admin_web/admin.css','admin_web/brand.svg','admin_web/resources.js','admin_web/ai-settings.js',
          'web/ai-ui.js','tools/ai_manage.py','tools/resources_manage.py','requirements.txt',
          'tests/test_ai_management.py','tests/test_ai.py', 'docs/deployment/AI设置后台部署-20261006.md')
 
