@@ -117,13 +117,13 @@ def main():
                      '      NEWS_AGENT_WORKSPACE_ID: ${NEWS_AGENT_WORKSPACE_ID:-llm-ep9bqc9mnw50k8e0}\n'
                      '      NEWS_AGENT_REGION: ${NEWS_AGENT_REGION:-beijing}\n'
                      '      NEWS_AGENT_CONFIG_VERSION: ${NEWS_AGENT_CONFIG_VERSION:-news-agent-v2}\n'
-                     '      NEWS_MCP_ENABLED: ${NEWS_MCP_ENABLED:-1}\n'
+                     '      NEWS_MCP_ENABLED: ${NEWS_MCP_ENABLED:-0}\n'
                      '      NEWS_MCP_CONTEXT_VERIFIED: ${NEWS_MCP_CONTEXT_VERIFIED:-0}\n'
                      '      NEWS_MCP_PLUGIN_CODE: ${NEWS_MCP_PLUGIN_CODE:-}\n')
         if '      NEWS_AGENT_ENABLED:' not in compose:
             compose = compose.replace(anchor,anchor + additions,1)
         (PROJECT / 'compose.yaml').write_text(compose)
-        overrides = {'NEWS_AGENT_ENABLED':'0','NEWS_CONTEXT_ENABLED':'1','NEWS_MCP_ENABLED':'1',
+        overrides = {'NEWS_AGENT_ENABLED':'0','NEWS_CONTEXT_ENABLED':'1','NEWS_MCP_ENABLED':'0',
                      'NEWS_MCP_CONTEXT_VERIFIED':'0','NEWS_AGENT_CONFIG_VERSION':'news-agent-v2'}
         env = (PROJECT / '.env').read_text().splitlines()
         env = [line for line in env if line.partition('=')[0].strip() not in overrides]
@@ -145,7 +145,7 @@ def main():
         if health_after['articles'] < health_before['articles'] or get('/api/ai/status') != ai_before:
             raise RuntimeError('Existing site regression')
         agent = get('/api/news/362/agent-status')
-        if agent['enabled'] or not agent['mcp_service_enabled']:
+        if agent['enabled'] or agent['mcp_service_enabled'] or agent['mcp_enabled']:
             raise RuntimeError('Unsafe or unavailable bootstrap state')
         unchanged_code = ("import hashlib,json; from pathlib import Path; "
                           "print(json.dumps({str(p.relative_to('/app/web')):hashlib.sha256(p.read_bytes()).hexdigest() "
@@ -161,7 +161,7 @@ def main():
                 if hashlib.sha256(live).hexdigest() != item['sha256']:
                     raise RuntimeError('Release runtime file mismatch')
         result = {'status':'deployed','image':image,'snapshot':snapshot,'evidence':str(evidence),
-                  'health':health_after,'public_generation_enabled':False,'mcp_bootstrap_enabled':True,
+                  'health':health_after,'public_generation_enabled':False,'mcp_bootstrap_enabled':False,
                   'unrelated_web_bytes_preserved':True,'model_calls':0}
         (evidence / 'result.json').write_text(json.dumps(result,indent=2)+'\n')
         (ROOT / 'latest-evidence-path').write_text(str(evidence)+'\n')
