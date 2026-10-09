@@ -48,7 +48,8 @@
   updateDetails.append(element('summary','','更新状态'),toolbar.lastElementChild);
   resultMeta.append(totalDescription,resultLabel,updateDetails); resultBar.append(resultMeta,resultActions);
   const layout = element('div','news-layout'), results = element('section','news-results'); results.setAttribute('aria-label','新闻结果');
-  results.append(resultBar,status,list,bottomPager); layout.append(panel,results); toolbar.replaceWith(layout);
+  const activeFilters=element('div','selected-filters');activeFilters.setAttribute('role','group');activeFilters.setAttribute('aria-label','已选筛选条件');
+  results.append(resultBar,activeFilters,status,list,bottomPager); layout.append(panel,results); toolbar.replaceWith(layout);
   let displayedItems = new Map(), sourceSignature = '';
   const categories = [['', '全部'], ['domestic_agency', '国内机构'], ['commercial', '商业航天'], ['international_agency', '国际机构']], buttons = [];
   let source = '', category = '', regionChoice = '', generation = 0, busy = false, sources = [], displayedKey = null, geographicRegions = [];
@@ -139,6 +140,11 @@
   function updateSelectedSummary() {
     selectedSummary.textContent = categories.find(([id])=>id===category)[1] + (regionChoice ? ' · '+(regionSelect.selectedOptions[0]?.textContent || regionChoice) : '') + (source ? ' · '+(sources.find(item=>item.id===source)?.name || '所选来源') : ' · 全部来源');
     selectedSummary.title=selectedSummary.textContent;
+    activeFilters.replaceChildren();
+    for(const [field,value,label] of [['category',category,categories.find(([id])=>id===category)[1]],['region',regionChoice,regionSelect.selectedOptions[0]?.textContent],['source',source,sources.find(item=>item.id===source)?.name||source]]){
+      if(!value)continue;const chip=element('button','',label+' ×');chip.type='button';chip.setAttribute('aria-label','移除筛选：'+label);
+      chip.addEventListener('click',()=>{if(field==='category'){category='';regionChoice='';source='';}else if(field==='region'){regionChoice='';source='';}else source='';buttons.forEach(item=>{item.node.classList.toggle('active',item.id===category);item.node.setAttribute('aria-pressed',String(item.id===category));});renderRegion();renderSelect();load(true);reset.focus({preventScroll:true});});activeFilters.append(chip);
+    }
   }
   function renderRegion() {
     regionLabel.hidden = category !== 'commercial'; regionSelect.replaceChildren();
@@ -176,6 +182,7 @@
     }
   }
   async function load(reset = false, targetPage = currentPage, scrollAfter = false) {
+    delete status.dataset.tone;
     if (busy && !reset) return;
     if (!reset && displayedKey !== key()) return;
     const request = ++generation, requestKey = key();
@@ -202,6 +209,7 @@
       if (scrollAfter) window.scrollTo({top: window.scrollY + resultBar.getBoundingClientRect().top - 24, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth'});
     } catch (error) {
       if (request !== generation) return;
+      status.dataset.tone='error';
       status.textContent = error.message === 'pagination_unavailable' ? '当前服务器尚未支持页码分页，请更新服务器版本。' :
         list.children.length ? '分页读取失败，保留当前页内容。请重试。' : '当前筛选读取失败，请刷新重试。';
     } finally { if (request === generation) { busy = false; renderPagination(); if (scrollAfter && succeeded) resultBar.focus({preventScroll:true}); } }
@@ -211,7 +219,7 @@
     button.addEventListener('click', () => { category = id; source = ''; regionChoice = ''; renderRegion(); renderSelect(); buttons.forEach(item => { item.node.classList.toggle('active', item.id === id); item.node.setAttribute('aria-pressed', String(item.id === id)); }); load(true); });
     buttons.push({id, node: button}); filters.append(button);
   });
-  select.addEventListener('change', () => { source = select.value; load(true); });
+  select.addEventListener('change', () => { source = select.value; renderSelect(); load(true); });
   regionSelect.addEventListener('change', () => { regionChoice = regionSelect.value; source = ''; renderSelect(); load(true); });
   const refresh = element('button', 'refresh-news', '刷新列表 ↻'); refresh.addEventListener('click', () => load(true)); resultActions.append(refresh);
   reset.addEventListener('click',()=>{category='';source='';regionChoice='';buttons.forEach(item=>{item.node.classList.toggle('active',item.id==='');item.node.setAttribute('aria-pressed',String(item.id===''));});renderRegion();renderSelect();load(true);});

@@ -8,7 +8,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parent.parent
 NAMES=['brand.svg','favicon.svg','news-state.js','frontend-refinement.css','glass-theme.css',
        'glass-theme.js','ai.css','news-ui.js','news-reader.js','resources-ui.js','ai-ui.js','quiet-ui.css',
-       'editorial.css','earthrise.jpg','history-mengtian.jpg','history-tianhe.png',
+       'editorial.css','design-system.css','earthrise.jpg','history-mengtian.jpg','history-tianhe.png',
        'history-apollo11.jpg','history-rosetta.jpg','history-slides.json','history-carousel.js','index.html']
 
 

@@ -21,7 +21,7 @@
   },
   {
     "id": "mengtian",
-    "image": "/assets/history-mengtian.jpg?v=20261008-hq",
+    "image": "/assets/history-mengtian-ai.png?v=20261008-ai1",
     "title": [
       "从文昌出发，",
       "奔向天宫。"
@@ -34,7 +34,7 @@
     "credit": "Gmandian",
     "license": "CC0 1.0",
     "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
-    "changes": "保留原始文件；画面按屏幕比例显示。",
+    "changes": "基于 Gmandian 原图使用 AI 提高清晰度；原始文件另行保留，增强纹理不代表新增真实记录。",
     "position": "50% 40%",
     "framing": "launch"
   },
@@ -79,7 +79,7 @@
   },
   {
     "id": "rosetta",
-    "image": "/assets/history-rosetta.jpg?v=20261008-hq",
+    "image": "/assets/history-rosetta-ai.png?v=20261008-ai1",
     "title": [
       "追上一颗彗星，",
       "走近远古世界。"
@@ -92,7 +92,7 @@
     "credit": "ESA/Rosetta/NAVCAM",
     "license": "CC BY-SA 3.0 IGO",
     "license_url": "https://creativecommons.org/licenses/by-sa/3.0/igo/",
-    "changes": "采用 ESA 提供的2048×2048完整JPEG；原图由ESA插值放大，图像沿用CC BY-SA 3.0 IGO。",
+    "changes": "基于 ESA/Rosetta/NAVCAM 原图使用 AI 提高清晰度；原始文件另行保留，增强纹理不代表新增观测数据。沿用 CC BY-SA 3.0 IGO。",
     "position": "50% 90%",
     "framing": "comet",
     "original_image_url": "https://www.esa.int/var/esa/storage/images/esa_multimedia/images/2014/08/comet_on_3_august_2014_-_navcam/14700233-1-eng-GB/Comet_on_3_August_2014_-_NavCam.jpg"

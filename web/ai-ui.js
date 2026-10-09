@@ -8,6 +8,8 @@
   let statusRequest=0;
   const make = (tag, cls, value) => { const node = document.createElement(tag); if (cls) node.className = cls; if (value) node.textContent = value; return node; };
   function controls() {
+    const hint=byId('ai-input-hint');if(hint){hint.hidden=!enabled;hint.textContent=busy?'正在处理问题，请等待回答。':'输入问题后发送，Ctrl / ⌘ + Enter 也可提交。';}
+    send.textContent=busy?'正在整理回答…':'发送问题 ↑';send.setAttribute('aria-busy',String(busy));
     send.disabled = !enabled || busy || !question.value.trim(); question.disabled = !enabled || busy;
     const counter=byId('ai-counter');if(counter)counter.textContent = question.value.length + ' / 1500'; waiting.hidden = !busy;
     thread.setAttribute('aria-busy', String(busy));
@@ -60,6 +62,7 @@
   async function init() {
     if(initialized)return;initialized=true;
     const check=++statusRequest;
+    controls();
     try{const status=await json('/api/ai/status',{signal:AbortSignal.timeout(10000)});if(check!==statusRequest)return;enabled=status.enabled;availabilityText=status.message;byId('ai-service-text').textContent=enabled?'专属知识库 · 可以提问':status.message;byId('ai-status-dot').dataset.ready=String(enabled);const retention=byId('ai-retention');if(retention)retention.textContent='对话历史保留约 '+Math.round(status.history_retention_seconds/60)+' 分钟，新对话会清除本站旧对话。';if(feedback.textContent==='无法读取问答服务状态，请重新打开此页面。')feedback.textContent='';}
     catch{if(check!==statusRequest)return;enabled=false;availabilityText='服务状态暂不可用，请稍后重新打开页面。';byId('ai-service-text').textContent='服务状态暂不可用';byId('ai-status-dot').dataset.ready='false';feedback.textContent='无法读取问答服务状态，请重新打开此页面。';initialized=false;}
     controls();
@@ -69,7 +72,7 @@
     thread.replaceChildren();welcome.hidden=false;question.value='';feedback.textContent='';fresh.disabled=true;controls();
     try{if(old)await json('/api/ai/conversations/'+old,{method:'DELETE'});}
     catch(error){if(error.code!=='session_expired')feedback.textContent='页面已清空，旧对话暂未确认删除，将按保留期限过期。';}
-    finally{fresh.disabled=false;if(enabled)question.focus();}
+    finally{fresh.disabled=false;controls();if(enabled)question.focus();}
   }
   form.addEventListener('submit',async event=>{
     event.preventDefault();const text=question.value.trim();if(!text||!enabled||busy||fresh.disabled)return;
