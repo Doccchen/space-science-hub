@@ -11,12 +11,13 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 NAMES = ['ai-layout.css', 'ai-ui.js', 'tiangong-lineart-v2.png',
          'long-march-5-lineart-transparent.png', 'shenzhou-lineart-transparent.png',
-         'satellite-lineart-transparent.png', 'index.html']
+         'satellite-lineart-transparent.png', 'change-6-lander-ascender-lineart-v2.png', 'index.html']
 AI_MAIN = '''<main id="home" class="page hidden ai-stage" data-ai-conversation="false">
 <img class="ai-art ai-art-station" src="/assets/tiangong-lineart-v2.png" alt="" aria-hidden="true">
 <img class="ai-art ai-art-rocket" src="/assets/long-march-5-lineart-transparent.png" alt="" aria-hidden="true">
 <img class="ai-art ai-art-shenzhou" src="/assets/shenzhou-lineart-transparent.png" alt="" aria-hidden="true">
 <img class="ai-art ai-art-satellite" src="/assets/satellite-lineart-transparent.png" alt="" aria-hidden="true">
+<img class="ai-art ai-art-change6" src="/assets/change-6-lander-ascender-lineart-v2.png" alt="" aria-hidden="true">
 <div class="ai-toolbar"><span class="eyebrow">02 / KNOWLEDGE WORKSPACE</span><button id="ai-new" class="secondary" type="button">新对话 ↻</button></div>
 <div class="ai-service-state ai-sr-only"><span id="ai-status-dot" class="ai-status-dot" aria-hidden="true"></span><span id="ai-service-text" role="status">正在检查问答服务…</span></div>
 <div class="ai-body"><div class="ai-workspace">
@@ -33,7 +34,7 @@ def patch_index(text):
     text, count = re.subn(r'<main id="home"[^>]*>.*?</main>', AI_MAIN, text, flags=re.S)
     assert count == 1, 'Exactly one AI page required'
     text = re.sub(r'<link rel="stylesheet" href="/assets/ai-layout\.css[^" ]*">', '', text)
-    text = text.replace('</head>', '<link rel="stylesheet" href="/assets/ai-layout.css?v=20261008-approved"></head>')
+    text = text.replace('</head>', '<link rel="stylesheet" href="/assets/ai-layout.css?v=20261009-satellite-width"></head>')
     text = text.replace('/assets/ai-ui.js?v=20261007-ui', '/assets/ai-ui.js?v=20261008-approved')
     return text
 
@@ -54,7 +55,7 @@ def main():
     source = args.server_index or ROOT / 'web/index.html'
     blobs = {'web/' + name: (ROOT / 'web' / name).read_bytes() for name in NAMES}
     blobs['web/index.html'] = patch_index(source.read_text(encoding='utf-8')).encode()
-    manifest = {'release': 'ai-workspace-lineart-20261008', 'files': [
+    manifest = {'release': 'ai-workspace-lineart-20261009-change6', 'files': [
         {'path': name, 'sha256': hashlib.sha256(data).hexdigest(), 'size': len(data)}
         for name, data in blobs.items()]}
     blobs['manifest.json'] = (json.dumps(manifest, indent=2) + '\n').encode()

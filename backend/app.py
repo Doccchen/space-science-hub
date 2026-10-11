@@ -45,9 +45,13 @@ async def lifespan(app):
         news_budget = ai.AIService(ai.Settings(enabled=False,db=news_limits.usage_path()))
         quota_error = True
     news_settings = news_agent.Settings.environment()
+    try:
+        news_settings.enabled = news_limits.configuration()['enabled']
+    except Exception:
+        news_settings.enabled = False
+        quota_error = True
     news_settings.timeout = news_budget.settings.timeout
     app.state.news_agent = news_agent.NewsAgentService(news_settings, news_budget)
-    original_news_problem = app.state.news_agent.problem
     if quota_error:
         app.state.news_agent.problem = 'configuration'
     async def sync_news_limits():
@@ -56,7 +60,6 @@ async def lifespan(app):
             try:
                 news_limits.sync(app.state.news_agent)
                 if quota_error and news_limits.present():
-                    app.state.news_agent.problem = original_news_problem
                     quota_error = False
             except Exception:
                 if news_limits.marker().exists():

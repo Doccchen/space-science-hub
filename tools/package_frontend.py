@@ -8,8 +8,9 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parent.parent
 NAMES=['brand.svg','favicon.svg','news-state.js','frontend-refinement.css','glass-theme.css',
        'glass-theme.js','ai.css','news-ui.js','news-reader.js','resources-ui.js','ai-ui.js','quiet-ui.css',
-       'editorial.css','earthrise.jpg','history-mengtian.jpg','history-tianhe.png',
-       'history-apollo11.jpg','history-rosetta.jpg','history-slides.json','history-carousel.js','index.html']
+       'editorial.css','design-system.css','earthrise.jpg','history-mengtian.jpg','history-tianhe.png',
+       'history-apollo11.jpg','history-rosetta.jpg','history-mengtian-ai.png','history-rosetta-ai.png',
+       'history-slides.json','history-carousel.js','index.html']
 
 
 def main():
@@ -34,7 +35,7 @@ def main():
     old_allow="allowed = {'web/index.html', 'web/news-ui.js', 'web/glass-theme.css', 'web/glass-theme.js', 'manifest.json'}"
     assert old_allow in script
     script=script.replace(old_allow,'allowed = {'+', '.join(repr(name) for name in sorted(files))+'}')
-    script=script.replace("m.size < 500000", "m.size < (4000000 if m.name == 'web/history-apollo11.jpg' else 1500000 if m.name == 'web/history-tianhe.png' else 500000)")
+    script=script.replace("m.size < 500000", "m.size < (4000000 if m.name in {'web/history-apollo11.jpg', 'web/history-mengtian-ai.png'} else 1500000 if m.name == 'web/history-tianhe.png' else 500000)")
     script=script.replace('space-glass-release.tar.gz','space-frontend-magazine-release.tar.gz').replace('glass-upgrade-','magazine-upgrade-')
     assert script.count('for name in glass-theme.css glass-theme.js news-ui.js index.html; do')==2
     script=script.replace('for name in glass-theme.css glass-theme.js news-ui.js index.html; do','for name in '+' '.join(NAMES)+'; do')

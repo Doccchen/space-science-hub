@@ -8,7 +8,7 @@ import secrets
 import sqlite3
 import time
 import uuid
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 
 from fastapi import APIRouter, Request, Response
@@ -93,16 +93,21 @@ class NewsAgentService:
         self.tasks = set()
         self.problem = 'disabled'
         self.tool_problem = 'disabled'
+        self.initialize(interrupt=True)
+
+    def initialize(self, *, interrupt=False):
+        settings = self.settings
         if not settings.enabled and not settings.context_enabled and not settings.mcp_enabled:
             return
         try:
-            self.store = store or Store(Path(os.getenv('NEWS_AGENT_DB_PATH', str(news.DB_PATH.parent / 'news-agent.sqlite3'))))
-            self.store.interrupt()
+            self.store = self.store or Store(Path(os.getenv('NEWS_AGENT_DB_PATH', str(news.DB_PATH.parent / 'news-agent.sqlite3'))))
+            if interrupt:
+                self.store.interrupt()
             self.context = news_context.ContextService(self.store, settings.context_enabled)
             if settings.enabled or settings.mcp_enabled:
                 if not settings.context_enabled:
                     raise ValueError('Context service required')
-                self.cipher = cipher or ai_config.cipher()
+                self.cipher = self.cipher or ai_config.cipher()
                 self.tool_problem = None
             if not settings.enabled:
                 return
@@ -110,13 +115,21 @@ class NewsAgentService:
                 raise ValueError('Configuration required')
             if settings.use_mcp and (len(settings.mcp_key) < 32 or not re.fullmatch(r'[A-Za-z0-9_-]{1,100}', settings.plugin_code)):
                 raise ValueError('MCP forwarding must be verified')
-            self.client = client or NewsAgentClient(settings.app_id, settings.key, settings.workspace,
+            self.client = self.client or NewsAgentClient(settings.app_id, settings.key, settings.workspace,
                                                    settings.region, settings.timeout, has_thoughts=True)
             self.problem = None
         except Exception as error:
             # Fail closed without disrupting the existing site or disclosing configuration values.
             self.problem = 'storage' if isinstance(error, (OSError, sqlite3.Error)) else 'configuration'
             self.tool_problem = self.problem
+
+    def set_enabled(self, enabled):
+        """Gate new jobs without interrupting accepted work or making a provider call."""
+        self.settings = replace(self.settings,enabled=enabled)
+        if not enabled:
+            self.problem = 'disabled'
+        elif self.problem:
+            self.initialize()
 
     def ready(self):
         if self.problem:

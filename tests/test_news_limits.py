@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from dataclasses import replace
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from fastapi.testclient import TestClient
 
@@ -107,6 +107,69 @@ class IndependentLimits(unittest.TestCase):
         news_limits.usage_path().unlink()
         with self.assertRaises(management_store.ManagementError):news_limits.budget()
         self.assertFalse(news_limits.usage_path().exists())
+
+    def set_switch(self, enabled, *, apply=True):
+        view=news_limits.overview()
+        news_limits.save({'revision':view['revision'],'config':{**view['draft']['config'],'enabled':enabled}},'test-admin')
+        view=news_limits.overview()
+        if apply:
+            news_limits.apply({'revision':view['revision'],'version':view['draft']['version']},'test-admin')
+            news_limits.sync(self.service)
+
+    def test_switch_requires_apply_persists_and_does_not_call_provider(self):
+        self.service.settings=replace(self.service.settings,key='fake-test-key',timeout=self.news_budget.settings.timeout)
+        self.service.client=Mock()
+        self.set_switch(True,apply=False)
+        news_limits.sync(self.service)
+        self.assertEqual(self.service.problem,'disabled')
+        view=news_limits.overview()
+        news_limits.apply({'revision':view['revision'],'version':view['draft']['version']},'test-admin')
+        with patch.object(self.service.store,'interrupt') as interrupt:
+            news_limits.sync(self.service)
+            self.service.ready()
+            self.assertTrue(news_limits.configuration()['enabled'])
+            self.assertTrue(news_limits.overview()['usage']['enabled'])
+            ledger=self.news_budget.reserve_news('in-flight','owner','ip','question')
+            self.news_budget.active=1
+            client=self.service.client
+            self.set_switch(False)
+            with self.assertRaises(AIError) as blocked:
+                self.service.create(1,'owner')
+            self.assertEqual(blocked.exception.code,'disabled')
+            self.assertEqual(self.news_budget.active,1)
+            self.news_budget.finish_news(ledger,NewsAnswer('answer','session',[],{'total_tokens':7},'provider'))
+            self.assertEqual(self.news_budget.daily_usage()['tokens_accounted'],7)
+            with patch.dict(os.environ,{'NEWS_AGENT_ENABLED':'1'}):
+                self.assertFalse(news_limits.configuration()['enabled'])
+            self.set_switch(True)
+            self.assertIs(self.service.client,client)
+            interrupt.assert_not_called()
+        self.service.client.ask.assert_not_called()
+        self.assertTrue(self.regular.settings.enabled)
+
+    def test_enable_missing_credentials_reports_failure_and_can_be_disabled(self):
+        self.set_switch(True)
+        self.assertEqual(self.service.problem,'configuration')
+        view=news_limits.overview()
+        self.assertEqual(view['status'],'failed')
+        self.assertFalse(view['usage']['enabled'])
+        self.assertTrue(view['error'])
+        self.set_switch(False)
+        self.assertEqual(news_limits.overview()['status'],'applied')
+        self.assertIsNone(news_limits.overview()['error'])
+
+    def test_legacy_version_inherits_environment_but_new_drafts_require_boolean(self):
+        with management_store.connection(write=True) as db:
+            db.execute('UPDATE news_limits_versions SET config=?',(json.dumps(news_limits.DEFAULTS),))
+        with patch.dict(os.environ,{'NEWS_AGENT_ENABLED':'1'}):
+            self.assertTrue(news_limits.overview()['draft']['config']['enabled'])
+        before=news_limits.overview()
+        for enabled in (1,'false',None):
+            with self.subTest(enabled=enabled),self.assertRaises(management_store.ManagementError):
+                news_limits.save({'revision':before['revision'],'config':{**before['draft']['config'],'enabled':enabled}},'admin')
+        with self.assertRaises(management_store.ManagementError):
+            news_limits.save({'revision':before['revision'],'config':news_limits.DEFAULTS},'admin')
+        self.assertEqual(news_limits.overview()['revision'],before['revision'])
 
     def test_admin_endpoint_requires_auth_and_csrf(self):
         admin_auth.initialize_user('admin','independent-limits-test-password')

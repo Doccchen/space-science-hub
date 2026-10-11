@@ -3,9 +3,11 @@ body.editorial-ui[data-theme-page="home"]>footer{display:none}
 .editorial-ui #home.ai-stage{position:relative;isolation:isolate;max-width:none;padding:0;min-height:calc(100dvh - 96px);overflow:hidden;--art-opacity:.12}
 .editorial-ui #home .ai-art{position:absolute;pointer-events:none;z-index:-1;mix-blend-mode:multiply;opacity:var(--art-opacity);transition:opacity .18s}
 .editorial-ui #home .ai-art-station{width:clamp(360px,34vw,490px);left:calc(50% + 100px);top:28px;transform:rotate(-10deg)}
-.editorial-ui #home .ai-art-rocket{width:clamp(190px,18vw,250px);left:26px;top:100px;transform:rotate(24deg)}
+.editorial-ui #home .ai-art-rocket{width:clamp(190px,18vw,250px);left:26px;top:340px;transform:rotate(24deg)}
 .editorial-ui #home .ai-art-shenzhou{width:clamp(198px,18vw,270px);left:calc(50% - 410px);top:50px;transform:none}
-.editorial-ui #home .ai-art-satellite{width:clamp(125px,11vw,165px);left:65px;top:540px;transform:rotate(-10deg)}
+.editorial-ui #home .ai-art-satellite{width:clamp(125px,11vw,165px);left:calc(66px + clamp(125px,11vw,165px));top:100px;transform:rotate(-10deg)}
+.editorial-ui #home .ai-art-change6{width:clamp(220px,22vw,310px);right:65px;bottom:28px;transform:none}
+@media(min-width:1101px){.editorial-ui #home.ai-stage{min-height:max(780px,calc(100dvh - 96px))}}
 .editorial-ui #home .ai-toolbar{display:flex;justify-content:space-between;align-items:center;gap:16px;border:0;padding:24px 48px}
 .editorial-ui #home #ai-new{font-size:13px;border:1px solid var(--line);border-radius:4px;padding:9px 16px;min-height:44px}
 .editorial-ui #home #ai-new:hover:not(:disabled){background:var(--tint)}
@@ -35,7 +37,7 @@ body.editorial-ui[data-theme-page="home"]>footer{display:none}
 .editorial-ui #home[data-ai-conversation=true] .ai-art{opacity:.04}
 .editorial-ui #home[data-ai-conversation=true] .ai-composer{position:sticky;bottom:20px}
 .editorial-ui #home[data-ai-conversation=true] .ai-footer-note{display:none}
-@media(max-width:1100px){.editorial-ui #home .ai-art-shenzhou,.editorial-ui #home .ai-art-satellite{visibility:hidden}}
+@media(max-width:1100px){.editorial-ui #home .ai-art-shenzhou,.editorial-ui #home .ai-art-satellite,.editorial-ui #home .ai-art-change6{visibility:hidden}}
 @media(max-width:1000px){.editorial-ui #home .ai-art-station{left:calc(50% + 45px);top:18px}.editorial-ui #home .ai-art-rocket{left:calc(50% - 330px);top:40px}.editorial-ui #home .ai-body{width:min(680px,calc(100% - 64px))}}
 @media(max-width:640px){
  .editorial-ui #home.ai-stage{min-height:calc(100dvh - 80px)}

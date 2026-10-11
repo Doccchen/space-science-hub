@@ -298,6 +298,26 @@ class NewsWork(unittest.IsolatedAsyncioTestCase):
     async def finish_jobs(self):
         await asyncio.gather(*self.service.tasks)
 
+    async def test_disable_blocks_new_requests_but_running_answer_completes(self):
+        self.provider.start,self.provider.finish=asyncio.Event(),asyncio.Event()
+        first=await self.submit()
+        await asyncio.wait_for(self.provider.start.wait(),5)
+        self.service.set_enabled(False)
+        status=(await self.http.get('/api/news/1/agent-status')).json()
+        self.assertFalse(status['enabled'])
+        self.assertEqual((await self.submit()).json()['error']['code'],'disabled')
+        self.assertEqual((await self.http.post('/api/news/1/conversations')).json()['error']['code'],'disabled')
+        self.provider.finish.set()
+        await self.finish_jobs()
+        job=(await self.http.get('/api/news-agent/jobs/'+first.json()['job_id'])).json()
+        self.assertEqual(job['stage'],'complete')
+        self.assertEqual(self.budget.daily_usage()['tokens_accounted'],30)
+        self.service.set_enabled(True)
+        self.assertTrue((await self.http.get('/api/news/1/agent-status')).json()['enabled'])
+        self.assertEqual((await self.submit()).status_code,202)
+        await self.finish_jobs()
+        self.assertEqual(len(self.provider.calls),2)
+
     async def test_two_rounds_idempotency_private_draft_and_no_session_leak(self):
         request_id = str(uuid.uuid4())
         first = await self.submit(request_id, explanation=True)

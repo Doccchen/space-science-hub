@@ -15,12 +15,17 @@ DEFAULTS = dict(timeout=120,concurrency=2,visitor_daily=20,ip_daily=30,site_dail
 
 def baseline():
     values = {name:int(os.getenv('NEWS_AGENT_'+name.upper(),str(value))) for name,value in DEFAULTS.items()}
+    values['enabled'] = os.getenv('NEWS_AGENT_ENABLED','0') == '1'
     return validate(values)
 
 
 def validate(values):
-    if not isinstance(values,dict) or set(values) != set(FIELDS):
+    if not isinstance(values,dict) or set(values) not in (set(FIELDS),set(FIELDS) | {'enabled'}):
         raise store.ManagementError('新闻 Agent 额度字段无效。',400)
+    # Existing limits versions inherit the server switch until saved with an explicit switch.
+    values = {**values,'enabled':values.get('enabled',os.getenv('NEWS_AGENT_ENABLED','0') == '1')}
+    if type(values['enabled']) is not bool:
+        raise store.ManagementError('新闻 Agent 开关必须为布尔值。',400)
     for name in FIELDS:
         maximum = 120 if name=='timeout' else 4 if name=='concurrency' else 10000000
         if type(values[name]) is not int or not 1 <= values[name] <= maximum:
@@ -81,6 +86,8 @@ def audit(db,actor,operation,identity):
 def save(body,actor):
     required()
     if not isinstance(body,dict) or set(body) != {'revision','config'}: raise store.ManagementError('新闻草稿格式无效。',400)
+    if not isinstance(body['config'],dict) or 'enabled' not in body['config']:
+        raise store.ManagementError('请重新读取新闻配置后保存开关与额度。',400)
     values = validate(body['config'])
     with store.connection(write=True) as db:
         current = state(db)
@@ -120,19 +127,23 @@ def usage_path():
     return Path(os.getenv('NEWS_AGENT_USAGE_DB_PATH',str(news.DB_PATH.parent/'news-agent-usage.sqlite3')))
 
 
+def configuration():
+    if present():
+        with store.connection() as db:
+            return version(db,state(db)['desired'])['config']
+    return baseline()
+
+
 def budget(values=None,*,initialize=False):
     if values is None:
-        values = baseline()
-        if present():
-            with store.connection() as db:
-                current = state(db); values = version(db,current['desired'])['config']
+        values = configuration()
     path = usage_path()
     if marker().exists() and not initialize:
         if not path.is_file(): raise store.ManagementError('新闻用量库丢失，请恢复备份。',503)
         with closing(sqlite3.connect(path.resolve().as_uri()+'?mode=ro',uri=True)) as db:
             if not db.execute("SELECT 1 FROM sqlite_master WHERE name='requests'").fetchone():
                 raise store.ManagementError('新闻用量表丢失，请恢复备份。',503)
-    return ai.AIService(replace(ai.Settings(),enabled=False,db=path,**values))
+    return ai.AIService(replace(ai.Settings(),enabled=False,db=path,**{name:values[name] for name in FIELDS}))
 
 
 def sync(service):
@@ -140,17 +151,18 @@ def sync(service):
     if not service.budget.settings.db.is_file(): raise store.ManagementError('新闻用量库丢失。',503)
     with store.connection() as db:
         current = state(db); values = version(db,current['desired'])['config']
-    # Limits only: no enabling, key changes, paid call or interruption of an active task.
-    service.budget.settings = replace(service.budget.settings,**values)
+    service.budget.settings = replace(service.budget.settings,**{name:values[name] for name in FIELDS})
     if service.settings.timeout != values['timeout']:
         service.settings = replace(service.settings,timeout=values['timeout'])
         if service.client:
             from .news_agent_client import NewsAgentClient
             service.client = NewsAgentClient(service.settings.app_id,service.settings.key,service.settings.workspace,
                                               service.settings.region,values['timeout'],has_thoughts=True)
+    service.set_enabled(values['enabled'])
     usage = service.budget.daily_usage()
-    usage.update(enabled=not service.problem,application_id=service.settings.app_id,workspace=service.settings.workspace,region=service.settings.region)
+    usage.update(enabled=not service.problem,problem=service.problem,application_id=service.settings.app_id,workspace=service.settings.workspace,region=service.settings.region)
+    error = '新闻 Agent 开启失败，请检查服务器连接、正文读取和凭据配置。' if values['enabled'] and service.problem else None
     with store.connection(write=True) as db:
         if state(db)['desired'] == current['desired']:
-            db.execute('UPDATE news_limits_state SET loaded=?,heartbeat=?,error=NULL,usage=? WHERE id=1',
-                       (current['desired'],time.time(),json.dumps(usage)))
+            db.execute('UPDATE news_limits_state SET loaded=?,heartbeat=?,error=?,usage=? WHERE id=1',
+                       (current['desired'],time.time(),error,json.dumps(usage)))
