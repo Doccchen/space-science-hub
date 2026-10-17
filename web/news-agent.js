@@ -124,5 +124,5 @@ export function mount(parent, item) {
   })();
   // Remove listeners/timers with the reader; replies for an old article cannot enter a new panel.
   const observer = new MutationObserver(() => { if (!section.isConnected) { destroyed = true; clearTimeout(pollTimer); observer.disconnect(); } });
-  observer.observe(parent, {childList:true});
+  observer.observe(parent.closest('.reader-body') || parent, {childList:true});
 }

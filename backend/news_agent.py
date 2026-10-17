@@ -401,6 +401,18 @@ class ExplanationBody(BaseModel):
     request_id: uuid.UUID
 
 
+@router.get('/api/news-agent/status')
+async def service_status(request: Request):
+    """Read-only availability for list entries; no article read or model request."""
+    try:
+        service = instance(request)
+        return JSONResponse({'enabled': not service.problem,
+                             'message': MESSAGES.get(service.problem, '基于当前新闻提问。')},
+                            headers={'Cache-Control': 'no-store'})
+    except AIError as error:
+        return error_response(error)
+
+
 @router.get('/api/news/{article_id}/agent-status')
 async def status(article_id: int, request: Request):
     try:

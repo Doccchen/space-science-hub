@@ -1,10 +1,12 @@
 const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict'),path=require('node:path');
 const web=path.resolve(__dirname,'../web');
 const read=n=>fs.readFileSync(path.join(web,n),'utf8');
-for(const n of ['ai-ui.js','news-ui.js'])new vm.Script(read(n),{filename:n});
+for(const n of ['ai-ui.js','news-ui.js','news-agent-availability.js'])new vm.Script(read(n),{filename:n});
 const atlas=read('resource-navigation.html');
 for(const m of atlas.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g))new vm.Script(m[1]);
-for(const n of ['index.html','resource-navigation.html'])assert.equal((read(n).match(/href="\/assets\/design-system.css/g)||[]).length,1);
+assert.equal((read('resource-navigation.html').match(/href="\/assets\/design-system.css/g)||[]).length,1);
+assert.deepEqual([...read('index.html').matchAll(/<link rel="stylesheet" href="([^"?]+)(?:\?[^\"]*)?"/g)].map(m=>m[1]),['/assets/styles/base.css','/assets/styles/components.css','/assets/styles/pages.css']);
+assert(read('styles/pages.css').includes(read('design-system.css').trim()));
 const css=read('design-system.css');
 const colors=Object.fromEntries([...css.matchAll(/--(ui-[\w-]+):\s*(#[0-9a-f]{6})/g)].map(m=>[m[1],m[2]]));
 function luminance(hex){return hex.slice(1).match(/../g).map(x=>parseInt(x,16)/255).map(x=>x<=.04045?x/12.92:((x+.055)/1.055)**2.4).reduce((v,x,i)=>v+x*[.2126,.7152,.0722][i],0);}

@@ -4,16 +4,36 @@ import io
 import json
 import tarfile
 from pathlib import Path
+try:
+    from .build_styles import build
+except ImportError:
+    from build_styles import build
 
 ROOT=Path(__file__).resolve().parent.parent
 NAMES=['brand.svg','favicon.svg','news-state.js','frontend-refinement.css','glass-theme.css',
        'glass-theme.js','ai.css','news-ui.js','news-reader.js','resources-ui.js','ai-ui.js','quiet-ui.css',
        'editorial.css','design-system.css','earthrise.jpg','history-mengtian.jpg','history-tianhe.png',
        'history-apollo11.jpg','history-rosetta.jpg','history-mengtian-ai.png','history-rosetta-ai.png',
-       'history-slides.json','history-carousel.js','index.html']
+       'history-slides.json','history-carousel.js',
+       'styles/base.css','styles/components.css','styles/pages.css','news-agent-availability.js','news-agent.js','news-agent.css','index.html']
 
 
 def main():
+    if '/assets/site-welcome.js' in (ROOT/'web/index.html').read_text(encoding='utf-8'):
+        try:
+            from .package_server_aligned import main as package_server_aligned
+        except ImportError:
+            from package_server_aligned import main as package_server_aligned
+        return package_server_aligned()
+    # The gallery needs nested assets and a rights gate. Use its complete snapshot
+    # rather than publishing the new index with the retired carousel allow-list.
+    if 'id="gallery"' in (ROOT/'web/index.html').read_text(encoding='utf-8'):
+        try:
+            from .package_gallery import main as package_gallery
+        except ImportError:
+            from package_gallery import main as package_gallery
+        return package_gallery()
+    build()
     output=ROOT/'artifacts/packages';output.mkdir(parents=True,exist_ok=True)
     # Preserve binary image bytes; normalize only the source text.
     files={}
@@ -37,6 +57,9 @@ def main():
     script=script.replace(old_allow,'allowed = {'+', '.join(repr(name) for name in sorted(files))+'}')
     script=script.replace("m.size < 500000", "m.size < (4000000 if m.name in {'web/history-apollo11.jpg', 'web/history-mengtian-ai.png'} else 1500000 if m.name == 'web/history-tianhe.png' else 500000)")
     script=script.replace('space-glass-release.tar.gz','space-frontend-magazine-release.tar.gz').replace('glass-upgrade-','magazine-upgrade-')
+    script=script.replace('install -m 644 "$evidence/stage/web/$name" "web/$name"','install -D -m 644 "$evidence/stage/web/$name" "web/$name"')
+    script=script.replace('# Assets first, index last; existing clients can continue loading old assets.',
+                          '# Assets first, index last; existing clients can continue loading old assets.\ndocker exec -u 0 "$old" mkdir -p /app/web/styles')
     assert script.count('for name in glass-theme.css glass-theme.js news-ui.js index.html; do')==2
     script=script.replace('for name in glass-theme.css glass-theme.js news-ui.js index.html; do','for name in '+' '.join(NAMES)+'; do')
     old_tuple="('glass-theme.css', 'glass-theme.js', 'news-ui.js', 'index.html')"

@@ -41,7 +41,7 @@
   if(visual){visual.dataset.framing=slide.framing;visual.dataset.slide=slide.id;}
   title.replaceChildren();slide.title.forEach((line,i)=>{if(i)title.append(document.createElement('br'));title.append(document.createTextNode(line));});
   label.textContent=slide.label;description.textContent=slide.description;
-  link.href=safeLink(slide.source_url)||'#';credit.textContent=slide.date+' / '+slide.credit;
+  link.href=safeLink(slide.source_url)||'#';credit.textContent=(slide.date?slide.date+' / ':'')+slide.credit;
   license.textContent=slide.license;license.href=safeLink(slide.license_url)||'#';
   if(manual)announce.textContent='第 '+(index+1)+' 张，共 '+slides.length+' 张：'+slide.label;
   if(blend){

@@ -14,7 +14,7 @@ NAMES = ['site-motion.css', 'site-motion.js', 'resource-navigation.html', 'index
 def patch_index(text):
     text = text.replace('\r\n', '\n')
     text = re.sub(r'(/assets/site-motion\.(?:css|js))\?v=[^" ]+',r'\1?v=20261009-usability-no-next',text)
-    if '/assets/site-motion.css' not in text:
+    if '/assets/site-motion.css' not in text and '/assets/styles/pages.css' not in text:
         text = text.replace('</head>', '<link rel="stylesheet" href="/assets/site-motion.css?v=20261009"></head>')
     if '/assets/site-motion.js' not in text:
         text = text.replace('</body>', '<script src="/assets/site-motion.js?v=20261009"></script></body>')

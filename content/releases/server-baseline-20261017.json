@@ -1,0 +1,247 @@
+{
+  "origin": "https://8.137.164.100:8080",
+  "captured_at": "2026-10-17T08:48:36.762219+00:00",
+  "read_only": true,
+  "files": [
+    {
+      "path": "web/index.html",
+      "url": "https://8.137.164.100:8080/",
+      "bytes": 13713,
+      "sha256": "57f3b1e0626673da305b48c8f8533998cdd7356be4339961bb2126f728da89f9"
+    },
+    {
+      "path": "web/ai-layout.css",
+      "url": "https://8.137.164.100:8080/assets/ai-layout.css",
+      "bytes": 5477,
+      "sha256": "a5d8881a9562c6030d0208ef9bcbfc07ef716b1ead771585656d9239d0343ee5"
+    },
+    {
+      "path": "web/ai-ui.js",
+      "url": "https://8.137.164.100:8080/assets/ai-ui.js",
+      "bytes": 9176,
+      "sha256": "2c40cc91de3179003e96dfb453604bd0fef45c127e37408655e7027afe7fb404"
+    },
+    {
+      "path": "web/ai.css",
+      "url": "https://8.137.164.100:8080/assets/ai.css",
+      "bytes": 6293,
+      "sha256": "5a3881f60bcd495d3efad8fe5da25d03218bf85219a9ba0314f7848942a424b7"
+    },
+    {
+      "path": "web/brand.svg",
+      "url": "https://8.137.164.100:8080/assets/brand.svg",
+      "bytes": 443,
+      "sha256": "82dc4b6a69a682bcb8eeb12f9429447647df9b67cd153b60112fa7333e19526d"
+    },
+    {
+      "path": "web/change-6-lander-ascender-lineart-v2.png",
+      "url": "https://8.137.164.100:8080/assets/change-6-lander-ascender-lineart-v2.png",
+      "bytes": 1212667,
+      "sha256": "b5f5f85400d355931c533035f6e6267ecbe777ba3a9ceeb07aa4de7a3956689b"
+    },
+    {
+      "path": "web/design-system.css",
+      "url": "https://8.137.164.100:8080/assets/design-system.css",
+      "bytes": 4919,
+      "sha256": "4ebb1180643172e9a13c18a43313b4e7e0e73e5e8a328a696fac105e973729f6"
+    },
+    {
+      "path": "web/earthrise.jpg",
+      "url": "https://8.137.164.100:8080/assets/earthrise.jpg",
+      "bytes": 494374,
+      "sha256": "4b1484e9bb55652e30a56c03c27141938885a09e4b3c0bcabb8841e1e94ed9d9"
+    },
+    {
+      "path": "web/editorial.css",
+      "url": "https://8.137.164.100:8080/assets/editorial.css",
+      "bytes": 24666,
+      "sha256": "b2aa50439be8d1f76d6b4f697100009e3d6073ad5a763e9e25e7071b124095f3"
+    },
+    {
+      "path": "web/favicon.svg",
+      "url": "https://8.137.164.100:8080/assets/favicon.svg",
+      "bytes": 420,
+      "sha256": "099555711289bef8c72fa3da3b7c0b3ebdd7b92a252280f736d4fdac38d86209"
+    },
+    {
+      "path": "web/frontend-refinement.css",
+      "url": "https://8.137.164.100:8080/assets/frontend-refinement.css",
+      "bytes": 7539,
+      "sha256": "d68b4e9bd7eb8c78495c80bb28557288cbf3ac7f36c3b5e787d468aa00117ea6"
+    },
+    {
+      "path": "web/glass-theme.css",
+      "url": "https://8.137.164.100:8080/assets/glass-theme.css",
+      "bytes": 10521,
+      "sha256": "81e816ec950a0619a73687cd38062bc39534e321c9230f575e351b60148dd7d7"
+    },
+    {
+      "path": "web/glass-theme.js",
+      "url": "https://8.137.164.100:8080/assets/glass-theme.js",
+      "bytes": 614,
+      "sha256": "4ef657067987e16ccf893a04771f3cb464bae9dafbec07d33adbcb01f3446825"
+    },
+    {
+      "path": "web/history-apollo11.jpg",
+      "url": "https://8.137.164.100:8080/assets/history-apollo11.jpg",
+      "bytes": 2305734,
+      "sha256": "cd6891bed3d8cd40c37566b917b3ff4079b6262a0ad0baf4ad50e4826c334b67"
+    },
+    {
+      "path": "web/history-carousel.js",
+      "url": "https://8.137.164.100:8080/assets/history-carousel.js",
+      "bytes": 6067,
+      "sha256": "d82cbb4d85990f3474ebb7f32dcd1f0991712c12dc2e998752067243aee96c80"
+    },
+    {
+      "path": "web/history-mengtian-ai.png",
+      "url": "https://8.137.164.100:8080/assets/history-mengtian-ai.png",
+      "bytes": 2023863,
+      "sha256": "1aa28875af1ba2664a8342d09577d4c14bc36833269a8cfa0710854f2d9c99a9"
+    },
+    {
+      "path": "web/history-rosetta-ai.png",
+      "url": "https://8.137.164.100:8080/assets/history-rosetta-ai.png",
+      "bytes": 406919,
+      "sha256": "34c115d54e91c602ae5e603beabc21e180e117d1f95604fcdac4844911d23fcd"
+    },
+    {
+      "path": "web/history-slides.json",
+      "url": "https://8.137.164.100:8080/assets/history-slides.json",
+      "bytes": 4908,
+      "sha256": "99504d99c6e360dbcde5621b405908995ed5cfaf1c22424e81543a91cf16dc74"
+    },
+    {
+      "path": "web/history-tianhe.png",
+      "url": "https://8.137.164.100:8080/assets/history-tianhe.png",
+      "bytes": 1009844,
+      "sha256": "da1d8fb94ca52acb9cd1932beb23622b2f5297bc1288d21f8a5a5c5f2b8f1d69"
+    },
+    {
+      "path": "web/long-march-5-lineart-transparent.png",
+      "url": "https://8.137.164.100:8080/assets/long-march-5-lineart-transparent.png",
+      "bytes": 1147516,
+      "sha256": "84c8ab7bad4343b37cbd7c14fb8d3a32e0c0890102e48e8bf7b23f1f95abef86"
+    },
+    {
+      "path": "web/news-agent-availability.js",
+      "url": "https://8.137.164.100:8080/assets/news-agent-availability.js",
+      "bytes": 1630,
+      "sha256": "b0bfc0096b50e511b0fc5b2cbebb0aa1dbbb668e4b46f1b85e3861dde96c25de"
+    },
+    {
+      "path": "web/news-agent.css",
+      "url": "https://8.137.164.100:8080/assets/news-agent.css",
+      "bytes": 1452,
+      "sha256": "4aaa1e3497e760f92cb78b3a0772c74d869f1a20d133180f15c5b77038e683a3"
+    },
+    {
+      "path": "web/news-agent.js",
+      "url": "https://8.137.164.100:8080/assets/news-agent.js",
+      "bytes": 8872,
+      "sha256": "2a1a9c35a87fc0a660094a26bd491c34f4a3dcd09ecaa4f0f1a66165ebd820ce"
+    },
+    {
+      "path": "web/news-reader.js",
+      "url": "https://8.137.164.100:8080/assets/news-reader.js",
+      "bytes": 11302,
+      "sha256": "0b8cd6646113a51e3c43644b53481a62566ad3868fae66bb96966b3da27bce3a"
+    },
+    {
+      "path": "web/news-state.js",
+      "url": "https://8.137.164.100:8080/assets/news-state.js",
+      "bytes": 807,
+      "sha256": "5173efac993efe8564526753e44ed45caa500b1f65b57aedefa7194436616924"
+    },
+    {
+      "path": "web/news-ui.js",
+      "url": "https://8.137.164.100:8080/assets/news-ui.js",
+      "bytes": 22183,
+      "sha256": "c9382754951d07332600e36ad46097d4a8e3b32550a9bfec991d58f43d2ba7c0"
+    },
+    {
+      "path": "web/quiet-ui.css",
+      "url": "https://8.137.164.100:8080/assets/quiet-ui.css",
+      "bytes": 8615,
+      "sha256": "076fd6dc8455bf10aaefdcef306fa31effced1b6b849c7f77fccde052c59be20"
+    },
+    {
+      "path": "web/resource-navigation.html",
+      "url": "https://8.137.164.100:8080/assets/resource-navigation.html",
+      "bytes": 2115869,
+      "sha256": "9143ca7ddbb18a8dac0f660f5248400bbd4fc0c8fa4d741fec1c1c36a1f4df03"
+    },
+    {
+      "path": "web/resources-ui.js",
+      "url": "https://8.137.164.100:8080/assets/resources-ui.js",
+      "bytes": 5142,
+      "sha256": "4e7e0c146f28f7c7ab29605da80bd2ea703274d64eaeb73b5d1ae8557113e433"
+    },
+    {
+      "path": "web/resources.css",
+      "url": "https://8.137.164.100:8080/assets/resources.css",
+      "bytes": 3865,
+      "sha256": "10dbaa0fecc5ad7a102c15ca97913bacd6932e882f0ca558d779055d7bcc90cd"
+    },
+    {
+      "path": "web/satellite-lineart-transparent.png",
+      "url": "https://8.137.164.100:8080/assets/satellite-lineart-transparent.png",
+      "bytes": 1294485,
+      "sha256": "660cd9e5ab57b25182f7cca263a2c850372cf580ecc1a9fe27fd9bd2f1571e2b"
+    },
+    {
+      "path": "web/shenzhou-lineart-transparent.png",
+      "url": "https://8.137.164.100:8080/assets/shenzhou-lineart-transparent.png",
+      "bytes": 947079,
+      "sha256": "2b9579afbbce8ffde485f1496a63854b1ac125550db2c860747a6b1acf70c296"
+    },
+    {
+      "path": "web/site-motion.css",
+      "url": "https://8.137.164.100:8080/assets/site-motion.css",
+      "bytes": 3271,
+      "sha256": "e01f6acced3d5709c0591c74beaceaad8170d6926cca9b728bb771b7ef030ac2"
+    },
+    {
+      "path": "web/site-motion.js",
+      "url": "https://8.137.164.100:8080/assets/site-motion.js",
+      "bytes": 4553,
+      "sha256": "c045def11994095f6a204efadbe6494472b28b0ed8399b4a7c36f9b0d6300764"
+    },
+    {
+      "path": "web/studio.js",
+      "url": "https://8.137.164.100:8080/assets/studio.js",
+      "bytes": 1007,
+      "sha256": "3c581e466bbdee0a189e480850668e169578e33cec64c4ea9bd7ab7d6e1cb910"
+    },
+    {
+      "path": "web/style.css",
+      "url": "https://8.137.164.100:8080/assets/style.css",
+      "bytes": 15330,
+      "sha256": "e05a4e4d4e0d5034356191f0752a7ac2a56dc9aad022acb1971d61d08fc5bc08"
+    },
+    {
+      "path": "web/styles/base.css",
+      "url": "https://8.137.164.100:8080/assets/styles/base.css",
+      "bytes": 15409,
+      "sha256": "c01a8e48be1e130f7a663f378299246103937776dbab77fad6c73fec14b34723"
+    },
+    {
+      "path": "web/styles/components.css",
+      "url": "https://8.137.164.100:8080/assets/styles/components.css",
+      "bytes": 37021,
+      "sha256": "0b1b0b26b256bb1c79ed34c2df1f452958e9720ba474a4c1529590ce10cd69c7"
+    },
+    {
+      "path": "web/styles/pages.css",
+      "url": "https://8.137.164.100:8080/assets/styles/pages.css",
+      "bytes": 38508,
+      "sha256": "0ca820c626d7812102fb8e40401d2e036759c37ba4b7c0da124c578dfbbd8837"
+    },
+    {
+      "path": "web/tiangong-lineart-v2.png",
+      "url": "https://8.137.164.100:8080/assets/tiangong-lineart-v2.png",
+      "bytes": 1380466,
+      "sha256": "e6366ab512333ec87e10c9cacaef2551f182b8695f661ed804094fe20f1e605a"
+    }
+  ]
+}

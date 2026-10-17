@@ -1,0 +1,527 @@
+[
+  {
+    "id": "landspace-sunset",
+    "image": "/assets/gallery/landspace-sunset-2400.jpg",
+    "fallback_image": "/assets/gallery/landspace-sunset-2400.jpg",
+    "width": 2400,
+    "height": 1491,
+    "mobile_image": "/assets/gallery/landspace-sunset-1200.webp",
+    "mobile_fallback_image": "/assets/gallery/landspace-sunset-1200.jpg",
+    "thumbnail": "/assets/gallery/landspace-sunset-320.webp",
+    "label": "官方影像 / 整箭与晚霞",
+    "title": [
+      "把遥远的想象，",
+      "立在大地之上。"
+    ],
+    "description": "火箭静立在晚霞与发射工位之间。",
+    "alt": "一枚火箭竖立在发射工位，后方是粉橙色晚霞和远处山脉",
+    "credit": "蓝箭航天 / LANDSPACE",
+    "source_url": "https://www.landspace.com/download.html",
+    "original_image_url": "https://offical-static.landspace.com/2024040210005933ce42375.jpg",
+    "original_sha256": "5092fe290579bee0ce82673b5c52352e5b85ae606cdb51574f48eeb5b5b032f1",
+    "rights_status": "authorized_user_confirmed",
+    "rights_evidence": "用户于2026-10-17确认：已有授权，可用于网站及公开GitHub仓库。依据为用户在本对话中的确认；未取得原始许可文件，不声明开放许可。",
+    "object_position_desktop": "56% 50%",
+    "object_position_mobile": "27% 50%",
+    "changes": "展示版等比例缩放与压缩；原图未裁切、未补绘或生成式增清；轮播按当前布局作显示裁切。",
+    "variants": [
+      {
+        "path": "/assets/gallery/landspace-sunset-2400.webp",
+        "width": 2400,
+        "height": 1491,
+        "bytes": 166118,
+        "sha256": "10db353740906c5153bb87563480707d8c3b29b59cd2ee5ba7e0ddbd026cc81a"
+      },
+      {
+        "path": "/assets/gallery/landspace-sunset-2400.jpg",
+        "width": 2400,
+        "height": 1491,
+        "bytes": 311131,
+        "sha256": "8133be0ebe4ab6da46cab34706d6a6993713638c78575609d2d9582f9c236930"
+      },
+      {
+        "path": "/assets/gallery/landspace-sunset-1200.webp",
+        "width": 1200,
+        "height": 746,
+        "bytes": 58538,
+        "sha256": "66ce5a5cf81b3d3279e6e7b38174008d7d80b14ad2bf8129aa2c7b693d014453"
+      },
+      {
+        "path": "/assets/gallery/landspace-sunset-1200.jpg",
+        "width": 1200,
+        "height": 746,
+        "bytes": 99136,
+        "sha256": "94cc14544c84d6b4fe99741935f1f32e5e6ee933f44eb8b0cb86bc2fde35f5c5"
+      },
+      {
+        "path": "/assets/gallery/landspace-sunset-320.webp",
+        "width": 320,
+        "height": 199,
+        "bytes": 6526,
+        "sha256": "b76906cb1e4a4466718cba811e75c4dcd2513b3507d21da24afa2eead5864e7f"
+      },
+      {
+        "path": "/assets/gallery/landspace-sunset-320.jpg",
+        "width": 320,
+        "height": 199,
+        "bytes": 10197,
+        "sha256": "00b5d67c78c2f0f24b48ade856296d69c565210f0ab73a3f593ed4e0926701da"
+      }
+    ],
+    "date": "",
+    "position": "56% 50%",
+    "framing": "photo",
+    "license": "蓝箭航天版权说明",
+    "license_url": "https://www.landspace.com/download.html"
+  },
+  {
+    "id": "landspace-horizon",
+    "image": "/assets/gallery/landspace-horizon-2400.jpg",
+    "fallback_image": "/assets/gallery/landspace-horizon-2400.jpg",
+    "width": 2400,
+    "height": 943,
+    "mobile_image": "/assets/gallery/landspace-horizon-1200.webp",
+    "mobile_fallback_image": "/assets/gallery/landspace-horizon-1200.jpg",
+    "thumbnail": "/assets/gallery/landspace-horizon-320.webp",
+    "label": "官方影像 / 发射工位与晨昏天空",
+    "title": [
+      "出发之前，",
+      "天地已经铺开。"
+    ],
+    "description": "宽阔天空下，发射工位等待下一次出发。",
+    "alt": "横向延展的天空与大地之间是火箭和发射工位",
+    "credit": "蓝箭航天 / LANDSPACE",
+    "source_url": "https://www.landspace.com/download.html",
+    "original_image_url": "https://offical-static.landspace.com/20240402100110751448510.jpg",
+    "original_sha256": "40c43a7550bfe913e0750894f41575e37297dd8277a2607ff3871f8178e4817f",
+    "rights_status": "authorized_user_confirmed",
+    "rights_evidence": "用户于2026-10-17确认：已有授权，可用于网站及公开GitHub仓库。依据为用户在本对话中的确认；未取得原始许可文件，不声明开放许可。",
+    "object_position_desktop": "53% 50%",
+    "object_position_mobile": "59% 50%",
+    "changes": "展示版等比例缩放与压缩；原图未裁切、未补绘或生成式增清；轮播按当前布局作显示裁切。",
+    "variants": [
+      {
+        "path": "/assets/gallery/landspace-horizon-2400.webp",
+        "width": 2400,
+        "height": 943,
+        "bytes": 162584,
+        "sha256": "cd7748a58123ac66e5e4faefad2d02d65986540c8f5bbb592a082ec795f9f76c"
+      },
+      {
+        "path": "/assets/gallery/landspace-horizon-2400.jpg",
+        "width": 2400,
+        "height": 943,
+        "bytes": 270602,
+        "sha256": "f6ee00867154d3ea739318bc3aa034e228b3b3442984b2a97edcc9aab4c4a416"
+      },
+      {
+        "path": "/assets/gallery/landspace-horizon-1200.webp",
+        "width": 1200,
+        "height": 472,
+        "bytes": 50982,
+        "sha256": "9c7cf3d06f3cc734bd3c95667d7bbc2261ebee420504f3d24046c7b0e68ef9c1"
+      },
+      {
+        "path": "/assets/gallery/landspace-horizon-1200.jpg",
+        "width": 1200,
+        "height": 472,
+        "bytes": 76918,
+        "sha256": "790444285232b75a52d7b0f6365f56b2896252cf801f3fa16acc93f8b666bee9"
+      },
+      {
+        "path": "/assets/gallery/landspace-horizon-320.webp",
+        "width": 320,
+        "height": 126,
+        "bytes": 4718,
+        "sha256": "b56ceacbcfd5198acc513a7f5fdfd7dd33308a116b7407606dc10ea98f207549"
+      },
+      {
+        "path": "/assets/gallery/landspace-horizon-320.jpg",
+        "width": 320,
+        "height": 126,
+        "bytes": 7364,
+        "sha256": "be25413dd01ddd17d2c3d9c7f6c145dbd09100abfa5f88a21e8d75b292657be0"
+      }
+    ],
+    "date": "",
+    "position": "53% 50%",
+    "framing": "photo",
+    "license": "蓝箭航天版权说明",
+    "license_url": "https://www.landspace.com/download.html"
+  },
+  {
+    "id": "landspace-desert",
+    "image": "/assets/gallery/landspace-desert-2400.jpg",
+    "fallback_image": "/assets/gallery/landspace-desert-2400.jpg",
+    "width": 2400,
+    "height": 1499,
+    "mobile_image": "/assets/gallery/landspace-desert-1200.webp",
+    "mobile_fallback_image": "/assets/gallery/landspace-desert-1200.jpg",
+    "thumbnail": "/assets/gallery/landspace-desert-320.webp",
+    "label": "官方影像 / 试验箭与荒漠",
+    "title": [
+      "在辽阔天地间，",
+      "寻找新的高度。"
+    ],
+    "description": "荒漠与远山之间，试验箭向上探索。",
+    "alt": "试验箭在荒漠上空离地升起，底部有细长喷流，后方是连绵山脉",
+    "credit": "蓝箭航天 / LANDSPACE",
+    "source_url": "https://www.landspace.com/download.html",
+    "original_image_url": "https://offical-static.landspace.com/20240402100238eec0b6214.jpg",
+    "original_sha256": "be88e6177976e06f17f9f8e0e7018b6d9d68e1e641507f440f28221bfc5a0025",
+    "rights_status": "authorized_user_confirmed",
+    "rights_evidence": "用户于2026-10-17确认：已有授权，可用于网站及公开GitHub仓库。依据为用户在本对话中的确认；未取得原始许可文件，不声明开放许可。",
+    "object_position_desktop": "50% 50%",
+    "object_position_mobile": "50% 50%",
+    "changes": "展示版等比例缩放与压缩；原图未裁切、未补绘或生成式增清；轮播按当前布局作显示裁切。",
+    "variants": [
+      {
+        "path": "/assets/gallery/landspace-desert-2400.webp",
+        "width": 2400,
+        "height": 1499,
+        "bytes": 191322,
+        "sha256": "c7a38145e850a07d9e4484906eb96fa6e783639a81bd7fd582f7758d0d995557"
+      },
+      {
+        "path": "/assets/gallery/landspace-desert-2400.jpg",
+        "width": 2400,
+        "height": 1499,
+        "bytes": 404433,
+        "sha256": "c214468ecc87d935c64c8d8a5f0b69fdb63d0b8eb774db1dbbeb4df5a8f5f22b"
+      },
+      {
+        "path": "/assets/gallery/landspace-desert-1200.webp",
+        "width": 1200,
+        "height": 749,
+        "bytes": 53560,
+        "sha256": "30cf74e09554b3fcf8ba208b061c6ef02b58805fa1353cb3f234aa2a614bdc1d"
+      },
+      {
+        "path": "/assets/gallery/landspace-desert-1200.jpg",
+        "width": 1200,
+        "height": 749,
+        "bytes": 99861,
+        "sha256": "0b4672f8b736902fbd2886874b0724f87e454e34e97db038b4534e6b049646a0"
+      },
+      {
+        "path": "/assets/gallery/landspace-desert-320.webp",
+        "width": 320,
+        "height": 200,
+        "bytes": 4434,
+        "sha256": "ec39f404de495f5741bdece39eb66b5bf1bbc45faef4dfcf301dcb1aa863e774"
+      },
+      {
+        "path": "/assets/gallery/landspace-desert-320.jpg",
+        "width": 320,
+        "height": 200,
+        "bytes": 7861,
+        "sha256": "b4f8a02b9fb70142bc4095b1ffdfd1e15b0090d1d3d76caf80133bf60aec087b"
+      }
+    ],
+    "date": "",
+    "position": "50% 50%",
+    "framing": "photo",
+    "license": "蓝箭航天版权说明",
+    "license_url": "https://www.landspace.com/download.html"
+  },
+  {
+    "id": "landspace-distance",
+    "image": "/assets/gallery/landspace-distance-2400.jpg",
+    "fallback_image": "/assets/gallery/landspace-distance-2400.jpg",
+    "width": 2400,
+    "height": 1636,
+    "mobile_image": "/assets/gallery/landspace-distance-1200.webp",
+    "mobile_fallback_image": "/assets/gallery/landspace-distance-1200.jpg",
+    "thumbnail": "/assets/gallery/landspace-distance-320.webp",
+    "label": "官方影像 / 升空远景",
+    "title": [
+      "从一束火光，",
+      "走向辽阔天空。"
+    ],
+    "description": "远处的发射工位被火焰与烟云照亮。",
+    "alt": "火箭从远处工位升空，喷流与烟云向地面扩散",
+    "credit": "蓝箭航天 / LANDSPACE",
+    "source_url": "https://www.landspace.com/download.html",
+    "original_image_url": "https://offical-static.landspace.com/202307180943513a5170174.jpeg",
+    "original_sha256": "a512eff95f2851ce053283230eaed2e20f23bdc13e03250d12d195731a21b6ba",
+    "rights_status": "authorized_user_confirmed",
+    "rights_evidence": "用户于2026-10-17确认：已有授权，可用于网站及公开GitHub仓库。依据为用户在本对话中的确认；未取得原始许可文件，不声明开放许可。",
+    "object_position_desktop": "50% 50%",
+    "object_position_mobile": "50% 50%",
+    "changes": "展示版等比例缩放与压缩；原图未裁切、未补绘或生成式增清；轮播按当前布局作显示裁切。",
+    "variants": [
+      {
+        "path": "/assets/gallery/landspace-distance-2400.webp",
+        "width": 2400,
+        "height": 1636,
+        "bytes": 199296,
+        "sha256": "211593ce497223678572567a7a2f026c8d99813f46ad1ac40b60fc3ecdd3d2af"
+      },
+      {
+        "path": "/assets/gallery/landspace-distance-2400.jpg",
+        "width": 2400,
+        "height": 1636,
+        "bytes": 397361,
+        "sha256": "dc17d4004531b359722d6076986bc4e0fa54093e2260b75fb168c3540a39e90d"
+      },
+      {
+        "path": "/assets/gallery/landspace-distance-1200.webp",
+        "width": 1200,
+        "height": 818,
+        "bytes": 54916,
+        "sha256": "1800b1b582a521f8a0de21a5a2a1fbee216c63ee4b2709490387aeb8e6e6e529"
+      },
+      {
+        "path": "/assets/gallery/landspace-distance-1200.jpg",
+        "width": 1200,
+        "height": 818,
+        "bytes": 95266,
+        "sha256": "35b1139a000d4ec88e3b3123361cf5bea56d6f27b90c033dacf1f757b76a674f"
+      },
+      {
+        "path": "/assets/gallery/landspace-distance-320.webp",
+        "width": 320,
+        "height": 218,
+        "bytes": 4516,
+        "sha256": "ca9fb610cb9ed949101be7e26d07df1a7743b07f9aaa426ca60b53c00a5ff3c3"
+      },
+      {
+        "path": "/assets/gallery/landspace-distance-320.jpg",
+        "width": 320,
+        "height": 218,
+        "bytes": 8190,
+        "sha256": "0f05de6aa3c2b9dad7f367d3f49407916c177f25c7572be7297e855ebbd8d7a5"
+      }
+    ],
+    "date": "",
+    "position": "50% 50%",
+    "framing": "photo",
+    "license": "蓝箭航天版权说明",
+    "license_url": "https://www.landspace.com/download.html"
+  },
+  {
+    "id": "landspace-liftoff",
+    "image": "/assets/gallery/landspace-liftoff-2400.jpg",
+    "fallback_image": "/assets/gallery/landspace-liftoff-2400.jpg",
+    "width": 2400,
+    "height": 1600,
+    "mobile_image": "/assets/gallery/landspace-liftoff-1200.webp",
+    "mobile_fallback_image": "/assets/gallery/landspace-liftoff-1200.jpg",
+    "thumbnail": "/assets/gallery/landspace-liftoff-320.webp",
+    "label": "官方影像 / 点火升空近景",
+    "title": [
+      "点燃此刻，",
+      "向更远处出发。"
+    ],
+    "description": "火焰照亮箭体，远行从此刻开始。",
+    "alt": "火箭从发射工位升起，底部喷出明亮火焰",
+    "credit": "蓝箭航天 / LANDSPACE",
+    "source_url": "https://www.landspace.com/download.html",
+    "original_image_url": "https://offical-static.landspace.com/20230718094246358e73816.jpeg",
+    "original_sha256": "62ab7c583e6c3455205ceb81ed475ddd1d2585737c6613e61f70d3ce351478a3",
+    "rights_status": "authorized_user_confirmed",
+    "rights_evidence": "用户于2026-10-17确认：已有授权，可用于网站及公开GitHub仓库。依据为用户在本对话中的确认；未取得原始许可文件，不声明开放许可。",
+    "object_position_desktop": "50% 50%",
+    "object_position_mobile": "50% 50%",
+    "changes": "展示版等比例缩放与压缩；原图未裁切、未补绘或生成式增清；轮播按当前布局作显示裁切。",
+    "variants": [
+      {
+        "path": "/assets/gallery/landspace-liftoff-2400.webp",
+        "width": 2400,
+        "height": 1600,
+        "bytes": 174036,
+        "sha256": "836a97e8267a285cf55d10016d536d5ed35e259e5545e18fc1fa600fd70b1e38"
+      },
+      {
+        "path": "/assets/gallery/landspace-liftoff-2400.jpg",
+        "width": 2400,
+        "height": 1600,
+        "bytes": 334663,
+        "sha256": "406c72dfcf23dd6da5597234104b499149ff93bcbe02c6d77cd0e635a1599af1"
+      },
+      {
+        "path": "/assets/gallery/landspace-liftoff-1200.webp",
+        "width": 1200,
+        "height": 800,
+        "bytes": 55860,
+        "sha256": "e2ee4359c8075f543d12ee40d88a723c9cc9233c4c1019f3277dfd000247eb9f"
+      },
+      {
+        "path": "/assets/gallery/landspace-liftoff-1200.jpg",
+        "width": 1200,
+        "height": 800,
+        "bytes": 92324,
+        "sha256": "572f23afd4620149a2fae45138fa0f192335760926eb05d91ff5f77a863d0d01"
+      },
+      {
+        "path": "/assets/gallery/landspace-liftoff-320.webp",
+        "width": 320,
+        "height": 213,
+        "bytes": 5746,
+        "sha256": "4ef933cba4124f1c274ecbe20cc36dd7ccf9de0b1993f99811163c3dcdf38ec8"
+      },
+      {
+        "path": "/assets/gallery/landspace-liftoff-320.jpg",
+        "width": 320,
+        "height": 213,
+        "bytes": 9177,
+        "sha256": "9aef50a7602f0cd7d834b411e3f1d7b667c5911879748999326cba5b170f956a"
+      }
+    ],
+    "date": "",
+    "position": "50% 50%",
+    "framing": "photo",
+    "license": "蓝箭航天版权说明",
+    "license_url": "https://www.landspace.com/download.html"
+  },
+  {
+    "id": "landspace-engine",
+    "image": "/assets/gallery/landspace-engine-2400.jpg",
+    "fallback_image": "/assets/gallery/landspace-engine-2400.jpg",
+    "width": 2400,
+    "height": 1600,
+    "mobile_image": "/assets/gallery/landspace-engine-1200.webp",
+    "mobile_fallback_image": "/assets/gallery/landspace-engine-1200.jpg",
+    "thumbnail": "/assets/gallery/landspace-engine-320.webp",
+    "label": "官方影像 / 喷焰与箭底结构",
+    "title": [
+      "远行的力量，",
+      "藏在每一处细节。"
+    ],
+    "description": "走近喷焰与箭底结构，看见工程的力量。",
+    "alt": "火箭底部结构与喷出的明亮火焰近景",
+    "credit": "蓝箭航天 / LANDSPACE",
+    "source_url": "https://www.landspace.com/download.html",
+    "original_image_url": "https://offical-static.landspace.com/202307180943013a9832302.jpeg",
+    "original_sha256": "e02e9a8bf8f34a5584dc96c91db5b0b80db09b163bd0d8ab442f1883c7b1454b",
+    "rights_status": "authorized_user_confirmed",
+    "rights_evidence": "用户于2026-10-17确认：已有授权，可用于网站及公开GitHub仓库。依据为用户在本对话中的确认；未取得原始许可文件，不声明开放许可。",
+    "object_position_desktop": "50% 50%",
+    "object_position_mobile": "75% 50%",
+    "changes": "展示版等比例缩放与压缩；原图未裁切、未补绘或生成式增清；轮播按当前布局作显示裁切。",
+    "variants": [
+      {
+        "path": "/assets/gallery/landspace-engine-2400.webp",
+        "width": 2400,
+        "height": 1600,
+        "bytes": 266858,
+        "sha256": "bef05aaad6d2019cba6ed5fa6aee8ea5323d9ae9d4833fd3aac31871ec8c8249"
+      },
+      {
+        "path": "/assets/gallery/landspace-engine-2400.jpg",
+        "width": 2400,
+        "height": 1600,
+        "bytes": 474864,
+        "sha256": "df0f9ad514fa61b008fce074fb98969241eec232d0b0690c7d12a47b6ba76478"
+      },
+      {
+        "path": "/assets/gallery/landspace-engine-1200.webp",
+        "width": 1200,
+        "height": 800,
+        "bytes": 90876,
+        "sha256": "e598db3b0b58d4f167645e0d189a3610f9da80111bafdae3c45638a272937129"
+      },
+      {
+        "path": "/assets/gallery/landspace-engine-1200.jpg",
+        "width": 1200,
+        "height": 800,
+        "bytes": 142992,
+        "sha256": "b77eb615da6687a44035800819a3e2beb20011f8c6d9fc71defc3be48f97fe10"
+      },
+      {
+        "path": "/assets/gallery/landspace-engine-320.webp",
+        "width": 320,
+        "height": 213,
+        "bytes": 10342,
+        "sha256": "91bb378c23e5acea278894515fae11fe6482ef2ccc21ab710bc6f1285461100d"
+      },
+      {
+        "path": "/assets/gallery/landspace-engine-320.jpg",
+        "width": 320,
+        "height": 213,
+        "bytes": 14261,
+        "sha256": "c44389fd5e49429324b61f8122cdedcaca8674f7e08ea49086672fc15ce214d3"
+      }
+    ],
+    "date": "",
+    "position": "50% 50%",
+    "framing": "photo",
+    "license": "蓝箭航天版权说明",
+    "license_url": "https://www.landspace.com/download.html"
+  },
+  {
+    "id": "landspace-testbed",
+    "image": "/assets/gallery/landspace-testbed-2400.jpg",
+    "fallback_image": "/assets/gallery/landspace-testbed-2400.jpg",
+    "width": 2400,
+    "height": 1466,
+    "mobile_image": "/assets/gallery/landspace-testbed-1200.webp",
+    "mobile_fallback_image": "/assets/gallery/landspace-testbed-1200.jpg",
+    "thumbnail": "/assets/gallery/landspace-testbed-320.webp",
+    "label": "官方影像 / 试验设施",
+    "title": [
+      "把想象落到实处，",
+      "把细节做到深处。"
+    ],
+    "description": "试验设施内的发动机结构与工作平台。",
+    "alt": "发动机置于室内试验设施中，周围有平台管线与工作人员",
+    "credit": "蓝箭航天 / LANDSPACE",
+    "source_url": "https://www.landspace.com/download.html",
+    "original_image_url": "https://offical-static.landspace.com/2023062018005890e5f9472.jpg",
+    "original_sha256": "c4977ec9f096009991edfe59a33fd6147dddb0b24f3f06102a1d868323d5253f",
+    "rights_status": "authorized_user_confirmed",
+    "rights_evidence": "用户于2026-10-17确认：已有授权，可用于网站及公开GitHub仓库。依据为用户在本对话中的确认；未取得原始许可文件，不声明开放许可。",
+    "object_position_desktop": "50% 50%",
+    "object_position_mobile": "50% 50%",
+    "changes": "展示版等比例缩放与压缩；原图未裁切、未补绘或生成式增清；轮播按当前布局作显示裁切。",
+    "variants": [
+      {
+        "path": "/assets/gallery/landspace-testbed-2400.webp",
+        "width": 2400,
+        "height": 1466,
+        "bytes": 417536,
+        "sha256": "2d6561d0d5aa37782cc0bd1294505905c62d17de996e71b9c22153249aba48f8"
+      },
+      {
+        "path": "/assets/gallery/landspace-testbed-2400.jpg",
+        "width": 2400,
+        "height": 1466,
+        "bytes": 641357,
+        "sha256": "fc8f5567deca91c41da7a9e6453263b47ab8be2e77cf61da44641dcd0fd1c8ea"
+      },
+      {
+        "path": "/assets/gallery/landspace-testbed-1200.webp",
+        "width": 1200,
+        "height": 733,
+        "bytes": 142842,
+        "sha256": "5077ac92d4fc1c3e30cdcdd6dcac4d2b98788daa55e131521daa583456715ba5"
+      },
+      {
+        "path": "/assets/gallery/landspace-testbed-1200.jpg",
+        "width": 1200,
+        "height": 733,
+        "bytes": 192400,
+        "sha256": "b597f887371c3725fe5c9172b81f0d69019c85fb07c7dc33fa261b320ba322a0"
+      },
+      {
+        "path": "/assets/gallery/landspace-testbed-320.webp",
+        "width": 320,
+        "height": 195,
+        "bytes": 13848,
+        "sha256": "c32c1b65b9d449258b99aa8725e233f6d97852800af498554f9896166377f4fc"
+      },
+      {
+        "path": "/assets/gallery/landspace-testbed-320.jpg",
+        "width": 320,
+        "height": 195,
+        "bytes": 16935,
+        "sha256": "bc01be35a2aef5a4bf9ff947200398deb54b5492efba318efb579b75449b9592"
+      }
+    ],
+    "date": "",
+    "position": "50% 50%",
+    "framing": "photo",
+    "license": "蓝箭航天版权说明",
+    "license_url": "https://www.landspace.com/download.html"
+  }
+]
