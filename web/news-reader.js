@@ -24,7 +24,7 @@
     if (!dialog.open || closing) return;
     closing = true; generation++; controller?.abort();
     if (pushed && history.state?.newsReader) { pushed = false; history.back(); }
-    else { history.replaceState(null, '', '#news'); route(); }
+    else { history.replaceState(null, '', '#page/news'); route(); }
   }
   close.addEventListener('click', closeReader);
   dialog.addEventListener('cancel', event => { event.preventDefault(); closeReader(); });
@@ -119,7 +119,7 @@
       if (!dialog.open) { closing=false;scroll = window.scrollY; previousOverflow = document.body.style.overflow; document.body.style.overflow = 'hidden'; dialog.showModal(); }
       if (activeId !== id) { activeId = id; load(id); }
     } else {
-      const page = location.hash.slice(1) || 'news'; showPage(page);
+      const page = navigationPage(); showPage(page);
       if (dialog.open) hide(); pushed = false;
     }
   }

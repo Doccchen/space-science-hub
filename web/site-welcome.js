@@ -12,7 +12,7 @@
     if (dialog.open) { dialog.close(); if (!page.classList.contains('hidden')) prior?.focus({preventScroll:true}); }
   }
   function play(force=false) {
-    if ((!force && (!initialEntry || (location.hash && location.hash!=='#gallery'))) || document.hidden || page.classList.contains('hidden') || dialog.open || preference.matches || (!force && (seen || !storage))) return;
+    if ((!force && (!initialEntry || (location.hash && !['#gallery','#page/news'].includes(location.hash)))) || document.hidden || page.classList.contains('hidden') || dialog.open || preference.matches || (!force && (seen || !storage))) return;
     prior=document.activeElement; dialog.showModal();
     // Hard deadline also covers failed image requests and animation exceptions.
     timer=setTimeout(() => finish(true), 2400);
@@ -26,7 +26,7 @@
   document.getElementById('gallery-skip').addEventListener('click', () => finish(true));
   dialog.addEventListener('cancel', event => { event.preventDefault(); finish(true); });
   document.getElementById('gallery-replay')?.addEventListener('click', () => play(true));
-  document.addEventListener('pagechange', () => { if (page.classList.contains('hidden') || (location.hash && location.hash!=='#gallery')) finish(false); else play(); });
+  document.addEventListener('pagechange', () => { if (page.classList.contains('hidden') || (location.hash && !['#gallery','#page/news'].includes(location.hash))) finish(false); else play(); });
   document.querySelector('.space-cover-image')?.addEventListener('error', () => finish(false));
   preference.addEventListener('change', () => { if (preference.matches) finish(false); });
   addEventListener('storage', event => { if (event.key===key && event.newValue==='true') seen=true; });

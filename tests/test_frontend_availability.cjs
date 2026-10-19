@@ -30,13 +30,13 @@ class Element {
 }
 const flush=()=>new Promise(resolve=>setImmediate(resolve));
 const read=name=>fs.readFileSync(path.join(__dirname,'../web',name),'utf8');
-async function aiAvailability(){
+async function aiAvailability(hash='#home'){
   const ids=Object.fromEntries(['ai-form','ai-question','ai-send','ai-new','ai-thread','ai-welcome','ai-feedback','ai-waiting',
     'ai-counter','ai-starters','ai-welcome-copy','ai-service-text','ai-status-dot','ai-retention','home','ai-complete'].map(id=>[id,new Element()]));
   const starter=new Element('button');starter.dataset.aiQuestion='示例问题';ids['ai-starters'].append(starter);
   let status={enabled:false,message:'知识库问答暂未开放。',history_retention_seconds:3600},fail=false;const requests=[],ticks=[];
   const document={getElementById:id=>ids[id],querySelectorAll:()=>[starter],addEventListener(){},createElement:tag=>new Element(tag)};
-  const context={document,window:{scrollTo(){}},location:{hash:'#home'},matchMedia:()=>({matches:false}),AbortSignal,
+  const context={document,window:{scrollTo(){}},location:{hash},matchMedia:()=>({matches:false}),AbortSignal,
     fetch:async url=>{requests.push(url);assert.equal(url,'/api/ai/status');if(fail)throw new Error('offline');return {ok:true,json:async()=>status};},
     setInterval:fn=>ticks.push(fn),setTimeout(){},clearTimeout(){}};
   vm.runInNewContext(read('ai-ui.js'),context);await flush();
@@ -127,4 +127,4 @@ async function newsSources(){
   assert.ok(!registry.some(el=>el.className==='news-list-settings'||el.className==='news-page-size'));
   console.log('News uses fixed 10-item pages; source filters retain inactive history, selection and original links');
 }
-(async()=>{await aiAvailability();await resourceCovers();await newsSources();})().catch(error=>{console.error(error);process.exitCode=1;});
+(async()=>{await aiAvailability();await aiAvailability('#page/home');await resourceCovers();await newsSources();})().catch(error=>{console.error(error);process.exitCode=1;});

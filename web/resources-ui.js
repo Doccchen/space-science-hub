@@ -92,5 +92,5 @@
   document.addEventListener('pagechange', event => {
     if (event.detail === 'library' && !started) {started = true; load();}
   });
-  if (window.location.hash === '#library') showPage('library');
+  if (['#library','#page/library'].includes(window.location.hash)) showPage('library');
 })();

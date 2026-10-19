@@ -96,5 +96,5 @@
   document.querySelectorAll('[data-ai-question]').forEach(button=>button.addEventListener('click',()=>{if(!enabled||busy)return;question.value=button.dataset.aiQuestion;controls();question.focus();}));
   document.addEventListener('pagechange',event=>{if(event.detail==='home')init();});
   setInterval(()=>{if(!busy&&!byId('home').classList.contains('hidden')){initialized=false;init();}},10000);
-  if(location.hash==='#home')init();controls();
+  if(['#home','#page/home'].includes(location.hash))init();controls();
 })();
