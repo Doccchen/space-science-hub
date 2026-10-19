@@ -55,7 +55,7 @@ async function aiAvailability(hash='#home'){
   delete ids['ai-starters'];delete ids['ai-counter'];delete ids['ai-retention'];
   status={...status,enabled:false};ticks[0]();await flush();assert.equal(ids['ai-question'].disabled,true);
   status={...status,enabled:true};ticks[0]();await flush();assert.equal(ids['ai-question'].disabled,false);
-  assert.equal(ids['ai-welcome-copy'].textContent,'围绕航天与工程问题，结合知识库资料展开解答。');
+  assert.equal(ids['ai-welcome-copy'].textContent,'');assert.equal(ids['ai-welcome-copy'].hidden,true);
   assert.equal(ids['home'].dataset.aiConversation,'false');
   console.log('AI disabled/enabled/offline transitions preserve drafts and never submit questions');
 }

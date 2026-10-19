@@ -22,17 +22,25 @@ def main():
  before={'app':inspect('app'),'reader':json.loads(run('docker','inspect','space-news-paper-search',capture=True))[0]}
  admin=inspect('admin')['Id'];original=files('app');state=settings_state();ai=get(18081,'/api/ai/status')
  groups={'app':[n for n in manifest['files'] if n.startswith('web/')],'reader':[n for n in manifest['files'] if n.startswith('reader_web/')]}
- previous={};source={};images={};rollback={}
+ previous={};source={};images={};rollback={};bases={}
  for service,old in before.items():
   assert old['State']['Health']['Status']=='healthy'
   for n in groups[service]:
    target=evidence/'runtime'/n;target.parent.mkdir(parents=True,exist_ok=True);run('docker','cp',old['Id']+':/app/'+n,str(target))
    blob=target.read_bytes();assert hashlib.sha256(blob.replace(b'\r\n',b'\n').removeprefix(b'\xef\xbb\xbf')).hexdigest()==manifest['baselines'][n],n+' baseline changed'
    previous[n]=target;p=PROJECT/n;source[n]=p.read_bytes() if p.is_file() else None
-  backup='space-news-before-page-copy-'+service+':'+stamp;run('docker','tag',old['Image'],backup);rollback[service]=backup
+  # Prior hot updates changed the tag and running files, not the container Image ID.
+  # Build on the published image only after verifying it matches all live source files.
+  base=json.loads(run('docker','image','inspect',old['Config']['Image'],capture=True))[0]['Id'];bases[service]=base
+  roots=('backend','web','admin_web','tests') if service=='app' else ('reader_web',)
+  code="import hashlib,json;from pathlib import Path;print(json.dumps({str(p.relative_to('/app')):hashlib.sha256(p.read_bytes()).hexdigest() for root in "+repr(roots)+" for p in (Path('/app')/root).rglob('*') if p.is_file() and '__pycache__' not in p.parts}))"
+  image_files=json.loads(run('docker','run','--rm','--network','none',base,'python','-c',code,capture=True))
+  live_files=original if service=='app' else json.loads(run('docker','exec',old['Id'],'python','-c',code,capture=True))
+  assert image_files==live_files,service+' published image does not match current live files'
+  backup='space-news-before-page-copy-'+service+':'+stamp;run('docker','tag',base,backup);rollback[service]=backup
   image='space-news-page-copy-'+service+':'+stamp;images[service]=image
   dockerfile=stage/('Dockerfile.'+service)
-  dockerfile.write_text('FROM '+old['Image']+'\nUSER 0\n'+''.join('COPY '+n+' /app/'+n+'\n' for n in groups[service])+'USER '+(old['Config'].get('User') or '0')+'\n')
+  dockerfile.write_text('FROM '+base+'\nUSER 0\n'+''.join('COPY '+n+' /app/'+n+'\n' for n in groups[service])+'USER '+(old['Config'].get('User') or '0')+'\n')
   run('docker','build','--pull=false','-f',str(dockerfile),'-t',image,str(stage))
  (evidence/'rollback.json').write_text(json.dumps({'images':rollback,'tags':{s:b['Config']['Image'] for s,b in before.items()}},indent=2))
  changed=False
@@ -58,7 +66,7 @@ def main():
  except BaseException:
   if changed:
    for service,old in before.items():
-    run('docker','tag',old['Image'],old['Config']['Image'])
+    run('docker','tag',bases[service],old['Config']['Image'])
     for n in groups[service]:
      run('docker','cp',str(previous[n]),old['Id']+':/app/'+n)
      p=PROJECT/n

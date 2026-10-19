@@ -15,7 +15,8 @@
     thread.setAttribute('aria-busy', String(busy));
     const starters=byId('ai-starters');if(starters){starters.hidden=!enabled;
     starters.querySelectorAll('button').forEach(button=>{button.disabled=!enabled||busy;});}
-    byId('ai-welcome-copy').textContent=enabled?'围绕航天与工程问题，结合知识库资料展开解答。':availabilityText;
+    byId('ai-welcome-copy').textContent=enabled?'':availabilityText;
+    byId('ai-welcome-copy').hidden=enabled;
     question.placeholder=enabled?'例如：固体火箭发动机为什么能产生推力？':'服务恢复后即可在这里提问。';
     byId('home').dataset.aiAvailable=String(enabled);
     byId('home').dataset.aiConversation=String(thread.children.length>0);
