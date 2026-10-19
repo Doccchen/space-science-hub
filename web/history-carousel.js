@@ -12,15 +12,15 @@
  const license=document.getElementById('cover-license');
  const announce=document.getElementById('cover-announcement'), dots=document.getElementById('cover-dots');
  const motion=matchMedia('(prefers-reduced-motion: reduce)');
- let current=0, request=0, timer, hovering=false, focused=false, visible=true;
+ let current=0, request=0, timer, loadTimer, prefetchTimer, hovering=false, focused=false, visible=true;
  let active=!document.getElementById('news').classList.contains('hidden'), loading=false;
  const failed=new Set(), buttons=[];
- let outgoing=null, fadeAnimation=null, copyAnimation=null;
+ let outgoing=null, fadeAnimation=null, copyAnimation=null, nextImage=null;
  const safeLink=url=>{try{const u=new URL(url);return ['http:','https:'].includes(u.protocol)&&!u.username&&!u.password?u.href:null}catch{return null}};
  function canPlay(){return !hovering&&!focused&&visible&&active&&!document.hidden&&!motion.matches&&!loading&&slides.length-failed.size>1;}
  function schedule(){clearTimeout(timer);if(canPlay())timer=setTimeout(()=>move(1,false),8000);}
  function controls(){
-  buttons.forEach((button,index)=>{button.setAttribute('aria-pressed',String(index===current));button.disabled=failed.has(index);});
+  buttons.forEach((button,index)=>{button.setAttribute('aria-pressed',String(index===current));button.disabled=false;button.title=failed.has(index)?'点击重试这张图片':'';});
   cover.setAttribute('aria-busy',String(loading));
  }
  function clearFade(){
@@ -29,7 +29,7 @@
   if(outgoing)outgoing.remove();
   outgoing=null;fadeAnimation=null;copyAnimation=null;
  }
- function render(index,manual){
+ function render(index,manual,source=sourcesFor(index)[0]){
   const blend=index!==current&&!motion.matches&&visual&&typeof visual.animate==='function';
   clearFade();
   if(blend){
@@ -37,7 +37,7 @@
    outgoing.querySelector('.space-cover-image').alt='';cover.insertBefore(outgoing,visual);
   }
   const slide=slides[index];current=index;
-  image.src=slide.image;image.alt=slide.alt;image.style.objectPosition=slide.position;cover.dataset.framing=slide.framing;cover.dataset.slide=slide.id;
+  image.src=source;image.alt=slide.alt;image.style.objectPosition=slide.position;cover.dataset.framing=slide.framing;cover.dataset.slide=slide.id;
   if(visual){visual.dataset.framing=slide.framing;visual.dataset.slide=slide.id;}
   title.replaceChildren();slide.title.forEach((line,i)=>{if(i)title.append(document.createElement('br'));title.append(document.createTextNode(line));});
   label.textContent=slide.label;description.textContent=slide.description;
@@ -50,14 +50,41 @@
    fadeAnimation.finished.then(()=>{layer.remove();if(outgoing===layer){outgoing=null;fadeAnimation=null;}}).catch(()=>{});
    if(copy&&typeof copy.animate==='function')copyAnimation=copy.animate([{opacity:0,transform:'translateY(6px)'},{opacity:1,transform:'translateY(0)'}],{duration:500,easing:'cubic-bezier(.22,.61,.36,1)'});
   }
-  controls();schedule();
+  controls();schedule();prefetchNext();
  }
- function show(index,manual=true){
-  if(index===current&&!failed.has(index)){schedule();return;}
-  const version=++request, candidate=new Image();loading=true;controls();clearTimeout(timer);
-  candidate.onload=()=>{if(version!==request)return;loading=false;if(!manual&&!canPlay()){controls();schedule();return;}render(index,manual);};
-  candidate.onerror=()=>{if(version!==request)return;loading=false;failed.add(index);announce.textContent='这张图像暂时无法显示，已保留当前影像。';controls();schedule();};
-  candidate.src=slides[index].image;
+ function sourcesFor(index){
+  const slide=slides[index],small=typeof innerWidth==='number'&&innerWidth<=900;
+  return [...new Set((small?[slide.mobile_image,slide.image,slide.mobile_fallback_image,slide.fallback_image]:[slide.image,slide.mobile_image,slide.fallback_image,slide.mobile_fallback_image]).filter(Boolean))];
+ }
+ function prefetchNext(){
+  clearTimeout(prefetchTimer);
+  prefetchTimer=setTimeout(()=>{
+   if(!active||document.hidden)return;
+   const next=(current+1)%slides.length,warm=nextImage=new Image();warm.decoding='async';warm.fetchPriority='low';warm.src=sourcesFor(next)[0];
+  },300);
+ }
+ function show(index,manual=true,force=false){
+  if(!force&&index===current&&!failed.has(index)){schedule();return;}
+  clearTimeout(loadTimer);clearTimeout(timer);
+  if(manual)failed.delete(index);
+  const version=++request,urls=sourcesFor(index);loading=true;controls();
+  function attempt(offset){
+   if(version!==request)return;
+   if(offset>=urls.length){
+    loading=false;failed.add(index);announce.textContent='这张图像暂时无法显示，已保留当前影像，可点击重试。';controls();schedule();return;
+   }
+   const candidate=new Image();let settled=false;candidate.decoding='async';
+   const retry=()=>{
+    if(settled||version!==request)return;settled=true;clearTimeout(loadTimer);
+    candidate.onload=null;candidate.onerror=null;candidate.src='';attempt(offset+1);
+   };
+   candidate.onload=()=>{
+    if(settled||version!==request)return;settled=true;clearTimeout(loadTimer);loading=false;failed.delete(index);
+    if(!manual&&!force&&!canPlay()){controls();schedule();return;}render(index,manual,urls[offset]);
+   };
+   candidate.onerror=retry;loadTimer=setTimeout(retry,7000);candidate.src=urls[offset];
+  }
+  attempt(0);
  }
  function move(step,manual=true){
   let index=current;
@@ -68,9 +95,9 @@
  cover.addEventListener('focusin',event=>{focused=event.target?.matches?.(':focus-visible')??true;schedule();});cover.addEventListener('focusout',()=>{setTimeout(()=>{focused=cover.contains(document.activeElement)&&(document.activeElement?.matches?.(':focus-visible')??true);schedule();},0);});
  cover.addEventListener('keydown',event=>{if(!event.target.closest('.cover-controls'))return;if(event.key==='ArrowLeft'||event.key==='ArrowRight'){event.preventDefault();move(event.key==='ArrowLeft'?-1:1);}});
  document.addEventListener('visibilitychange',schedule);
- document.addEventListener('pagechange',event=>{active=event.detail==='news';if(!active){request++;loading=false;clearFade();}controls();schedule();});
+ document.addEventListener('pagechange',event=>{active=event.detail==='news';if(!active){request++;loading=false;clearTimeout(loadTimer);clearTimeout(prefetchTimer);clearFade();}controls();schedule();});
  motion.addEventListener('change',()=>{if(motion.matches)clearFade();controls();schedule();});
  if(typeof IntersectionObserver!=='undefined'){new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;schedule();},{threshold:.15}).observe(cover);}
- image.addEventListener('error',()=>{cover.classList.add('cover-image-error');});image.addEventListener('load',()=>cover.classList.remove('cover-image-error'));
+ image.addEventListener('error',()=>{cover.classList.add('cover-image-error');if(!loading)show(current,false,true);});image.addEventListener('load',()=>cover.classList.remove('cover-image-error'));
  render(0,false);document.getElementById('cover-controls').hidden=false;
 })();

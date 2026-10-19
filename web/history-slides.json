@@ -1,7 +1,7 @@
 [
   {
     "id": "earthrise",
-    "image": "/assets/earthrise.jpg?v=20261008-hq",
+    "image": "/assets/carousel/earthrise-1800.webp",
     "title": [
       "换一个视角，",
       "重新看见地球。"
@@ -14,14 +14,16 @@
     "credit": "NASA",
     "license": "NASA 媒体使用规范",
     "license_url": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
-    "changes": "采用 NASA 图像库 3000×3000 原始扫描版，未生成或补绘画面细节。",
+    "changes": "采用 NASA 图像库 3000×3000 原始扫描版，未生成或补绘画面细节。；展示版本等比例缩放并转为 WebP，未裁切或补绘。",
     "position": "50% 65%",
     "framing": "photo",
-    "original_image_url": "http://images-assets.nasa.gov/image/as08-14-2383/as08-14-2383~orig.jpg"
+    "original_image_url": "http://images-assets.nasa.gov/image/as08-14-2383/as08-14-2383~orig.jpg",
+    "mobile_image": "/assets/carousel/earthrise-960.webp",
+    "fallback_image": "/assets/earthrise.jpg?v=20261008-hq"
   },
   {
     "id": "mengtian",
-    "image": "/assets/history-mengtian-ai.png?v=20261008-ai1",
+    "image": "/assets/carousel/mengtian-1800.webp",
     "title": [
       "从文昌出发，",
       "奔向天宫。"
@@ -34,13 +36,15 @@
     "credit": "Gmandian",
     "license": "CC0 1.0",
     "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
-    "changes": "基于 Gmandian 原图使用 AI 提高清晰度；原始文件另行保留，增强纹理不代表新增真实记录。",
+    "changes": "基于 Gmandian 原图使用 AI 提高清晰度；原始文件另行保留，增强纹理不代表新增真实记录。；展示版本等比例缩放并转为 WebP，未裁切或补绘。",
     "position": "50% 40%",
-    "framing": "launch"
+    "framing": "launch",
+    "mobile_image": "/assets/carousel/mengtian-960.webp",
+    "fallback_image": "/assets/history-mengtian-ai.png?v=20261008-ai1"
   },
   {
     "id": "apollo11",
-    "image": "/assets/history-apollo11.jpg?v=20261008-hq",
+    "image": "/assets/carousel/apollo11-1800.webp",
     "title": [
       "点燃引擎，",
       "向月球出发。"
@@ -53,14 +57,16 @@
     "credit": "NASA",
     "license": "NASA 媒体使用规范",
     "license_url": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
-    "changes": "采用 NASA 图像库原始扫描，保留1763×3000像素，高质量JPEG编码，未生成或补绘画面细节。",
+    "changes": "采用 NASA 图像库原始扫描，保留1763×3000像素，高质量JPEG编码，未生成或补绘画面细节。；展示版本等比例缩放并转为 WebP，未裁切或补绘。",
     "position": "50% 40%",
     "framing": "launch",
-    "original_image_url": "http://images-assets.nasa.gov/image/6901001/6901001~orig.jpg"
+    "original_image_url": "http://images-assets.nasa.gov/image/6901001/6901001~orig.jpg",
+    "mobile_image": "/assets/carousel/apollo11-960.webp",
+    "fallback_image": "/assets/history-apollo11.jpg?v=20261008-hq"
   },
   {
     "id": "tianhe",
-    "image": "/assets/history-tianhe.png?v=20261008-hq",
+    "image": "/assets/carousel/tianhe-1800.webp",
     "title": [
       "在轨道之上，",
       "建起一个家。"
@@ -73,13 +79,15 @@
     "credit": "Shujianyang",
     "license": "CC BY-SA 4.0",
     "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
-    "changes": "保留原始透明 PNG；等比例置于深色背景，未重绘舱体。图像沿用 CC BY-SA 4.0。",
+    "changes": "保留原始透明 PNG；等比例置于深色背景，未重绘舱体。图像沿用 CC BY-SA 4.0。；展示版本等比例缩放并转为 WebP，未裁切或补绘。",
     "position": "center",
-    "framing": "illustration"
+    "framing": "illustration",
+    "mobile_image": "/assets/carousel/tianhe-960.webp",
+    "fallback_image": "/assets/history-tianhe.png?v=20261008-hq"
   },
   {
     "id": "rosetta",
-    "image": "/assets/history-rosetta-ai.png?v=20261008-ai1",
+    "image": "/assets/carousel/rosetta-1800.webp",
     "title": [
       "追上一颗彗星，",
       "走近远古世界。"
@@ -92,14 +100,16 @@
     "credit": "ESA/Rosetta/NAVCAM",
     "license": "CC BY-SA 3.0 IGO",
     "license_url": "https://creativecommons.org/licenses/by-sa/3.0/igo/",
-    "changes": "基于 ESA/Rosetta/NAVCAM 原图使用 AI 提高清晰度；原始文件另行保留，增强纹理不代表新增观测数据。沿用 CC BY-SA 3.0 IGO。",
+    "changes": "基于 ESA/Rosetta/NAVCAM 原图使用 AI 提高清晰度；原始文件另行保留，增强纹理不代表新增观测数据。沿用 CC BY-SA 3.0 IGO。；展示版本等比例缩放并转为 WebP，未裁切或补绘。",
     "position": "50% 90%",
     "framing": "comet",
-    "original_image_url": "https://www.esa.int/var/esa/storage/images/esa_multimedia/images/2014/08/comet_on_3_august_2014_-_navcam/14700233-1-eng-GB/Comet_on_3_August_2014_-_NavCam.jpg"
+    "original_image_url": "https://www.esa.int/var/esa/storage/images/esa_multimedia/images/2014/08/comet_on_3_august_2014_-_navcam/14700233-1-eng-GB/Comet_on_3_August_2014_-_NavCam.jpg",
+    "mobile_image": "/assets/carousel/rosetta-960.webp",
+    "fallback_image": "/assets/history-rosetta-ai.png?v=20261008-ai1"
   },
   {
     "id": "landspace-sunset",
-    "image": "/assets/gallery/landspace-sunset-2400.jpg",
+    "image": "/assets/gallery/landspace-sunset-2400.webp",
     "fallback_image": "/assets/gallery/landspace-sunset-2400.jpg",
     "width": 2400,
     "height": 1491,
@@ -174,7 +184,7 @@
   },
   {
     "id": "landspace-horizon",
-    "image": "/assets/gallery/landspace-horizon-2400.jpg",
+    "image": "/assets/gallery/landspace-horizon-2400.webp",
     "fallback_image": "/assets/gallery/landspace-horizon-2400.jpg",
     "width": 2400,
     "height": 943,
@@ -249,7 +259,7 @@
   },
   {
     "id": "landspace-desert",
-    "image": "/assets/gallery/landspace-desert-2400.jpg",
+    "image": "/assets/gallery/landspace-desert-2400.webp",
     "fallback_image": "/assets/gallery/landspace-desert-2400.jpg",
     "width": 2400,
     "height": 1499,
@@ -324,7 +334,7 @@
   },
   {
     "id": "landspace-distance",
-    "image": "/assets/gallery/landspace-distance-2400.jpg",
+    "image": "/assets/gallery/landspace-distance-2400.webp",
     "fallback_image": "/assets/gallery/landspace-distance-2400.jpg",
     "width": 2400,
     "height": 1636,
@@ -399,7 +409,7 @@
   },
   {
     "id": "landspace-liftoff",
-    "image": "/assets/gallery/landspace-liftoff-2400.jpg",
+    "image": "/assets/gallery/landspace-liftoff-2400.webp",
     "fallback_image": "/assets/gallery/landspace-liftoff-2400.jpg",
     "width": 2400,
     "height": 1600,
@@ -474,7 +484,7 @@
   },
   {
     "id": "landspace-engine",
-    "image": "/assets/gallery/landspace-engine-2400.jpg",
+    "image": "/assets/gallery/landspace-engine-2400.webp",
     "fallback_image": "/assets/gallery/landspace-engine-2400.jpg",
     "width": 2400,
     "height": 1600,
@@ -549,7 +559,7 @@
   },
   {
     "id": "landspace-testbed",
-    "image": "/assets/gallery/landspace-testbed-2400.jpg",
+    "image": "/assets/gallery/landspace-testbed-2400.webp",
     "fallback_image": "/assets/gallery/landspace-testbed-2400.jpg",
     "width": 2400,
     "height": 1466,

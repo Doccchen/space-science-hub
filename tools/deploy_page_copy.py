@@ -27,9 +27,14 @@ def main():
  for service,old in before.items():
   assert old['State']['Health']['Status']=='healthy'
   for n in groups[service]:
-   target=evidence/'runtime'/n;target.parent.mkdir(parents=True,exist_ok=True);run('docker','cp',old['Id']+':/app/'+n,str(target))
-   blob=target.read_bytes();assert hashlib.sha256(blob.replace(b'\r\n',b'\n').removeprefix(b'\xef\xbb\xbf')).hexdigest()==manifest['baselines'][n],n+' baseline changed'
-   previous[n]=target;p=PROJECT/n;source[n]=p.read_bytes() if p.is_file() else None
+   if n in manifest['baselines']:
+    target=evidence/'runtime'/n;target.parent.mkdir(parents=True,exist_ok=True);run('docker','cp',old['Id']+':/app/'+n,str(target))
+    blob=target.read_bytes();assert hashlib.sha256(blob.replace(b'\r\n',b'\n').removeprefix(b'\xef\xbb\xbf')).hexdigest()==manifest['baselines'][n],n+' baseline changed'
+    previous[n]=target
+   else:
+    assert service=='app' and n not in original,n+' unexpected new asset already exists'
+    previous[n]=None
+   p=PROJECT/n;source[n]=p.read_bytes() if p.is_file() else None
   # Prior hot updates changed the tag and running files, not the container Image ID.
   # Build on the published image only after verifying it matches all live source files.
   base=json.loads(run('docker','image','inspect',old['Config']['Image'],capture=True))[0]['Id'];bases[service]=base
@@ -49,6 +54,8 @@ def main():
   changed=True
   for service,old in before.items():
    run('docker','tag',images[service],old['Config']['Image'])
+   parents=sorted({str(Path('/app')/Path(n).parent) for n in groups[service]})
+   run('docker','exec','-u','0',old['Id'],'python','-c','from pathlib import Path;'+''.join('Path('+repr(parent)+').mkdir(mode=0o755,parents=True,exist_ok=True);' for parent in parents))
    for n in sorted(groups[service],key=lambda n:n.endswith('.html')):
     p=PROJECT/n;p.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(stage/n,p)
     run('docker','cp',str(stage/n),old['Id']+':/app/'+n)
@@ -69,7 +76,8 @@ def main():
    for service,old in before.items():
     run('docker','tag',bases[service],old['Config']['Image'])
     for n in groups[service]:
-     run('docker','cp',str(previous[n]),old['Id']+':/app/'+n)
+     if previous[n] is not None:run('docker','cp',str(previous[n]),old['Id']+':/app/'+n)
+     else:run('docker','exec','-u','0',old['Id'],'python','-c','from pathlib import Path;Path('+repr('/app/'+n)+').unlink(missing_ok=True)')
      p=PROJECT/n
      if source[n] is None:p.unlink(missing_ok=True)
      else:p.write_bytes(source[n])

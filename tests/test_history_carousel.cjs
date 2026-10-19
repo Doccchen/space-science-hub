@@ -11,7 +11,8 @@ class Element{
  remove(){this.removed=true;}
  animate(frames,options){const finished={then(fn){this.complete=fn;return this;},catch(){return this;}};this.animation={frames,options,finished,cancel(){}};return this.animation;}
 }
-const slides=JSON.parse(fs.readFileSync(path.join(__dirname,'../web/history-slides.json'),'utf8'));
+const markup=fs.readFileSync(path.join(__dirname,'../web/index.html'),'utf8');
+const slides=JSON.parse(markup.match(/<script[^>]*id="history-slides"[^>]*>([\s\S]*?)<\/script>/)[1]);
 const ids=Object.fromEntries(['history-slides','space-cover-title','cover-label','cover-description','cover-source','cover-credit','cover-license','cover-announcement','cover-dots','cover-controls','news'].map(id=>[id,new Element()]));
 ids['history-slides'].textContent=JSON.stringify(slides);
 const cover=new Element(),image=new Element(),visual=new Element(),copy=new Element(),events={},timers=new Map(),pending=[];let timerId=0;
@@ -36,9 +37,10 @@ ids['cover-dots'].children[2].trigger('click');const stale=pending.at(-1);
 ids['cover-dots'].children[3].trigger('click');pending.at(-1).onload();stale.onload();
 assert.equal(image.src,slides[3].image);assert.equal(ids['cover-license'].textContent,'CC BY-SA 4.0');
 // Failed candidates leave the visible photo, description and attribution untouched.
-ids['cover-dots'].children[4].trigger('click');pending.at(-1).onerror();
+ids['cover-dots'].children[4].trigger('click');
+for(let attempt=0;attempt<8&&pending.at(-1).onerror;attempt++)pending.at(-1).onerror();
 assert.equal(image.src,slides[3].image);assert.equal(ids['cover-credit'].textContent,slides[3].date+' / '+slides[3].credit);
-assert.equal(ids['cover-dots'].children[4].disabled,true);
+assert.equal(ids['cover-dots'].children[4].disabled,false, 'A transient image failure must remain manually retryable');
 // If a timed request is already loading when the pointer enters, it must not change the image.
 autoTimers()[0].fn();const hoveringRequest=pending.at(-1);
 cover.trigger('mouseenter');assert.equal(autoTimers().length,0);hoveringRequest.onload();assert.equal(image.src,slides[3].image);
@@ -54,4 +56,12 @@ assert.equal(image.src,slides[3].image);assert.equal(autoTimers().length,0);
 events.pagechange({detail:'news'});assert.equal(autoTimers().length,1);
 motion.matches=true;motion.change();assert.equal(autoTimers().length,0);
 motion.matches=false;motion.change();assert.equal(autoTimers().length,1);
-console.log('Carousel attribution/race/error and hover/focus/manual/visibility/page/reduced-motion regressions passed.');
+// A failed slide remains manually selectable and can recover through a smaller fallback.
+ids['cover-dots'].children[4].trigger('click');const primary=pending.at(-1).src;
+pending.at(-1).onerror();assert.notEqual(pending.at(-1).src,primary);pending.at(-1).onload();
+assert.equal(cover.dataset.slide,slides[4].id);assert.equal(image.src,slides[4].mobile_image);assert.equal(ids['cover-license'].href,slides[4].license_url);
+// A request that never fires load/error is bounded and advances to another source.
+ids['cover-dots'].children[5].trigger('click');const stalled=pending.at(-1),deadline=[...timers.values()].find(t=>t.ms===7000);
+assert(deadline);deadline.fn();assert.notEqual(pending.at(-1),stalled);pending.at(-1).onload();
+assert.equal(cover.dataset.slide,slides[5].id);assert.equal(cover.attrs['aria-busy'],'false');
+console.log('Carousel: real 12-slide manifest, attribution/races, source fallback, timeout, retry and pause regressions passed.');
