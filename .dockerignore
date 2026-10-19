@@ -18,3 +18,10 @@ backend/__pycache__/
 tools/preview_admin.py
 tools/preview_ai.py
 tools/preview_frontend.py
+
+!requirements-reader.txt
+!reader/
+!reader/**
+!reader_web/
+!reader_web/**
+reader/__pycache__/

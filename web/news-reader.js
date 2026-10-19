@@ -1,6 +1,5 @@
 'use strict';
 (() => {
-  const agentStyle = document.createElement('link'); agentStyle.rel = 'stylesheet'; agentStyle.href = '/assets/news-agent.css?v=20261011-split'; document.head.append(agentStyle);
   const make = (tag, text, cls) => { const node = document.createElement(tag); if (text) node.textContent = text; if (cls) node.className = cls; return node; };
   const dialog = make('dialog', '', 'news-reader'); dialog.setAttribute('aria-labelledby', 'reader-title');
   const bar = make('div', '', 'reader-bar'), label = make('span', '新闻阅读'), close = make('button', '×');
@@ -66,7 +65,6 @@
   async function load(id) {
     controller?.abort(); controller = new AbortController(); const currentController = controller, request = ++generation;
     const timeout = setTimeout(() => currentController.abort(), 15000);
-    body.classList.remove('reader-split');
     body.replaceChildren(make('h1', '正在读取新闻…')); body.firstChild.id = 'reader-title';
     body.scrollTop=0;focusTitle();
     delete body.dataset.contentVersion;
@@ -87,10 +85,10 @@
       const date = item.published_time_status === 'timezone_missing' ? (item.published_raw || '') + '（来源未标时区）' :
         (item.published_calendar_date || (item.published_at ? new Date(item.published_at).toLocaleString('zh-CN', {hour12: false}) : '日期未提供'));
       const language = {en:'英文',zh:'中文',ja:'日文',es:'西班牙文',fr:'法文',de:'德文'}[content.language] || '原始语言';
-      const newsPane = make('section', '', 'reader-news'), assistantPane = make('aside', '', 'reader-assistant');
-      newsPane.setAttribute('aria-label', '新闻正文');assistantPane.setAttribute('aria-label', '新闻科普');
+      const newsPane = make('section', '', 'reader-news');
+      newsPane.setAttribute('aria-label', '新闻正文');
       newsPane.append(make('p', scope, 'reader-scope'), title, make('p', [item.source_name, date, language].join(' · '), 'reader-meta'));
-      body.replaceChildren(newsPane, assistantPane);body.classList.add('reader-split');
+      body.replaceChildren(newsPane);
       if (content.credit) newsPane.append(make('p', '内容署名：' + content.credit, 'reader-meta'));
       let paragraphs = 0;
       const figures = position => (content.assets || []).filter(asset => asset.block_index === position).forEach(asset => {
@@ -102,15 +100,13 @@
       figures(0);
       content.blocks.forEach((block, index) => { if (block.type === 'paragraph') paragraphs++; const node = blockNode(block, id, content.content_version, paragraphs); if (node) newsPane.append(node); figures(index+1); });
       const footer = make('div', '', 'reader-notice'); footer.append(make('p', content.notes), make('p', content.assets?.length ? '仅展示已审核图片；其他图片请到原文查看。' : '图片请到原文查看。'), link(item.original_url));
+      const findPapers = make('a', '查找相关论文 ↗', 'reader-return');
+      findPapers.href = '/reader/?news=' + encodeURIComponent(id);
+      footer.append(findPapers);
       newsPane.append(footer,returnButton()); body.dataset.contentVersion = content.content_version;
-      try {
-        const agent = await import('/assets/news-agent.js?v=20261011-split');
-        if (request === generation && dialog.open) agent.mount(assistantPane, item);
-      } catch { if (request === generation && dialog.open) assistantPane.append(make('p', '新闻科普入口暂不可用。')); }
       if(shouldFocus)focusTitle();
     } catch (error) {
       if (request !== generation || !dialog.open) return;
-      body.classList.remove('reader-split');
       const title = make('h1', error.message === '404' ? '这篇新闻不存在' : '新闻读取失败'); title.id = 'reader-title';
       const retry = make('button', '重试', 'secondary'); retry.addEventListener('click', () => load(id));
       title.tabIndex=-1;body.replaceChildren(title, make('p', '关闭后仍可继续浏览当前列表。'), retry,returnButton());focusTitle();
@@ -146,7 +142,7 @@
       const content = await response.json();
       if (request === generation && dialog.open && content.content_version !== body.dataset.contentVersion) load(id);
     } catch {
-      if (request === generation && dialog.open) { body.classList.remove('reader-split');const title = make('h1', '展示范围暂时无法确认'); title.id = 'reader-title'; title.tabIndex=-1;body.replaceChildren(title, make('p', '请重试，或关闭后继续浏览列表。')); delete body.dataset.contentVersion; const retry = make('button', '重试', 'secondary'); retry.addEventListener('click', () => load(id)); body.append(retry,returnButton()); }
+      if (request === generation && dialog.open) { const title = make('h1', '展示范围暂时无法确认'); title.id = 'reader-title'; title.tabIndex=-1;body.replaceChildren(title, make('p', '请重试，或关闭后继续浏览列表。')); delete body.dataset.contentVersion; const retry = make('button', '重试', 'secondary'); retry.addEventListener('click', () => load(id)); body.append(retry,returnButton()); }
     }
   }, 30000);
   route();

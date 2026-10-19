@@ -29,3 +29,7 @@ artifacts/*
 ai-upgrade-*/
 glass-upgrade-*/
 bailian-probe-*/
+
+.env.reader
+.env.reader.*
+!.env.reader.example

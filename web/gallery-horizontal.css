@@ -1,0 +1,44 @@
+/* One photograph at a time, on the site's shared warm paper. */
+#gallery:not(.gallery-viewing) .gallery-stage{perspective:none;background:var(--ui-surface);cursor:grab}
+.gallery-rail{position:absolute;inset:0;transform:translateX(0);touch-action:pan-y}
+#gallery .gallery-exhibit{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(calc(100vw - 48px),calc((100svh - 112px)*var(--photo-ratio,1.6)));aspect-ratio:var(--photo-ratio,1.6);height:auto;margin:0;padding:0;border:0;background:transparent;box-shadow:none;overflow:hidden;user-select:none;touch-action:pan-y;cursor:zoom-in}
+#gallery .gallery-exhibit:hover{background:transparent;border:0}
+.gallery-exhibit-photo,.gallery-exhibit-photo img{display:block;width:100%;height:100%;object-fit:contain;pointer-events:none}
+#gallery:not(.gallery-viewing) .gallery-photo{visibility:hidden;pointer-events:none}
+#gallery.gallery-returning .gallery-photo.is-current{visibility:visible}
+.gallery-viewing .gallery-rail{display:none}
+.gallery-spatial-hint{position:absolute}
+#gallery:not(.gallery-ui-hidden) .gallery-spatial-hint{visibility:hidden}
+#gallery.gallery-viewing :is(#gallery-index,#gallery-explore){display:none}
+.gallery-atmosphere{background:var(--ui-surface)}
+.gallery-atmosphere img,.gallery-atmosphere::after{display:none}
+#gallery .gallery-stage.is-dragging,#gallery .gallery-stage.is-dragging .gallery-exhibit{cursor:grabbing}
+#gallery .gallery-index{gap:5px;max-height:148px;align-items:stretch}
+#gallery .gallery-index button{flex:0 0 72px;min-width:72px;min-height:65px;padding:4px;border:1px solid transparent;border-bottom:2px solid transparent;display:flex;flex-direction:column-reverse;gap:4px;justify-content:center;align-items:center}
+#gallery .gallery-index button[aria-pressed=true]{border-bottom-color:var(--ui-primary)}
+#gallery .gallery-index-preview{display:block;position:static;width:64px;padding:0;font-size:0;background:transparent;opacity:1;visibility:visible;transform:none;transition:none}
+#gallery .gallery-index-preview img{display:block;width:64px;height:40px;object-fit:cover;margin:0}
+#gallery .gallery-tools{grid-template-columns:auto minmax(0,1fr) auto}
+@media(max-width:1000px) and (min-width:701px){#gallery .gallery-index button{flex-basis:56px;min-width:56px}#gallery .gallery-index-preview,#gallery .gallery-index-preview img{width:48px}.gallery-index-preview img{height:32px}}
+@media(max-width:700px){
+ #gallery .gallery-exhibit{width:calc(100vw - 32px);height:calc(100svh - 136px);aspect-ratio:auto}
+ .gallery-exhibit-photo img{object-fit:cover;object-position:var(--mobile-focus,50% 50%)}
+ #gallery .gallery-tools{grid-template-columns:1fr auto}
+ #gallery.gallery-viewing .gallery-pagination{position:static}
+ #gallery .gallery-index button{flex-basis:64px;min-width:64px}
+ #gallery .gallery-index-preview,#gallery .gallery-index-preview img{width:56px}
+}
+@media(prefers-reduced-motion:reduce){#gallery .gallery-rail{transform:none!important}}
+
+/* Photography and reading share copper accents, with surface-specific contrast. */
+:root{
+ --photo-surface:#191b1f;--photo-container:#272b31;--photo-text:#f2f3f4;
+ --photo-muted:#b6bcc5;--photo-copper:#c77b52;--photo-outline:#8c949e;--photo-divider:#f2f3f429;
+}
+body.gallery-active{background:var(--photo-surface);color:var(--photo-text)}
+body.editorial-ui #gallery,.gallery-welcome,.gallery-menu{
+ --ui-surface:var(--photo-surface);--ui-container:var(--photo-container);
+ --ui-on-surface:var(--photo-text);--ui-muted:var(--photo-muted);
+ --ui-primary:var(--photo-copper);--ui-on-primary:var(--photo-surface);
+ --ui-outline:var(--photo-outline);--ui-divider:var(--photo-divider);
+}

@@ -1,0 +1,19 @@
+# Add to the existing Compose configuration. No existing app ports are changed.
+services:
+  reader:
+    image: space-news-app
+    build: .
+    command: [python, -m, uvicorn, 'reader.app:app', --host, '0.0.0.0', --port, '8002', --workers, '1', --no-proxy-headers]
+    ports:
+      - '127.0.0.1:8092:8002'
+    env_file: .env.reader
+    environment:
+      READER_PUBLIC_ORIGIN: ${READER_PUBLIC_ORIGIN:?Set the actual public HTTPS origin including port}
+    mem_limit: 640m
+    cpus: 1.0
+    restart: unless-stopped
+    healthcheck:
+      test: [CMD, python, '-c', "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8002/api/reader/health', timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3

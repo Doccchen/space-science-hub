@@ -89,9 +89,6 @@
     const scope = ({full_text:'本站全文', link_only:'原文阅读', unavailable:'暂不可用'}[item.reading_mode] || '原文阅读');
     bottom.append(element('span', 'reading-badge', scope));
     if (canRead) bottom.append(originalLink(item, '查看原文 ↗'));
-    const explain = element('button', 'link-button news-agent-entry', '正在读取新闻科普状态…'); explain.type = 'button';explain.disabled = true;
-    window.newsAgentAvailability?.decorate(explain);
-    explain.addEventListener('click', () => { if (!explain.disabled) window.newsReader.open(item.id, explain); }); bottom.append(explain);
     text.append(meta, heading);
     if (canRead && item.summary?.trim()) text.append(element('p', 'news-summary', item.summary));
     text.append(bottom);row.append(text);
@@ -222,7 +219,7 @@
   });
   select.addEventListener('change', () => { source = select.value; renderSelect(); load(true); });
   regionSelect.addEventListener('change', () => { regionChoice = regionSelect.value; source = ''; renderSelect(); load(true); });
-  const refresh = element('button', 'refresh-news', '刷新列表 ↻'); refresh.addEventListener('click', () => { window.newsAgentAvailability?.refresh();load(true); }); resultActions.append(refresh);
+  const refresh = element('button', 'refresh-news', '刷新列表 ↻'); refresh.addEventListener('click', () => { load(true); }); resultActions.append(refresh);
   reset.addEventListener('click',()=>{category='';source='';regionChoice='';buttons.forEach(item=>{item.node.classList.toggle('active',item.id==='');item.node.setAttribute('aria-pressed',String(item.id===''));});renderRegion();renderSelect();load(true);});
   renderRegion(); renderSelect(); renderPagination(); load(true);
   document.addEventListener('readingchange', event => {
