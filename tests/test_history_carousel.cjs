@@ -2,6 +2,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
 class Element{
  constructor(){this.children=[];this.events={};this.dataset={};this.attrs={};this.style={};const names=new Set();this.classList={contains:name=>names.has(name),add:name=>names.add(name),remove:name=>names.delete(name)};}
+ showModal(){this.open=true;} close(){this.open=false;this.trigger('close');} focus(){document.activeElement=this;}
  addEventListener(name,fn){this.events[name]=fn;} setAttribute(name,value){this.attrs[name]=value;}
  append(node){this.children.push(node);} replaceChildren(){this.children=[];}
  contains(node){return node===this;} closest(){return true;}
@@ -13,13 +14,13 @@ class Element{
 }
 const markup=fs.readFileSync(path.join(__dirname,'../web/index.html'),'utf8');
 const slides=JSON.parse(markup.match(/<script[^>]*id="history-slides"[^>]*>([\s\S]*?)<\/script>/)[1]);
-const ids=Object.fromEntries(['history-slides','cover-source','cover-credit','cover-license','cover-announcement','cover-dots','cover-controls','news'].map(id=>[id,new Element()]));
+const ids=Object.fromEntries(['cover-lightbox','cover-lightbox-image','cover-lightbox-close','cover-lightbox-original','history-slides','cover-source','cover-credit','cover-license','cover-announcement','cover-dots','cover-controls','news'].map(id=>[id,new Element()]));
 ids['history-slides'].textContent=JSON.stringify(slides);
-const cover=new Element(),image=new Element(),visual=new Element(),copy=new Element(),events={},timers=new Map(),pending=[];let timerId=0;
-visual.append(image);cover.querySelector=selector=>selector==='.cover-visual'?visual:selector==='.space-cover-copy'?copy:image;
+const cover=new Element(),image=new Element(),visual=new Element(),copy=new Element(),openButton=new Element(),events={},timers=new Map(),pending=[];let timerId=0;
+visual.append(image);cover.querySelector=selector=>selector==='.cover-visual'?visual:selector==='.cover-open'?openButton:image;
 cover.insertBefore=node=>cover.append(node);
 const motion={matches:false,addEventListener(name,fn){this.change=fn;}};
-const document={hidden:false,activeElement:null,getElementById:id=>ids[id],querySelector:()=>cover,
+const document={body:{style:{overflow:''}},hidden:false,activeElement:null,getElementById:id=>ids[id],querySelector:()=>cover,
  createElement:()=>new Element(),createTextNode:text=>({text}),addEventListener:(name,fn)=>events[name]=fn};
 const context={document,URL,matchMedia:()=>motion,Image:class{constructor(){pending.push(this);}},
  setTimeout(fn,ms){const id=++timerId;timers.set(id,{fn,ms});return id;},clearTimeout(id){timers.delete(id);}};
@@ -64,4 +65,10 @@ assert.equal(cover.dataset.slide,slides[4].id);assert.equal(image.src,slides[4].
 ids['cover-dots'].children[5].trigger('click');const stalled=pending.at(-1),deadline=[...timers.values()].find(t=>t.ms===7000);
 assert(deadline);deadline.fn();assert.notEqual(pending.at(-1),stalled);pending.at(-1).onload();
 assert.equal(cover.dataset.slide,slides[5].id);assert.equal(cover.attrs['aria-busy'],'false');
+// The full-view modal uses the same complete asset, pauses autoplay and restores focus.
+openButton.trigger('click');assert.equal(ids['cover-lightbox'].open,true);assert.equal(autoTimers().length,0);
+assert.equal(ids['cover-lightbox-image'].src,image.src);assert.equal(ids['cover-lightbox-original'].href,slides[5].fallback_image);
+assert.equal(document.body.style.overflow,'hidden');
+ids['cover-lightbox-close'].trigger('click');assert.equal(ids['cover-lightbox'].open,false);assert.equal(document.activeElement,openButton);assert.equal(document.body.style.overflow,'');
+assert.equal(visual.dataset.fit,slides[5].display_mode);
 console.log('Carousel: real 12-slide manifest, attribution/races, source fallback, timeout, retry and pause regressions passed.');

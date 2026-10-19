@@ -24,3 +24,9 @@ def test_runtime_slides_match_asset_catalog_and_all_image_sources_exist():
 
     assert not soup.select(".space-cover-copy, #space-cover-title, #cover-label, #cover-description")
     assert soup.select_one(".space-cover").get("aria-label")
+
+    assert soup.select_one("button.cover-open[aria-label]")
+    assert soup.select_one("dialog#cover-lightbox")
+    assert all(slide["display_mode"] in {"fill","full"} for slide in slides)
+    assert next(s for s in slides if s["id"]=="apollo11")["display_mode"]=="full"
+    assert next(s for s in slides if s["id"]=="landspace-testbed")["display_mode"]=="fill"

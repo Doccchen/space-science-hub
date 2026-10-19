@@ -19,7 +19,8 @@
     "framing": "photo",
     "original_image_url": "http://images-assets.nasa.gov/image/as08-14-2383/as08-14-2383~orig.jpg",
     "mobile_image": "/assets/carousel/earthrise-960.webp",
-    "fallback_image": "/assets/earthrise.jpg?v=20261008-hq"
+    "fallback_image": "/assets/earthrise.jpg?v=20261008-hq",
+    "display_mode": "full"
   },
   {
     "id": "mengtian",
@@ -40,7 +41,8 @@
     "position": "50% 40%",
     "framing": "launch",
     "mobile_image": "/assets/carousel/mengtian-960.webp",
-    "fallback_image": "/assets/history-mengtian-ai.png?v=20261008-ai1"
+    "fallback_image": "/assets/history-mengtian-ai.png?v=20261008-ai1",
+    "display_mode": "fill"
   },
   {
     "id": "apollo11",
@@ -62,7 +64,8 @@
     "framing": "launch",
     "original_image_url": "http://images-assets.nasa.gov/image/6901001/6901001~orig.jpg",
     "mobile_image": "/assets/carousel/apollo11-960.webp",
-    "fallback_image": "/assets/history-apollo11.jpg?v=20261008-hq"
+    "fallback_image": "/assets/history-apollo11.jpg?v=20261008-hq",
+    "display_mode": "full"
   },
   {
     "id": "tianhe",
@@ -83,7 +86,8 @@
     "position": "center",
     "framing": "illustration",
     "mobile_image": "/assets/carousel/tianhe-960.webp",
-    "fallback_image": "/assets/history-tianhe.png?v=20261008-hq"
+    "fallback_image": "/assets/history-tianhe.png?v=20261008-hq",
+    "display_mode": "full"
   },
   {
     "id": "rosetta",
@@ -105,7 +109,8 @@
     "framing": "comet",
     "original_image_url": "https://www.esa.int/var/esa/storage/images/esa_multimedia/images/2014/08/comet_on_3_august_2014_-_navcam/14700233-1-eng-GB/Comet_on_3_August_2014_-_NavCam.jpg",
     "mobile_image": "/assets/carousel/rosetta-960.webp",
-    "fallback_image": "/assets/history-rosetta-ai.png?v=20261008-ai1"
+    "fallback_image": "/assets/history-rosetta-ai.png?v=20261008-ai1",
+    "display_mode": "full"
   },
   {
     "id": "landspace-sunset",
@@ -180,7 +185,8 @@
     "position": "56% 50%",
     "framing": "photo",
     "license": "蓝箭航天版权说明",
-    "license_url": "https://www.landspace.com/download.html"
+    "license_url": "https://www.landspace.com/download.html",
+    "display_mode": "fill"
   },
   {
     "id": "landspace-horizon",
@@ -255,7 +261,8 @@
     "position": "53% 50%",
     "framing": "photo",
     "license": "蓝箭航天版权说明",
-    "license_url": "https://www.landspace.com/download.html"
+    "license_url": "https://www.landspace.com/download.html",
+    "display_mode": "full"
   },
   {
     "id": "landspace-desert",
@@ -330,7 +337,8 @@
     "position": "50% 50%",
     "framing": "photo",
     "license": "蓝箭航天版权说明",
-    "license_url": "https://www.landspace.com/download.html"
+    "license_url": "https://www.landspace.com/download.html",
+    "display_mode": "fill"
   },
   {
     "id": "landspace-distance",
@@ -405,7 +413,8 @@
     "position": "50% 50%",
     "framing": "photo",
     "license": "蓝箭航天版权说明",
-    "license_url": "https://www.landspace.com/download.html"
+    "license_url": "https://www.landspace.com/download.html",
+    "display_mode": "fill"
   },
   {
     "id": "landspace-liftoff",
@@ -480,7 +489,8 @@
     "position": "50% 50%",
     "framing": "photo",
     "license": "蓝箭航天版权说明",
-    "license_url": "https://www.landspace.com/download.html"
+    "license_url": "https://www.landspace.com/download.html",
+    "display_mode": "fill"
   },
   {
     "id": "landspace-engine",
@@ -555,7 +565,8 @@
     "position": "50% 50%",
     "framing": "photo",
     "license": "蓝箭航天版权说明",
-    "license_url": "https://www.landspace.com/download.html"
+    "license_url": "https://www.landspace.com/download.html",
+    "display_mode": "fill"
   },
   {
     "id": "landspace-testbed",
@@ -630,6 +641,7 @@
     "position": "50% 50%",
     "framing": "photo",
     "license": "蓝箭航天版权说明",
-    "license_url": "https://www.landspace.com/download.html"
+    "license_url": "https://www.landspace.com/download.html",
+    "display_mode": "fill"
   }
 ]
