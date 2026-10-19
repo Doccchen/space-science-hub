@@ -22,6 +22,7 @@ def main():
  before={'app':inspect('app'),'reader':json.loads(run('docker','inspect','space-news-paper-search',capture=True))[0]}
  admin=inspect('admin')['Id'];original=files('app');state=settings_state();ai=get(18081,'/api/ai/status')
  groups={'app':[n for n in manifest['files'] if n.startswith('web/')],'reader':[n for n in manifest['files'] if n.startswith('reader_web/')]}
+ before={service:old for service,old in before.items() if groups[service]}
  previous={};source={};images={};rollback={};bases={}
  for service,old in before.items():
   assert old['State']['Health']['Status']=='healthy'
