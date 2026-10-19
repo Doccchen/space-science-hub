@@ -1,4 +1,4 @@
-/* Observable carousel behavior: matching attribution, async races, errors and pause conditions. */
+/* Observable carousel behavior: image-only display, attribution, async races, errors and pause conditions. */
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
 class Element{
  constructor(){this.children=[];this.events={};this.dataset={};this.attrs={};this.style={};const names=new Set();this.classList={contains:name=>names.has(name),add:name=>names.add(name),remove:name=>names.delete(name)};}
@@ -13,7 +13,7 @@ class Element{
 }
 const markup=fs.readFileSync(path.join(__dirname,'../web/index.html'),'utf8');
 const slides=JSON.parse(markup.match(/<script[^>]*id="history-slides"[^>]*>([\s\S]*?)<\/script>/)[1]);
-const ids=Object.fromEntries(['history-slides','space-cover-title','cover-label','cover-description','cover-source','cover-credit','cover-license','cover-announcement','cover-dots','cover-controls','news'].map(id=>[id,new Element()]));
+const ids=Object.fromEntries(['history-slides','cover-source','cover-credit','cover-license','cover-announcement','cover-dots','cover-controls','news'].map(id=>[id,new Element()]));
 ids['history-slides'].textContent=JSON.stringify(slides);
 const cover=new Element(),image=new Element(),visual=new Element(),copy=new Element(),events={},timers=new Map(),pending=[];let timerId=0;
 visual.append(image);cover.querySelector=selector=>selector==='.cover-visual'?visual:selector==='.space-cover-copy'?copy:image;

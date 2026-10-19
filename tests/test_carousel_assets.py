@@ -21,3 +21,6 @@ def test_runtime_slides_match_asset_catalog_and_all_image_sources_exist():
             with Image.open(path) as image:image.verify()
         assert (root/slide['image'].removeprefix('/assets/')).stat().st_size<500_000
     assert not soup.select('.section-entries')
+
+    assert not soup.select(".space-cover-copy, #space-cover-title, #cover-label, #cover-description")
+    assert soup.select_one(".space-cover").get("aria-label")

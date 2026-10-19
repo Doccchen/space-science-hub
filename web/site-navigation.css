@@ -21,3 +21,17 @@ main.page{overflow-anchor:none}
 
 /* The question toolbar only contains its action after decorative copy removal. */
 .editorial-ui #home .ai-toolbar{justify-content:flex-end}
+
+/* Photo-first carousel: complete framing, no copy mask or image-dimming overlay. */
+.editorial-ui #news .space-cover.image-gallery{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:24px;min-height:0;background:var(--paper);color:var(--ink)}
+.editorial-ui #news .image-gallery .cover-visual{position:relative;inset:auto;grid-column:1/-1;grid-row:1;height:clamp(340px,65dvh,720px);min-height:0;z-index:0;background:#0b1420}
+.editorial-ui #news .image-gallery .cover-visual-outgoing{position:absolute;inset:0 0 auto;z-index:1}
+.editorial-ui #news .image-gallery .cover-visual::after{display:none;background:none}
+.editorial-ui #news .image-gallery .cover-visual .space-cover-image{inset:0;width:100%;height:100%;padding:0;object-fit:contain;object-position:center!important;transform:none;filter:none}
+.editorial-ui #news .image-gallery .cover-controls{position:static;grid-column:1;grid-row:2;align-self:center;margin:0 0 0 24px;padding:10px 0;color:var(--ink)}
+.editorial-ui #news .image-gallery .space-cover-credit{position:static;grid-column:2;grid-row:2;align-self:center;max-width:none;margin:0;padding:10px 24px 10px 0;gap:4px 12px;color:var(--muted);text-shadow:none}
+.editorial-ui #news .image-gallery .space-cover-credit a{min-height:32px;margin:0;color:var(--ink)}
+.editorial-ui #news .image-gallery #cover-dots button::after{border-color:var(--ink)}
+.editorial-ui #news .image-gallery #cover-dots button[aria-pressed=true]::after{background:#e66a35;border-color:#e66a35}
+.editorial-ui #news .image-gallery .cover-controls button:hover{background:var(--tint)}
+@media(max-width:760px){.editorial-ui #news .space-cover.image-gallery{grid-template-columns:minmax(0,1fr);column-gap:0}.editorial-ui #news .image-gallery .cover-visual{height:clamp(280px,48dvh,480px)}.editorial-ui #news .image-gallery .cover-controls{grid-column:1;grid-row:2;margin:0 12px;justify-content:center}.editorial-ui #news .image-gallery .space-cover-credit{grid-column:1;grid-row:3;padding:0 16px 12px;justify-content:center;text-align:center}.editorial-ui #news .image-gallery #cover-dots{width:100%;justify-content:center}.editorial-ui #news .image-gallery #cover-dots button{flex:1;width:auto;min-width:20px;max-width:26px}}

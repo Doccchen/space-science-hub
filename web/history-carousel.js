@@ -5,9 +5,8 @@
  let slides;
  try{slides=JSON.parse(data.textContent)}catch{return;}
  if(!Array.isArray(slides)||slides.length<2)return;
- const image=cover.querySelector('.space-cover-image'), title=document.getElementById('space-cover-title');
- const visual=cover.querySelector('.cover-visual'), copy=cover.querySelector('.space-cover-copy');
- const label=document.getElementById('cover-label'), description=document.getElementById('cover-description');
+ const image=cover.querySelector('.space-cover-image');
+ const visual=cover.querySelector('.cover-visual');
  const link=document.getElementById('cover-source'), credit=document.getElementById('cover-credit');
  const license=document.getElementById('cover-license');
  const announce=document.getElementById('cover-announcement'), dots=document.getElementById('cover-dots');
@@ -15,7 +14,7 @@
  let current=0, request=0, timer, loadTimer, prefetchTimer, hovering=false, focused=false, visible=true;
  let active=!document.getElementById('news').classList.contains('hidden'), loading=false;
  const failed=new Set(), buttons=[];
- let outgoing=null, fadeAnimation=null, copyAnimation=null, nextImage=null;
+ let outgoing=null, fadeAnimation=null, nextImage=null;
  const safeLink=url=>{try{const u=new URL(url);return ['http:','https:'].includes(u.protocol)&&!u.username&&!u.password?u.href:null}catch{return null}};
  function canPlay(){return !hovering&&!focused&&visible&&active&&!document.hidden&&!motion.matches&&!loading&&slides.length-failed.size>1;}
  function schedule(){clearTimeout(timer);if(canPlay())timer=setTimeout(()=>move(1,false),8000);}
@@ -25,9 +24,8 @@
  }
  function clearFade(){
   if(fadeAnimation)fadeAnimation.cancel();
-  if(copyAnimation)copyAnimation.cancel();
   if(outgoing)outgoing.remove();
-  outgoing=null;fadeAnimation=null;copyAnimation=null;
+  outgoing=null;fadeAnimation=null;
  }
  function render(index,manual,source=sourcesFor(index)[0]){
   const blend=index!==current&&!motion.matches&&visual&&typeof visual.animate==='function';
@@ -39,8 +37,6 @@
   const slide=slides[index];current=index;
   image.src=source;image.alt=slide.alt;image.style.objectPosition=slide.position;cover.dataset.framing=slide.framing;cover.dataset.slide=slide.id;
   if(visual){visual.dataset.framing=slide.framing;visual.dataset.slide=slide.id;}
-  title.replaceChildren();slide.title.forEach((line,i)=>{if(i)title.append(document.createElement('br'));title.append(document.createTextNode(line));});
-  label.textContent=slide.label;description.textContent=slide.description;
   link.href=safeLink(slide.source_url)||'#';credit.textContent=(slide.date?slide.date+' / ':'')+slide.credit;
   license.textContent=slide.license;license.href=safeLink(slide.license_url)||'#';
   if(manual)announce.textContent='第 '+(index+1)+' 张，共 '+slides.length+' 张：'+slide.label;
@@ -48,7 +44,6 @@
    const layer=outgoing;
    fadeAnimation=layer.animate([{opacity:1},{opacity:0}],{duration:750,easing:'cubic-bezier(.22,.61,.36,1)',fill:'forwards'});
    fadeAnimation.finished.then(()=>{layer.remove();if(outgoing===layer){outgoing=null;fadeAnimation=null;}}).catch(()=>{});
-   if(copy&&typeof copy.animate==='function')copyAnimation=copy.animate([{opacity:0,transform:'translateY(6px)'},{opacity:1,transform:'translateY(0)'}],{duration:500,easing:'cubic-bezier(.22,.61,.36,1)'});
   }
   controls();schedule();prefetchNext();
  }
