@@ -30,3 +30,8 @@ def test_runtime_slides_match_asset_catalog_and_all_image_sources_exist():
     assert all(slide["display_mode"] in {"fill","full"} for slide in slides)
     assert next(s for s in slides if s["id"]=="apollo11")["display_mode"]=="full"
     assert next(s for s in slides if s["id"]=="landspace-testbed")["display_mode"]=="fill"
+
+    assert soup.select_one("#image-thumbnails")
+    assert soup.select_one("#image-gallery-toggle[aria-expanded=false]")
+    assert not soup.select("#cover-dots, #cover-controls")
+    assert any(x.get('src','').startswith('/assets/space-gallery.js') for x in soup.find_all('script'))

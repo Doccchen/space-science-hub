@@ -20,7 +20,9 @@
     "original_image_url": "http://images-assets.nasa.gov/image/as08-14-2383/as08-14-2383~orig.jpg",
     "mobile_image": "/assets/carousel/earthrise-960.webp",
     "fallback_image": "/assets/earthrise.jpg?v=20261008-hq",
-    "display_mode": "full"
+    "display_mode": "full",
+    "width": 1800,
+    "height": 1800
   },
   {
     "id": "mengtian",
@@ -42,7 +44,9 @@
     "framing": "launch",
     "mobile_image": "/assets/carousel/mengtian-960.webp",
     "fallback_image": "/assets/history-mengtian-ai.png?v=20261008-ai1",
-    "display_mode": "fill"
+    "display_mode": "fill",
+    "width": 1543,
+    "height": 1019
   },
   {
     "id": "apollo11",
@@ -65,7 +69,9 @@
     "original_image_url": "http://images-assets.nasa.gov/image/6901001/6901001~orig.jpg",
     "mobile_image": "/assets/carousel/apollo11-960.webp",
     "fallback_image": "/assets/history-apollo11.jpg?v=20261008-hq",
-    "display_mode": "full"
+    "display_mode": "full",
+    "width": 1058,
+    "height": 1800
   },
   {
     "id": "tianhe",
@@ -87,7 +93,9 @@
     "framing": "illustration",
     "mobile_image": "/assets/carousel/tianhe-960.webp",
     "fallback_image": "/assets/history-tianhe.png?v=20261008-hq",
-    "display_mode": "full"
+    "display_mode": "full",
+    "width": 1211,
+    "height": 1080
   },
   {
     "id": "rosetta",
@@ -110,7 +118,9 @@
     "original_image_url": "https://www.esa.int/var/esa/storage/images/esa_multimedia/images/2014/08/comet_on_3_august_2014_-_navcam/14700233-1-eng-GB/Comet_on_3_August_2014_-_NavCam.jpg",
     "mobile_image": "/assets/carousel/rosetta-960.webp",
     "fallback_image": "/assets/history-rosetta-ai.png?v=20261008-ai1",
-    "display_mode": "full"
+    "display_mode": "full",
+    "width": 1254,
+    "height": 1254
   },
   {
     "id": "landspace-sunset",
