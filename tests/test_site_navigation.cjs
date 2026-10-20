@@ -22,7 +22,7 @@ const visible=old.pages.map(p=>p.classList.contains('hidden'));
 old.nodes[3].handlers.click({preventDefault(){}});assert.equal(old.location.href,'/assets/resource-navigation.html');assert.deepEqual(old.pages.map(p=>p.classList.contains('hidden')),visible);
 for(const hash of ['#page/news','#page/home','#page/about','#news','#home','#about']){const s=setup(hash);assert(['news','home','about'].includes(vm.runInContext('navigationPage()',s.context)));assert.deepEqual(s.scrolls,[])}
 const headers=['web/index.html','web/resource-navigation.html','reader_web/index.html'].map(n=>fs.readFileSync(n,'utf8').match(/<header class="site-header">[\s\S]*?<\/header>/)[0]);
-for(const h of headers){for(const text of ['航天新闻','论文查找','知识问答','资源导航','关于本站','brand-wordmark'])assert(h.includes(text));for(const url of ['/#page/news','/reader/','/#page/home','/assets/resource-navigation.html','/#page/about'])assert(h.includes('href="'+url+'"'))}
+for(const h of headers){for(const text of ['航天新闻','研究助手','资源导航','关于本站','brand-wordmark'])assert(h.includes(text));for(const url of ['/#page/news','/assets/research.html','/assets/resource-navigation.html','/#page/about'])assert(h.includes('href="'+url+'"'))}
 const normalize=h=>h.replace(/ data-page="[^"]+"/g,'').replace(/ class="active" aria-current="page"/g,'');assert.equal(normalize(headers[0]),normalize(headers[1]));assert.equal(normalize(headers[0]),normalize(headers[2]));
 const motion=fs.readFileSync('web/site-motion.js','utf8');assert(!motion.includes('pageAnimation'));assert(!motion.includes('motion-nav-rule'));
 console.log('Navigation: identical headers, logical routes, legacy links, active/ARIA state and no automatic scrolling passed.');

@@ -101,7 +101,7 @@
       content.blocks.forEach((block, index) => { if (block.type === 'paragraph') paragraphs++; const node = blockNode(block, id, content.content_version, paragraphs); if (node) newsPane.append(node); figures(index+1); });
       const footer = make('div', '', 'reader-notice'); footer.append(make('p', content.notes), make('p', content.assets?.length ? '仅展示已审核图片；其他图片请到原文查看。' : '图片请到原文查看。'), link(item.original_url));
       const findPapers = make('a', '查找相关论文 ↗', 'reader-return');
-      findPapers.href = '/reader/?news=' + encodeURIComponent(id);
+      findPapers.href = '/assets/research.html?news=' + encodeURIComponent(id);
       footer.append(findPapers);
       newsPane.append(footer,returnButton()); body.dataset.contentVersion = content.content_version;
       if(shouldFocus)focusTitle();

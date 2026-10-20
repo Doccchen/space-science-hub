@@ -47,5 +47,5 @@ def test_frontend_has_no_agent_mount_or_polling_and_keeps_paper_entry():
         text=Path(name).read_text(encoding='utf-8')
         for term in ['news-agent','newsAgentAvailability','新闻科普','reader-assistant','reader-split','news-limits.js']:
             assert term not in text,(name,term)
-    assert '/reader/?news=' in Path('web/news-reader.js').read_text(encoding='utf-8')
+    assert '/assets/research.html?news=' in Path('web/news-reader.js').read_text(encoding='utf-8')
     assert 'if (canRead)' in Path('web/news-ui.js').read_text(encoding='utf-8')
