@@ -1,0 +1,10 @@
+# Include alongside the existing main and reader Compose files. The reader
+# needs the SAME persistent management DB and independent master key as admin.
+services:
+  reader:
+    environment:
+      MANAGEMENT_DB_PATH: /data/site-management.sqlite3
+      AI_MASTER_KEY_FILE: /run/secrets/site-management.key
+    volumes:
+      - news-data:/data
+      - ./secrets/site-management.key:/run/secrets/site-management.key:ro

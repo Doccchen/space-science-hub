@@ -9,6 +9,7 @@ import xml.etree.ElementTree as ET
 from urllib.parse import quote, urlencode, urlsplit
 
 import httpx
+from backend.management_store import ManagementError
 
 SOURCES = ('Crossref', 'Semantic Scholar', 'NASA NTRS', 'arXiv')
 TOPICS = {
@@ -44,6 +45,8 @@ def fallback_plan(text):
     # Specific capture terms must not be broadened into a different recovery mechanism.
     if any(t['name'] == '绳网回收' for t in topics):
         topics = [t for t in topics if t['name'] != '火箭回收']
+    for topic in topics:
+        topic['query_zh'] = topic['name'] if topic['name'] != '自定义技术主题' else clean(text, 160)
     return {'topics': topics[:4], 'method': '关键词识别',
             'notice': '仅按输入中出现的技术生成候选词；请确认后检索。型号名称不能证明具体技术路线。'}
 
@@ -83,7 +86,7 @@ async def plan(text, settings, client):
                     if known in name and re.search(pattern, text, re.I):
                         query = curated
                         break
-                topics.append({'name': name, 'query': query})
+                topics.append({'name': name, 'query': query, 'query_zh': name})
         if not topics:
             raise ValueError('no topics')
         return {**result, 'topics': topics, 'method': 'AI 技术提取'}
@@ -192,10 +195,14 @@ def merge_rank(records, query):
 
 
 class SearchService:
-    def __init__(self, client):
+    def __init__(self, client, wanfang_key='', managed=None):
         self.client = client
+        self.managed=managed
+        self.wanfang_key = (managed['wanfang']['key'] if managed and managed['wanfang']['enabled'] else '') if managed is not None else wanfang_key
+        sd=bool(managed and managed['sciencedirect']['enabled'])
+        self.sources = SOURCES + (('万方',) if self.wanfang_key else ()) + (('ScienceDirect',) if sd else ())
         self.cache = {}
-        self.locks = {s: asyncio.Lock() for s in SOURCES}
+        self.locks = {s: asyncio.Lock() for s in self.sources}
         self.last = {}
 
     async def source(self, source, query):
@@ -209,21 +216,49 @@ class SearchService:
             if delay > 0: await asyncio.sleep(delay)
             self.last[source] = time.monotonic()
             try:
-                rows = await fetch_source(source, query, self.client)
+                provider={'万方':'wanfang','ScienceDirect':'sciencedirect'}.get(source)
+                options=self.managed.get(provider) if self.managed and provider else None
+                ledger=None
+                if options:
+                    from backend import literature_config
+                    ledger=literature_config.reserve(provider,options['version'],options['daily_limit'])
+                async def fetch_rows():
+                    if source == '万方':
+                        from .wanfang import fetch
+                        return await fetch(query,self.client,self.wanfang_key,timeout=options['timeout'] if options else 18)
+                    if source == 'ScienceDirect':
+                        from .sciencedirect import fetch
+                        return await fetch(query,self.client,options['key'],options['insttoken'],timeout=options['timeout'])
+                    return await fetch_source(source,query,self.client)
+                try:
+                    rows=await asyncio.wait_for(fetch_rows(),timeout=options['timeout'] if options else 20)
+                    if ledger:literature_config.finish(ledger,{'ok':True,'count':len(rows)})
+                except BaseException:
+                    if ledger:literature_config.finish(ledger,{'ok':False,'message':'来源请求未完成。'})
+                    raise
                 if len(self.cache) >= 200:
                     self.cache.pop(next(iter(self.cache)))
-                self.cache[key] = (time.monotonic() + 600, rows)
+                if source!='ScienceDirect':self.cache[key] = (time.monotonic() + 600, rows)
                 return rows, {'source': source, 'state': 'ok', 'count': len(rows)}
-            except (httpx.HTTPError, ValueError, KeyError, TypeError, IndexError, ET.ParseError) as error:
+            except (httpx.HTTPError, ValueError, KeyError, TypeError, IndexError, ET.ParseError,TimeoutError,ManagementError) as error:
                 message = '来源连接超时或暂不可用'
+                from .wanfang import WanfangError
+                if isinstance(error, WanfangError):
+                    message = str(error)
+                from .sciencedirect import ScienceDirectError
+                from backend.literature_config import ProviderLimit
+                if isinstance(error,(ScienceDirectError,ProviderLimit)):message=str(error)
                 if isinstance(error, httpx.HTTPStatusError):
                     message = '来源限流，请稍后再试' if error.response.status_code == 429 else '来源请求失败，请稍后重试'
                 return [], {'source': source, 'state': 'error', 'message': message, 'count': 0}
 
-    async def search(self, query):
-        results = await asyncio.gather(*(self.source(source, query) for source in SOURCES))
-        rows = merge_rank([row for records, _ in results for row in records], query)
+    async def search(self, query, query_zh=''):
+        results = await asyncio.gather(*(self.source(source, query_zh or query) if source == '万方'
+                                        else self.source(source, query) for source in self.sources))
+        rows = merge_rank([row for records, _ in results for row in records], ' '.join(filter(None, (query, query_zh))))
         return {'papers': rows, 'sources': [status for _, status in results], 'query': query,
+                'query_zh': query_zh,
+                'no_persist_sources':['ScienceDirect'],
                 'notice': '排序依据题名与摘要关键词匹配；未读取全文。预印本不代表已经同行评审。',
                 'links': [
                     {'name': 'NASA 原站检索', 'url': 'https://ntrs.nasa.gov/search?' + urlencode({'q': query})},

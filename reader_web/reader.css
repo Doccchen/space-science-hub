@@ -2,3 +2,8 @@
 @media(max-width:900px){header{margin:0 22px;gap:20px}header nav{gap:18px;font-size:12px}.header-side{display:none}main{padding:0 24px}.intro{gap:25px}.steps{min-width:220px}.section-label{gap:18px}}
 @media(max-width:640px){.intro{display:block;padding:32px 0 22px}.intro h1{font-size:39px}.steps{display:flex;gap:10px;margin-top:28px}.steps li{font:12px/1.8 "Microsoft YaHei",sans-serif;flex:1;padding:12px 0}.steps span{display:block;margin:0 0 7px}.section-label{display:block}.section-label .eyebrow{display:block;margin-bottom:8px}h2{font-size:22px}.form-footer{align-items:stretch;flex-direction:column;gap:15px}.query-row{flex-direction:column}.results-heading{align-items:start;gap:12px}#result-count{white-space:nowrap}.filters{gap:15px;padding:14px}.paper{grid-template-columns:25px minmax(0,1fr);gap:8px}.paper h3{font-size:18px}.paper-number{font-size:11px}footer{flex-direction:column;gap:8px}.external>div{gap:15px}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+.request-status{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:12px 0}
+.request-status #status{flex:1 1 240px;margin:0;min-width:0}
+.request-status button{min-height:44px}
+#query{font-size:16px}
+@media(max-width:640px){#news-input{font-size:16px}.examples button,.topics button{min-height:44px}}

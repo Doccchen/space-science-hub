@@ -73,6 +73,8 @@
 
 /* Separate the welcome title and the lower composer as in the supplied layout. */
 #question:focus-visible{outline:none}
+.query-form{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start}.query-zh{grid-column:1/-1;font-size:12px;color:var(--muted)}.query-zh input{display:block;width:100%;margin-top:6px}
+@media(max-width:640px){.query-form{grid-template-columns:minmax(0,1fr)}}
 #composer:has(#question:focus-visible){border-color:#687588}
 .workspace[data-empty=true] .stage{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(36px,.55fr) auto minmax(64px,1.05fr) auto minmax(24px,.45fr);padding:0;gap:0}
 .workspace[data-empty=true] .conversation{grid-row:2;width:100%;min-height:0}

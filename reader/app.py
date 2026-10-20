@@ -12,6 +12,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from .config import Settings
 from .discovery import SearchService, plan
+from .provider_runtime import Runtime
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -22,6 +23,7 @@ class Analysis(BaseModel):
 
 class Search(BaseModel):
     query: str = Field(min_length=2, max_length=160)
+    query_zh: str = Field(default='', max_length=160)
 
 
 def create_app(settings=None, transport=None):
@@ -35,8 +37,12 @@ def create_app(settings=None, transport=None):
         async with httpx.AsyncClient(timeout=httpx.Timeout(18, connect=6), transport=transport,
                                      follow_redirects=False, headers={'User-Agent': 'ZhihangPaperSearch/1.0'}) as client:
             app.state.client = client
-            app.state.search = SearchService(client)
-            yield
+            runtime=Runtime(client,settings);runtime.sync();app.state.providers=runtime
+            task=asyncio.create_task(runtime.loop())
+            try:yield
+            finally:
+                task.cancel()
+                await asyncio.gather(task,return_exceptions=True)
 
     app = FastAPI(title='知航 · 论文查找', lifespan=lifespan, docs_url=None, redoc_url=None, openapi_url=None)
 
@@ -75,7 +81,12 @@ def create_app(settings=None, transport=None):
 
     @app.get('/api/reader/config')
     def config():
-        return {'model_enabled': bool(settings.model_key), 'max_input': 6000}
+        app.state.providers.sync()
+        service=app.state.providers.service
+        return {'model_enabled': bool(settings.model_key), 'max_input': 6000,
+                'wanfang_enabled': '万方' in service.sources,
+                'sciencedirect_enabled':'ScienceDirect' in service.sources,
+                'source_count':len(service.sources),'warning':app.state.providers.warning}
 
     @app.post('/api/reader/analyze')
     async def analyze(body: Analysis):
@@ -97,7 +108,9 @@ def create_app(settings=None, transport=None):
     async def search(body: Search):
         if len(body.query.strip()) < 2:
             raise HTTPException(422, '请填写检索词。')
-        return await run(lambda: app.state.search.search(body.query.strip()))
+        app.state.providers.sync()
+        service=app.state.providers.service
+        return await run(lambda: service.search(body.query.strip(), body.query_zh.strip()))
 
     @app.get('/reader')
     def slash():

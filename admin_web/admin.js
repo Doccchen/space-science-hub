@@ -4,7 +4,7 @@
   let csrf = '';
   const updatePageLabel = () => {
     $('admin-page-label').textContent = $('workspace').hidden ? '私有管理后台' :
-      ($('nav-ai').getAttribute('aria-pressed') === 'true' ? 'AI 设置' : '资料管理');
+      ($('nav-ai').getAttribute('aria-pressed') === 'true' ? 'API 管理' : '资料管理');
   };
   const navigationObserver = new MutationObserver(updatePageLabel);
   navigationObserver.observe($('workspace'), {attributes:true,attributeFilter:['hidden']});

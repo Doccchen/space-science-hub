@@ -125,7 +125,7 @@ def test_model_only_produces_topics_and_bad_formats_fall_back():
 
 def test_news_entry_handoff_is_same_origin_and_does_not_leak_body_in_url():
     source = Path('web/news-reader.js').read_text(encoding='utf-8')
-    assert "findPapers.href = '/reader/?news=' + encodeURIComponent(id)" in source
+    assert "findPapers.href = '/assets/research.html?news=' + encodeURIComponent(id)" in source
     frontend = Path('reader_web/reader.js').read_text(encoding='utf-8-sig')
     assert 'innerHTML' not in frontend
     assert "fetch('/api/news/' + news" in frontend

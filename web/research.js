@@ -3,11 +3,11 @@
   const $ = id => document.getElementById(id), KEY = 'zhihang-research-preview-v1', WEEK = 7 * 86400000;
   const el = (tag, text, cls) => { const n = document.createElement(tag); if (text != null) n.textContent = text; if (cls) n.className = cls; return n; };
   const uid = () => crypto.randomUUID();
-  let works = [], selected, available = false, offlinePreview = false, serviceMessage = '正在检查知识库服务…', manageAction, opener;
+  let works = [], selected, available = false, sourceCount=4, wanfangEnabled = false, offlinePreview = false, serviceMessage = '正在检查知识库服务…', manageAction, opener;
   const pending = new Map();
   try { const saved = JSON.parse(localStorage.getItem(KEY)); works = (saved?.works || []).filter(w => w && typeof w.id === 'string' && typeof w.title === 'string' && Array.isArray(w.messages) && Date.now() - w.updated < WEEK).slice(0, 20); selected = works.some(w => w.id === saved.selected) ? saved.selected : works[0]?.id; } catch { /* A new browser or invalid saved preview starts empty. */ }
   const current = () => works.find(w => w.id === selected);
-  function save() { try { localStorage.setItem(KEY, JSON.stringify({selected, works})); } catch { $('storage-note').textContent = '浏览器存储不可用或已满，最新记录未保存。'; } }
+  function save() { try { const stored=works.map(work=>({...work,messages:work.messages.map(msg=>msg.type==='papers'?{...msg,papers:(msg.papers||[]).filter(p=>!p.sources?.includes('ScienceDirect')),transient_missing:msg.transient_missing||(msg.papers||[]).some(p=>p.sources?.includes('ScienceDirect'))}:msg)}));localStorage.setItem(KEY, JSON.stringify({selected, works:stored})); } catch { $('storage-note').textContent = '浏览器存储不可用或已满，最新记录未保存。'; } }
   function create() {
     if (works.length >= 20) { $('activity').textContent = '最多保留 20 项研究，请先删除不再需要的记录。'; return; }
     const work = {id: uid(), title: '新的研究', mode: 'papers', draft: '', messages: [], updated: Date.now(), session: null};
@@ -31,7 +31,7 @@
     $('question').value = w.draft || ''; $('question').maxLength = isPaper ? 6000 : 1500;
     $('question').placeholder = isPaper ? '输入技术名称，或粘贴一段航天新闻…' : '向本站航天知识库提问…';
     $('question').disabled = busy;
-    $('scope').textContent = isPaper ? '四源论文检索' : '航天知识库';
+    $('scope').textContent = isPaper ? (wanfangEnabled ? '中英文论文检索' : sourceCount+'源论文检索') : '航天知识库';
     $('input-note').textContent = isPaper ? '先识别主题，确认检索词后查找论文' : '独立知识库回答，不自动读取检索到的论文';
     $('service-note').textContent = w.demo ? '当前为交互示例，内容仅用于展示布局。' : isPaper ? '识别内容可能发送至模型；检索词将发送至论文来源。' : available ? '知识库会话有有效期与轮次限制，来源可展开查看。' : serviceMessage;
     if(offlinePreview && !w.demo)$('service-note').textContent = '离线交互预览 · 输入仅用于本机演示，不调用模型。';
@@ -68,13 +68,17 @@
     box.append(el('p', '选择一个技术主题，确认或修改检索词。'));
     const choices = el('div', null, 'topic-options'), form = el('form', null, 'query-form'), input = el('input');
     input.value = msg.query || ''; input.required = true; input.minLength = 2; input.maxLength = 160; input.setAttribute('aria-label', '论文检索词');
-    for (const topic of msg.topics || []) { const b = el('button', topic.name); b.type = 'button'; b.setAttribute('aria-pressed', String(input.value === topic.query)); b.onclick = () => { input.value = topic.query; msg.query = topic.query; choices.querySelectorAll('button').forEach(n => n.setAttribute('aria-pressed', String(n === b))); save(); }; choices.append(b); }
+    const zh = el('input'); zh.value=msg.query_zh || msg.topics?.[0]?.query_zh || msg.topics?.[0]?.name || ''; zh.maxLength=160;zh.setAttribute('aria-label','万方中文检索词');
+    zh.oninput=()=>{msg.query_zh=zh.value;save();};
+    for (const topic of msg.topics || []) { const b = el('button', topic.name); b.type = 'button'; b.setAttribute('aria-pressed', String(input.value === topic.query)); b.onclick = () => { input.value = topic.query; msg.query = topic.query; zh.value=topic.query_zh || topic.name;msg.query_zh=zh.value;choices.querySelectorAll('button').forEach(n => n.setAttribute('aria-pressed', String(n === b))); save(); }; choices.append(b); }
     input.oninput = () => { msg.query = input.value; save(); }; const submit = el('button', '查找论文', 'primary'); submit.disabled = pending.has(work.id); form.append(input, submit);
-    form.onsubmit = event => { event.preventDefault(); search(work, input.value.trim()); };
+    if(wanfangEnabled){const label=el('label','万方中文检索词（可修改）','query-zh');label.append(zh);form.append(label);}
+    form.onsubmit = event => { event.preventDefault(); search(work, input.value.trim(),wanfangEnabled ? zh.value.trim() : ''); };
     box.append(choices, form, el('p', msg.notice || '检索词可以直接修改；确认后再访问论文来源。', 'muted'));
   }
   function renderPapers(box, msg, work) {
-    box.append(el('p', '本次检索：' + msg.query, 'muted'));
+    if(msg.transient_missing)box.append(el('p','ScienceDirect 结果不保存到浏览器，请重新检索查看。','muted'));
+    box.append(el('p', '本次检索：' + msg.query + (msg.query_zh ? ' · 万方：' + msg.query_zh : ''), 'muted'));
     const sources = el('div', null, 'source-status'); for (const s of msg.sources || []) sources.append(el('span', s.source + ' · ' + (s.state === 'ok' ? s.count + ' 条' : s.message || '暂不可用'), s.state !== 'ok' ? 'failed' : '')); box.append(sources);
     const filters = el('div', null, 'filters'), year = el('select'), kind = el('select'), oa = el('input');
     year.setAttribute('aria-label','发表年份'); kind.setAttribute('aria-label','文献类型');
@@ -122,11 +126,11 @@
     finally { clearTimeout(timer); pending.delete(work.id); if(works.includes(work)){ update(work); if(work.id === selected)scrollEnd(); } }
   }
   function nameWork(work,text) { if(work.title === '新的研究')work.title = text.replace(/\s+/g,' ').slice(0,22); }
-  async function search(work, query) {
+  async function search(work, query, query_zh='') {
     if(query.length < 2 || query.length > 160 || pending.has(work.id)) return;
     if(work.demo) { work.messages.push({type:'error',text:'交互示例不会调用真实检索。请新建研究后查找论文。'}); update(work); scrollEnd(); return; }
     work.messages.push({role:'user',text:'查找论文：' + query}); nameWork(work,query);
-    await run(work,'正在检索论文来源，可切换到其他研究…',async signal => { const result = await api('/api/reader/search',{query},signal); if(works.includes(work))work.messages.push({type:'papers',...result}); });
+    await run(work,'正在检索论文来源，可切换到其他研究…',async signal => { const result = await api('/api/reader/search',{query,query_zh},signal); if(works.includes(work))work.messages.push({type:'papers',...result}); });
   }
   $('composer').onsubmit = async event => {
     event.preventDefault(); const work = current(), text = $('question').value.trim(); if(!text || pending.has(work.id))return;
@@ -138,7 +142,7 @@
       let result;
       try { result = await api('/api/reader/analyze',{text},signal); }
       catch(error) { if(error.name === 'AbortError')throw error; result = {topics:[],notice:'主题识别未完成，可修改下方检索词直接查找。'}; }
-      if(works.includes(work))work.messages.push({type:'topics',topics:result.topics || [],query:result.topics?.[0]?.query || text.slice(0,160),notice:result.notice});
+      if(works.includes(work))work.messages.push({type:'topics',topics:result.topics || [],query:result.topics?.[0]?.query || text.slice(0,160),query_zh:result.topics?.[0]?.query_zh || text.slice(0,160),notice:result.notice});
     });
     else await run(work,'正在检索知识库并整理回答…',async signal => {
       if(!work.session){ const data = await api('/api/ai/conversations',{},signal); work.session = data.conversation_id; }
@@ -168,6 +172,7 @@
   if(!works.length)create();else render();
   const params = new URLSearchParams(location.search); if(params.get('mode') === 'knowledge'){current().mode='knowledge';save();renderComposer();}
   async function boot() {
+    try {const config=await api('/api/reader/config',null,AbortSignal.timeout(10000));wanfangEnabled=Boolean(config.wanfang_enabled);sourceCount=Number(config.source_count)||4;renderThread();}catch{/* Existing four-source search stays available. */}
     try { const status = await api('/api/ai/status',null,AbortSignal.timeout(10000)); available = Boolean(status.enabled); serviceMessage = status.message || '知识库服务暂未开放。'; offlinePreview = Boolean(status.preview || /离线/.test(serviceMessage)); if(offlinePreview)$('storage-note').nextElementSibling.textContent = '离线交互预览 · 未连接模型'; }
     catch { serviceMessage = '知识库服务暂不可用，仍可使用论文查找。'; }
     if(!pending.has(selected))renderComposer();

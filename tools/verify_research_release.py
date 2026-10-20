@@ -20,7 +20,8 @@ def main():
                     headers={'Content-Type':'application/json','Origin':BASE})
     with urlopen(request,timeout=80) as reply:
         data=json.load(reply)
-    assert data['query']==query and isinstance(data['papers'],list) and len(data['sources'])==4
+    assert data['query']==query and isinstance(data['papers'],list)
+    assert {'Crossref','Semantic Scholar','NASA NTRS','arXiv'} <= {s['source'] for s in data['sources']}
     assert any(s['state']=='ok' for s in data['sources']), 'No search provider available'
     result={'reader_health':health,'knowledge_enabled':status['enabled'],
             'knowledge_message':status['message'],'topic_model_enabled':config['model_enabled'],

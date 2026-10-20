@@ -24,6 +24,7 @@ class Settings:
     model_url: str = field(default_factory=lambda: os.getenv('READER_MODEL_URL', 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions'))
     model_key: str = field(default_factory=lambda: os.getenv('READER_MODEL_KEY', ''))
     model: str = field(default_factory=lambda: os.getenv('READER_MODEL', 'qwen-plus'))
+    wanfang_key: str = field(default_factory=lambda: os.getenv('READER_WANFANG_API_KEY', ''))
     verify_answers: bool = field(default_factory=lambda: os.getenv('READER_VERIFY_ANSWERS','1')=='1')
     legacy_url: str = field(default_factory=lambda: os.getenv('READER_LEGACY_URL', 'http://127.0.0.1:8080'))
 

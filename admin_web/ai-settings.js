@@ -74,13 +74,14 @@
   }
   document.addEventListener('admin-session', event => { csrf = event.detail.csrf; });
   document.addEventListener('admin-logout', () => { csrf = ''; current = null; dirty = false; generation++; $('config-new-key').value = ''; $('config-tests').replaceChildren(); $('config-history').replaceChildren(); });
-  document.addEventListener('admin-tab-request', event => { if (['resources','news'].includes(event.detail)){if(busy||!leave())event.preventDefault();else{dirty=false;generation++;$('config-new-key').value='';}} });
+  document.addEventListener('admin-tab-request', event => { if (['resources','news','literature'].includes(event.detail)){if(busy||!leave())event.preventDefault();else{dirty=false;generation++;$('config-new-key').value='';}} });
   $('nav-ai').addEventListener('click', () => act($('nav-ai'), async () => {
     if (!leave() || !document.dispatchEvent(new CustomEvent('admin-tab-request',{cancelable:true,detail:'ai'}))) return;
     $('resource-workspace').hidden = true; $('ai-workspace').hidden = false;
     $('nav-ai').setAttribute('aria-pressed','true'); $('nav-resources').setAttribute('aria-pressed','false');
-    await load();
+    if (!$('bailian-panel').hidden) await load();
   }));
+  document.addEventListener('bailian-open',()=>{if(csrf)load().catch(error=>message(error.message));});
   $('ai-settings-form').addEventListener('input', () => { dirty = true; });
   $('ai-settings-form').addEventListener('submit', event => { event.preventDefault(); act(event.submitter, async () => {
     if (!current) throw new Error('请先读取 AI 配置。');
@@ -109,7 +110,7 @@
     $('config-fee').checked = false; message('测试已排队，与访客共用额度和并发；结果将在下方显示。');
   }));
   setInterval(async () => {
-    if (!csrf || $('ai-workspace').hidden || busy || !current) return;
+    if (!csrf || $('ai-workspace').hidden || $('bailian-panel').hidden || busy || !current) return;
     const run = generation;
     try {
       const data = await api('/api/ai-config');
