@@ -19,6 +19,31 @@ def record():
         'HasFulltext':True,'FulltextPath':'private-fixture.pdf'}}
 
 
+def test_live_typed_periodical_envelope_with_empty_fields_is_not_dropped():
+    async def exercise():
+        document={'resourceType':'Periodical','uid':'fixture-uid','fields':{},'Periodical':record()['fields']}
+        async with httpx.AsyncClient(transport=httpx.MockTransport(lambda r:httpx.Response(200,json={'documents':[document],'numFound':1}))) as client:
+            rows=await fetch('液氧煤油',client,'fixture-only-key')
+        assert len(rows)==1,'Provider returned a document but the adapter silently dropped it'
+        assert rows[0]['title']=='栅格舵气动研究（测试样本）'
+        assert rows[0]['year']==2026 and rows[0]['sources']==['万方']
+    asyncio.run(exercise())
+
+
+@pytest.mark.parametrize('body',[
+    {'documents':[{'fields':{}}],'numFound':1},
+    {'documents':[],'numFound':10},
+    {'documents':[],'num_found':10},
+    {'code':'AUTH_PAYMENT_FAILED','message':'fixture-key','documents':[]},
+])
+def test_unparseable_or_payment_failures_are_not_reported_as_zero_matches(body):
+    async def exercise():
+        async with httpx.AsyncClient(transport=httpx.MockTransport(lambda r:httpx.Response(200,json=body))) as client:
+            with pytest.raises(WanfangError) as error:await fetch('液氧煤油',client,'fixture-key')
+            assert 'fixture-key' not in str(error.value)
+    asyncio.run(exercise())
+
+
 def test_wanfang_sends_key_only_to_https_api_and_maps_metadata():
     async def exercise():
         def respond(request):
