@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "items": [
+    {"id":"using-ai","title":"正确使用 AI 工具","summary":"把任务说清楚，让 AI 帮助理解与整理。","updated":"2026-10-21","file":"using-ai.md"},
+    {"id":"evaluating-output","title":"辨别模型输出","summary":"区分事实、推测与建议，识别缺乏依据的回答。","updated":"2026-10-21","file":"evaluating-output.md"},
+    {"id":"verifying-sources","title":"溯源与交叉核验","summary":"回到原始资料，逐项核对结论、数据与引用。","updated":"2026-10-21","file":"verifying-sources.md"},
+    {"id":"academic-integrity","title":"学术诚信与使用说明","summary":"记录 AI 的参与范围，对最终作品负责。","updated":"2026-10-21","file":"academic-integrity.md"}
+  ]
+}

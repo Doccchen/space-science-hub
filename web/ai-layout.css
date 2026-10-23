@@ -51,3 +51,11 @@ body.editorial-ui[data-theme-page="home"]>footer{display:none}
  .editorial-ui #home .ai-message[data-role=user]{margin-left:32px}.editorial-ui #home .ai-footer-note{margin-top:32px}
 }
 @media(prefers-reduced-motion:reduce){.editorial-ui #home .ai-art{transition:none}}
+.editorial-ui .ai-reset-dialog{box-sizing:border-box;width:min(460px,calc(100vw - 32px));max-height:calc(100dvh - 32px);overflow:auto;padding:28px;border:1px solid var(--line);border-radius:12px;background:var(--paper);color:var(--ink);box-shadow:0 16px 48px #10233f26}
+.editorial-ui .ai-reset-dialog::backdrop{background:#10233f80}
+.editorial-ui .ai-reset-dialog h2{margin:0 0 14px;font:600 22px/1.5 var(--sans)}
+.editorial-ui .ai-reset-dialog p{font:16px/1.8 var(--sans);margin:0 0 24px}
+.editorial-ui .ai-reset-actions{display:flex;justify-content:flex-end;gap:12px;flex-wrap:wrap}
+.editorial-ui .ai-reset-actions button{min-height:44px;padding:10px 16px;border:1px solid var(--line);border-radius:6px;font:14px/1.5 var(--sans)}
+.editorial-ui #ai-reset-accept{background:var(--accent);border-color:var(--accent);color:var(--ui-on-primary,#fffaf4)}
+.editorial-ui .ai-reset-actions button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}

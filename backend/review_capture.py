@@ -1,11 +1,49 @@
 """Capture a private draft from a fixed government article; never auto-authorize."""
 import hashlib
 import re
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlsplit
 from bs4 import BeautifulSoup
 from . import news
 from .html_sources import SELECTORS
 from .publisher_fetch import Publisher, checked_url
+
+
+def text_and_links(node, base_url, *, table=False):
+    """Keep publisher link ranges alongside plain text; never persist source HTML."""
+    parts, links, length, previous_anchor = [], [], 0, None
+    for string in node.find_all(string=True):
+        # Match BeautifulSoup.get_text's default exclusion of comments/script strings.
+        if type(string) not in node.MAIN_CONTENT_STRING_TYPES:
+            continue
+        text = str(string).strip() if table else str(string)
+        if table and not text:
+            continue
+        separator = ' ' if table and parts else ''
+        parts.append(separator + text); length += len(separator)
+        anchor = string.find_parent('a')
+        href = str(anchor.get('href', '')) if anchor else ''
+        try:
+            target = urljoin(base_url, href) if href else ''
+            parsed = urlsplit(target)
+            safe = (parsed.scheme in {'http', 'https'} and parsed.hostname and not parsed.username
+                    and not parsed.password and not re.search(r'[\s\x00-\x1f\x7f\\]', target))
+        except ValueError:
+            safe = False
+        if safe and text:
+            if anchor is previous_anchor and links and links[-1]['url'] == target:
+                links[-1]['end'] = length + len(text)
+            else:
+                links.append({'start': length, 'end': length + len(text), 'url': target})
+        length += len(text); previous_anchor = anchor if safe else None
+    raw = ''.join(parts)
+    offset = len(raw) - len(raw.lstrip())
+    text = raw.strip()
+    adjusted = []
+    for link in links:
+        start, end = max(0, link['start'] - offset), min(len(text), link['end'] - offset)
+        if start < end:
+            adjusted.append({**link, 'start': start, 'end': end})
+    return text, adjusted
 
 
 def parse(source, url, raw, actor, *, strict=False):
@@ -58,21 +96,33 @@ def parse(source, url, raw, actor, *, strict=False):
         for br in node.find_all('br'):
             br.replace_with('\n')
         if node.name in {'ul', 'ol'}:
-            items = [li.get_text('', strip=False).strip() for li in node.find_all('li', recursive=False)]
+            entries = [text_and_links(li, url) for li in node.find_all('li', recursive=False)]
+            items = [text for text, _ in entries]
             if items:
-                blocks.append({'type': 'list', 'items': items, 'ordered': node.name == 'ol'})
+                block = {'type': 'list', 'items': items, 'ordered': node.name == 'ol'}
+                links = [{**link, 'item': index} for index, (_, entries_links) in enumerate(entries) for link in entries_links]
+                if links:
+                    block['links'] = links
+                blocks.append(block)
         elif node.name == 'table':
-            rows = [[cell.get_text(' ', strip=True) for cell in tr.find_all(['th', 'td'], recursive=False)] for tr in node.find_all('tr')]
+            entries = [[text_and_links(cell, url, table=True) for cell in tr.find_all(['th', 'td'], recursive=False)] for tr in node.find_all('tr')]
+            rows = [[text for text, _ in row] for row in entries]
             if any(node.select('[rowspan],[colspan]')):
                 warnings = True
             if rows and any(cell for row in rows for cell in row):
-                blocks.append({'type': 'table', 'rows': rows})
+                block = {'type': 'table', 'rows': rows}
+                links = [{**link, 'row': r, 'column': c} for r, row in enumerate(entries) for c, (_, cell_links) in enumerate(row) for link in cell_links]
+                if links:
+                    block['links'] = links
+                blocks.append(block)
         else:
-            value = node.get_text('', strip=False).strip()
+            value, links = text_and_links(node, url)
             if value:
                 block = {'type': 'heading' if node.name.startswith('h') else 'paragraph', 'text': value}
                 if block['type'] == 'heading':
                     block['level'] = int(node.name[1])
+                if links:
+                    block['links'] = links
                 blocks.append(block)
     if not blocks or len(candidates) > 10:
         raise ValueError('Empty or oversized draft')

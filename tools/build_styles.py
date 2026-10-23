@@ -8,7 +8,7 @@ WEB = ROOT/'web'
 GROUPS = {
     'base.css': ('style.css',),
     'components.css': ('resources.css','glass-theme.css','ai.css','frontend-refinement.css','quiet-ui.css'),
-    'pages.css': ('editorial.css','ai-layout.css','site-motion.css','design-system.css','site-welcome.css'),
+    'pages.css': ('editorial.css','ai-layout.css','site-motion.css','design-system.css','site-welcome.css','article.css'),
 }
 
 

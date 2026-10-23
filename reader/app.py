@@ -4,6 +4,7 @@ import time
 from collections import deque
 from contextlib import asynccontextmanager
 from pathlib import Path
+from typing import Literal
 
 import httpx
 from fastapi import FastAPI, HTTPException, Request
@@ -21,9 +22,21 @@ class Analysis(BaseModel):
     text: str = Field(min_length=2, max_length=6000)
 
 
+class WanfangOptions(BaseModel):
+    field: Literal['topic','title','all']='topic'
+    library: Literal['papers','all','periodical','thesis','conference','patent']='papers'
+    sort: Literal['relevance','date']='relevance'
+    page: int=Field(default=1,ge=1,le=1000)
+    page_size: Literal[10,20,50]=20
+    year_from: int | None=Field(default=None,ge=1900,le=2100)
+    year_to: int | None=Field(default=None,ge=1900,le=2100)
+
+
 class Search(BaseModel):
     query: str = Field(min_length=2, max_length=160)
     query_zh: str = Field(default='', max_length=160)
+    source: Literal['Crossref','Semantic Scholar','NASA NTRS','arXiv','万方','ScienceDirect'] | None=None
+    wanfang: WanfangOptions | None=None
 
 
 def create_app(settings=None, transport=None):
@@ -110,7 +123,11 @@ def create_app(settings=None, transport=None):
             raise HTTPException(422, '请填写检索词。')
         app.state.providers.sync()
         service=app.state.providers.service
-        return await run(lambda: service.search(body.query.strip(), body.query_zh.strip()))
+        if body.source and body.source not in service.sources:raise HTTPException(400,'该文献来源未启用。')
+        if body.wanfang and body.wanfang.year_from and body.wanfang.year_to and body.wanfang.year_from>body.wanfang.year_to:
+            raise HTTPException(422,'开始年份不能晚于结束年份。')
+        return await run(lambda: service.search(body.query.strip(),body.query_zh.strip(),source=body.source,
+                                               wanfang_options=body.wanfang.model_dump() if body.wanfang else None))
 
     @app.get('/reader')
     def slash():

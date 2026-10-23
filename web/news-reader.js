@@ -48,19 +48,22 @@
     try { const parsed = new URL(url); if (['https:', 'http:'].includes(parsed.protocol) && !parsed.username && !parsed.password) node.href = parsed.href; } catch { /* invalid metadata */ }
     node.target = '_blank'; node.rel = 'noopener noreferrer'; return node;
   }
-  function blockNode(block, articleId, version, number) {
-    let node;
-    if (block.type === 'heading') node = make('h' + (block.level || 2), block.text);
-    else if (block.type === 'paragraph') node = make('p', block.text);
-    else if (block.type === 'list') { node = make(block.ordered ? 'ol' : 'ul'); block.items.forEach(item => node.append(make('li', item))); }
-    else if (block.type === 'table') {
-      node = make('div', '', 'reader-table'); const table = make('table'); if (block.caption) table.append(make('caption', block.caption));
-      const tbody = make('tbody'); block.rows.forEach(row => { const tr = make('tr'); row.forEach(cell => tr.append(make('td', cell))); tbody.append(tr); }); table.append(tbody); node.append(table);
-    } else return null;
+  function blockNode(block, articleId, version, number, originalURL) {
+    const node = window.ArticleRenderer.block(block, {baseURL: originalURL});
+    if (!node) return null;
     node.id = 'reading-' + articleId + '-' + version.replaceAll(':', '-') + '-' + block.block_id;
     node.dataset.blockId = block.block_id;
     if (block.type === 'paragraph') node.title = '本站展示第' + number + '段（当前版本）';
     return node;
+  }
+  function paperSearch(id) {
+    const section = make('div', '', 'reader-paper-search');
+    const description = make('div', '', 'reader-paper-description');
+    description.append(make('strong', '相关论文'), make('p', '查找与本条新闻相关的研究'));
+    const action = make('a', '搜索相关论文', 'reader-paper-button');
+    action.href = '/assets/research.html?news=' + encodeURIComponent(id);
+    section.append(description, action);
+    return section;
   }
   async function load(id) {
     controller?.abort(); controller = new AbortController(); const currentController = controller, request = ++generation;
@@ -85,11 +88,12 @@
       const date = item.published_time_status === 'timezone_missing' ? (item.published_raw || '') + '（来源未标时区）' :
         (item.published_calendar_date || (item.published_at ? new Date(item.published_at).toLocaleString('zh-CN', {hour12: false}) : '日期未提供'));
       const language = {en:'英文',zh:'中文',ja:'日文',es:'西班牙文',fr:'法文',de:'德文'}[content.language] || '原始语言';
-      const newsPane = make('section', '', 'reader-news');
+      const newsPane = make('section', '', 'reader-news article-content');
       newsPane.setAttribute('aria-label', '新闻正文');
       newsPane.append(make('p', scope, 'reader-scope'), title, make('p', [item.source_name, date, language].join(' · '), 'reader-meta'));
       body.replaceChildren(newsPane);
       if (content.credit) newsPane.append(make('p', '内容署名：' + content.credit, 'reader-meta'));
+      newsPane.append(paperSearch(id));
       let paragraphs = 0;
       const figures = position => (content.assets || []).filter(asset => asset.block_index === position).forEach(asset => {
         const figure = make('figure', '', 'reader-figure'), image = make('img');
@@ -98,12 +102,12 @@
         figure.append(image, make('figcaption', asset.caption + ' · ' + asset.credit)); newsPane.append(figure);
       });
       figures(0);
-      content.blocks.forEach((block, index) => { if (block.type === 'paragraph') paragraphs++; const node = blockNode(block, id, content.content_version, paragraphs); if (node) newsPane.append(node); figures(index+1); });
-      const footer = make('div', '', 'reader-notice'); footer.append(make('p', content.notes), make('p', content.assets?.length ? '仅展示已审核图片；其他图片请到原文查看。' : '图片请到原文查看。'), link(item.original_url));
-      const findPapers = make('a', '查找相关论文 ↗', 'reader-return');
-      findPapers.href = '/assets/research.html?news=' + encodeURIComponent(id);
-      footer.append(findPapers);
-      newsPane.append(footer,returnButton()); body.dataset.contentVersion = content.content_version;
+      content.blocks.forEach((block, index) => { if (block.type === 'paragraph') paragraphs++; const node = blockNode(block, id, content.content_version, paragraphs, item.original_url); if (node) newsPane.append(node); figures(index+1); });
+      const footer = make('div', '', 'reader-notice');
+      // Keep availability guidance when the body is unavailable, without the old publication/image notices.
+      if (content.read_scope !== 'full_text' && content.notes) footer.append(make('p', content.notes));
+      footer.append(link(item.original_url));
+      newsPane.append(footer, returnButton()); body.dataset.contentVersion = content.content_version;
       if(shouldFocus)focusTitle();
     } catch (error) {
       if (request !== generation || !dialog.open) return;

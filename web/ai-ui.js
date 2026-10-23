@@ -27,25 +27,9 @@
     if (!response.ok) { const error = new Error(data.error?.message || '请求未完成，请稍后再试。'); error.code = data.error?.code; throw error; }
     return data;
   }
-  // DOM-only Markdown subset: no raw HTML, links, images or script evaluation.
-  function inline(node,text) {
-    for (const part of text.split(/(\*\*[^*]+\*\*|`[^`]+`)/g)) {
-      if (part.startsWith('**') && part.endsWith('**')) node.append(make('strong','',part.slice(2,-2)));
-      else if (part.startsWith('`') && part.endsWith('`')) node.append(make('code','',part.slice(1,-1)));
-      else node.append(document.createTextNode(part));
-    }
-  }
   function markdown(text) {
-    const body=make('div','ai-message-content'); let list=null,code=null;
-    for(const line of text.split('\n')) {
-      if(line.startsWith('```')) {if(code)code=null;else{code=make('pre');body.append(code);}list=null;continue;}
-      if(code){code.append(document.createTextNode(line+'\n'));continue;}
-      if(!line.trim()){list=null;continue;}
-      const heading=/^(#{1,4})\s+(.+)$/.exec(line),bullet=/^\s*[-*]\s+(.+)$/.exec(line);
-      if(heading){const h=make('h'+Math.min(4,heading[1].length+1));inline(h,heading[2]);body.append(h);list=null;}
-      else if(bullet){if(!list){list=make('ul');body.append(list);}const item=make('li');inline(item,bullet[1]);list.append(item);}
-      else{list=null;const p=make('p');inline(p,line);body.append(p);}
-    }
+    const body = window.ArticleRenderer.markdown(text);
+    body.classList.add('ai-message-content');
     return body;
   }
   function message(role,text,result) {
@@ -70,7 +54,7 @@
   }
   async function reset(){
     const old=session;session=null;generation++;controller?.abort();controller=null;busy=false;
-    thread.replaceChildren();welcome.hidden=false;question.value='';feedback.textContent='';fresh.disabled=true;controls();
+    thread.replaceChildren();welcome.hidden=false;question.value='';feedback.textContent='';byId('ai-complete').textContent='';fresh.disabled=true;controls();
     try{if(old)await json('/api/ai/conversations/'+old,{method:'DELETE'});}
     catch(error){if(error.code!=='session_expired')feedback.textContent='页面已清空，旧对话暂未确认删除，将按保留期限过期。';}
     finally{fresh.disabled=false;controls();if(enabled)question.focus();}
@@ -92,7 +76,15 @@
     }catch(error){if(run!==generation)return;feedback.textContent=error.name==='AbortError'?'等待已结束，没有收到完整回答；本次不会自动重试。':error.message;if(error.code==='session_expired'){session=null;feedback.textContent='此对话已过期或服务配置已变更。点击“新对话”后重新提问。';}if(error.code==='disabled'||error.code==='configuration'){initialized=false;await init();}if(submitted)question.value=text;}
     finally{clearTimeout(timeout);if(run===generation){busy=false;controller=null;controls();}}
   });
-  fresh.addEventListener('click',reset);question.addEventListener('input',controls);
+  const resetDialog=byId('ai-reset-confirm');
+  fresh.addEventListener('click',()=>{
+    if(thread.children.length || question.value.trim())resetDialog.showModal();
+    else reset();
+  });
+  byId('ai-reset-cancel').addEventListener('click',()=>resetDialog.close());
+  byId('ai-reset-accept').addEventListener('click',()=>{resetDialog.close();reset();});
+  resetDialog.addEventListener('close',()=>fresh.focus({preventScroll:true}));
+  question.addEventListener('input',controls);
   question.addEventListener('keydown',event=>{if(event.key==='Enter'&&(event.ctrlKey||event.metaKey)&&!event.isComposing){event.preventDefault();form.requestSubmit();}});
   document.querySelectorAll('[data-ai-question]').forEach(button=>button.addEventListener('click',()=>{if(!enabled||busy)return;question.value=button.dataset.aiQuestion;controls();question.focus();}));
   document.addEventListener('pagechange',event=>{if(event.detail==='home')init();});

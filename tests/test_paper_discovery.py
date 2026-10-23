@@ -49,7 +49,7 @@ def test_search_merges_sources_keeps_provenance_and_caches():
         return provider(request)
     with TestClient(create_app(settings(), httpx.MockTransport(respond))) as client:
         assert client.get('/api/reader/health').json()['service'] == 'paper-search'
-        assert '论文查找' in client.get('/reader/').text
+        assert 'id="search-form"' in client.get('/reader/').text
         assert client.post('/api/reader/papers').status_code == 404
         result = client.post('/api/reader/search', json={'query': 'net capture dynamics'}).json()
         assert len(result['papers']) == 3
@@ -125,7 +125,7 @@ def test_model_only_produces_topics_and_bad_formats_fall_back():
 
 def test_news_entry_handoff_is_same_origin_and_does_not_leak_body_in_url():
     source = Path('web/news-reader.js').read_text(encoding='utf-8')
-    assert "findPapers.href = '/assets/research.html?news=' + encodeURIComponent(id)" in source
+    assert ".href = '/assets/research.html?news=' + encodeURIComponent(id)" in source
     frontend = Path('reader_web/reader.js').read_text(encoding='utf-8-sig')
     assert 'innerHTML' not in frontend
     assert "fetch('/api/news/' + news" in frontend

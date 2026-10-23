@@ -5,9 +5,11 @@ Legacy collector excerpts stay private until explicitly reviewed.
 """
 import hashlib
 import json
+import re
 import sqlite3
 from contextlib import closing
 from datetime import datetime, timezone
+from urllib.parse import urlsplit
 
 from . import news
 from .locking import operation_lock
@@ -55,6 +57,35 @@ def plain(value, maximum=12000):
 def exact_keys(value, required, optional=()):
     if not isinstance(value, dict) or not set(required) <= value.keys() or value.keys() - set(required) - set(optional):
         raise ValueError('Unexpected or missing fields')
+
+
+def validate_links(block):
+    links = block.get('links', [])
+    if not isinstance(links, list) or len(links) > 1000:
+        raise ValueError('Invalid links')
+    ends = {}
+    for link in links:
+        kind = block['type']
+        positions = {'item'} if kind == 'list' else {'row', 'column'} if kind == 'table' else set()
+        exact_keys(link, {'start', 'end', 'url'} | positions)
+        for key in positions:
+            if type(link[key]) is not int or link[key] < 0:
+                raise ValueError('Invalid link position')
+        try:
+            text = (block['items'][link['item']] if kind == 'list' else
+                    block['rows'][link['row']][link['column']] if kind == 'table' else block['text'])
+        except IndexError:
+            raise ValueError('Link position outside block') from None
+        slot = tuple(link[key] for key in sorted(positions))
+        start, end = link['start'], link['end']
+        if type(start) is not int or type(end) is not int or not ends.get(slot, 0) <= start < end <= len(text):
+            raise ValueError('Invalid or overlapping link range')
+        ends[slot] = end
+        target = plain(link['url'], 4000)
+        parsed = urlsplit(target)
+        if (parsed.scheme not in {'http', 'https'} or not parsed.hostname or parsed.username or parsed.password
+                or re.search(r'[\s\x00-\x1f\x7f\\]', target)):
+            raise ValueError('Invalid link URL')
 
 
 def validate(document):
@@ -107,13 +138,13 @@ def validate(document):
         if not isinstance(block, dict):
             raise ValueError('Invalid block')
         kind = block.get('type')
-        if kind in {'heading', 'paragraph'}:
-            exact_keys(block, {'type', 'text'}, {'level'} if kind == 'heading' else ())
+        if kind in {'heading', 'paragraph', 'markdown'}:
+            exact_keys(block, {'type', 'text'}, {'level', 'links'} if kind == 'heading' else {'links'} if kind == 'paragraph' else ())
             plain(block['text'])
             if kind == 'heading' and block.get('level', 2) not in {2, 3, 4}:
                 raise ValueError('Invalid heading level')
         elif kind == 'list':
-            exact_keys(block, {'type', 'items'}, {'ordered'})
+            exact_keys(block, {'type', 'items'}, {'ordered', 'links'})
             if not isinstance(block['items'], list) or not 1 <= len(block['items']) <= 50:
                 raise ValueError('Invalid list')
             for item in block['items']:
@@ -121,7 +152,7 @@ def validate(document):
             if 'ordered' in block and type(block['ordered']) is not bool:
                 raise ValueError('Invalid list ordering')
         elif kind == 'table':
-            exact_keys(block, {'type', 'rows'}, {'caption'})
+            exact_keys(block, {'type', 'rows'}, {'caption', 'links'})
             rows = block['rows']
             if not isinstance(rows, list) or not 1 <= len(rows) <= 50:
                 raise ValueError('Invalid table')
@@ -140,6 +171,8 @@ def validate(document):
                 plain(block['caption'], 2000)
         else:
             raise ValueError('Unsupported block; no HTML or media embeds')
+        if 'links' in block:
+            validate_links(block)
     serialized = json.dumps(document, ensure_ascii=False, sort_keys=True)
     if len(serialized.encode()) > MAX_DOCUMENT_BYTES:
         raise ValueError('Edition exceeds byte budget')

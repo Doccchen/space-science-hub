@@ -205,12 +205,12 @@ class SearchService:
         self.locks = {s: asyncio.Lock() for s in self.sources}
         self.last = {}
 
-    async def source(self, source, query):
-        key = (source, query.casefold())
+    async def source(self, source, query, wanfang_options=None):
+        key = (source, query.casefold(), json.dumps(wanfang_options,sort_keys=True) if source=='万方' else '')
         async with self.locks[source]:
             cached = self.cache.get(key)
             if cached and cached[0] > time.monotonic():
-                return cached[1], {'source': source, 'state': 'ok', 'count': len(cached[1]), 'cached': True}
+                return cached[1], {**cached[2], 'cached': True}
             # Respect conservative provider pacing; no hidden retries.
             delay = (3.1 if source == 'arXiv' else 1.1) - (time.monotonic() - self.last.get(source, 0))
             if delay > 0: await asyncio.sleep(delay)
@@ -224,22 +224,28 @@ class SearchService:
                     ledger=literature_config.reserve(provider,options['version'],options['daily_limit'])
                 async def fetch_rows():
                     if source == '万方':
-                        from .wanfang import fetch
-                        return await fetch(query,self.client,self.wanfang_key,timeout=options['timeout'] if options else 18)
+                        from .wanfang import fetch_page
+                        return await fetch_page(query,self.client,self.wanfang_key,timeout=options['timeout'] if options else 18,options=wanfang_options)
                     if source == 'ScienceDirect':
                         from .sciencedirect import fetch
                         return await fetch(query,self.client,options['key'],options['insttoken'],timeout=options['timeout'])
                     return await fetch_source(source,query,self.client)
                 try:
-                    rows=await asyncio.wait_for(fetch_rows(),timeout=options['timeout'] if options else 20)
+                    fetched=await asyncio.wait_for(fetch_rows(),timeout=options['timeout'] if options else 20)
+                    if source=='万方':
+                        rows=fetched['papers'];meta={k:v for k,v in fetched.items() if k!='papers'}
+                    else:
+                        rows=fetched;meta={'total':None,'page':1,'page_size':len(rows),'has_more':False,
+                                           'pagination_supported':False,'order':'provider'}
                     if ledger:literature_config.finish(ledger,{'ok':True,'count':len(rows)})
                 except BaseException:
                     if ledger:literature_config.finish(ledger,{'ok':False,'message':'来源请求未完成。'})
                     raise
                 if len(self.cache) >= 200:
                     self.cache.pop(next(iter(self.cache)))
-                if source!='ScienceDirect':self.cache[key] = (time.monotonic() + 600, rows)
-                return rows, {'source': source, 'state': 'ok', 'count': len(rows)}
+                status={'source':source,'state':'ok','count':len(rows),'query':query,**meta}
+                if source!='ScienceDirect':self.cache[key] = (time.monotonic() + 600, rows, status)
+                return rows,status
             except (httpx.HTTPError, ValueError, KeyError, TypeError, IndexError, ET.ParseError,TimeoutError,ManagementError) as error:
                 message = '来源连接超时或暂不可用'
                 from .wanfang import WanfangError
@@ -252,11 +258,14 @@ class SearchService:
                     message = '来源限流，请稍后再试' if error.response.status_code == 429 else '来源请求失败，请稍后重试'
                 return [], {'source': source, 'state': 'error', 'message': message, 'count': 0}
 
-    async def search(self, query, query_zh=''):
-        results = await asyncio.gather(*(self.source(source, query_zh or query) if source == '万方'
-                                        else self.source(source, query) for source in self.sources))
+    async def search(self, query, query_zh='',source=None,wanfang_options=None):
+        selected=(source,) if source else self.sources
+        if any(s not in self.sources for s in selected):raise ValueError('Source not enabled')
+        results = await asyncio.gather(*(self.source(s,query_zh or query,wanfang_options) if s=='万方'
+                                        else self.source(s,query) for s in selected))
         rows = merge_rank([row for records, _ in results for row in records], ' '.join(filter(None, (query, query_zh))))
         return {'papers': rows, 'sources': [status for _, status in results], 'query': query,
+                'source_results':[{**status,'papers':records} for records,status in results],
                 'query_zh': query_zh,
                 'no_persist_sources':['ScienceDirect'],
                 'notice': '排序依据题名与摘要关键词匹配；未读取全文。预印本不代表已经同行评审。',
